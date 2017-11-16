@@ -6,16 +6,16 @@
 	height:50px;
 	min-width: 100px;
 	min-height: 100px;
-	left: 300px;
+	left: 100px;
 	top: 300px
 }#parentDiv{
 	position: absolute;
 	border:2px solid red;
-	width:100%;
+	width:99.75%;
 	height:800px;
 	min-width: 100px;
 	min-height: 100px;
-	left: 0;
+	left: 0px;
 	top: 0;
 }
 #otherDiv{

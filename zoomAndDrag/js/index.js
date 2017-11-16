@@ -181,6 +181,37 @@ $('#otherDiv').mouseup(function (e) {
   e.stopPropagation(); //阻止事件冒泡(导致body捕获不到mouseup事件)
 });
 
+function savePosistionitionObjToPosistionitionArray(ele) {
+  var flag = 0;
+  var borderWidth = parseInt(ele.css("border"));
+  var position = ele.position();
+  var id = ele.attr("id");
+  var x1 = position.left;
+  var x2 = x1 + ele.width() + borderWidth * 2;
+  var y1 = position.top;
+  var y2 = y1 + ele.height() + borderWidth * 2;
+  $.each(positionArray, function(index, value) {
+    if (value.id == id) {
+      value.x1 = x1;
+      value.x2 = x2;
+      value.y1 = y1;
+      value.y2 = y2;
+      flag = 1;
+      //return false;
+    }
+  });
+  if (!flag) {
+    var obj = {
+      id: id,
+      x1: x1,
+      x2: x2,
+      y1: y1,
+      y2: y2
+    };
+    positionArray.push(obj);
+  }
+}
+
 /*
 函数名:边缘吸附函数
 功能:当div超过父容器边缘或者靠近边缘时,自动吸附到父容器边缘
