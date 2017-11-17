@@ -1,5 +1,5 @@
-function dragAble(ele) {
-
+function dragAble(ele){
+  
   var isMouseDown = false;
 
   var leftBorder = parseInt(ele.css("border-left-width"));
@@ -24,7 +24,7 @@ function dragAble(ele) {
   var preTop = 0;
 
   ele.bind({
-    mousedown: function (e) {
+    mousedown:function(e){
       var leftPos = ele.offset().left;
       var rightPos = leftPos + ele.width() + leftBorder + rightBorder;
       var topPos = ele.offset().top;
@@ -35,55 +35,61 @@ function dragAble(ele) {
       preLeft = parseInt(ele.css('left'));
       preTop = parseInt(ele.css('top'));
 
-      if (e.pageX >= leftPos - 5 && e.pageX <= rightPos + 5 &&
-        e.pageY >= topPos - 5 && e.pageY <= bottomPos + 5) {
+      if(e.pageX >= leftPos-5 && e.pageX <= rightPos+5 &&
+        e.pageY >= topPos-5 && e.pageY <= bottomPos+5){
         isMouseDown = true;
         //创建遮罩层，防止mouseup事件被其它元素阻止冒泡，导致mouseup事件无法被body捕获，导致拖动不能停止
-        var bodyWidth = ele.parent().width();
-        var bodyHeight = ele.parent().height();
-        $('body').append('<div id="mask" style="opacity:0.1;top:0px;left:0px;background-color:green;position:absolute;z-index:9999;width:'+bodyWidth+'px;height:'+bodyHeight+'px;"></div>');
+        $('body').append('<div id="mask" style="opacity:0.1;top:0px;right:0px;bottom:0px;left:0px;background-color:green;position:absolute;z-index:9999;"></div>');
       }
     }
   });
 
   $('body').bind({
-    mousemove: function (e) {
+    mousemove:function(e){
       var leftPos = ele.offset().left;
       var rightPos = leftPos + ele.width() + leftBorder + rightBorder;
       var topPos = ele.offset().top;
       var bottomPos = topPos + ele.height() + topBorder + bottomBorder;
 
-      if (leftPos - 5 <= e.pageX && e.pageX <= leftPos + 5 &&
-        topPos - 5 <= e.pageY && e.pageY <= topPos + 5 && !isMouseDown) {
-        ele.css('cursor', 'nw-resize');
+      if(leftPos-5 <= e.pageX && e.pageX <= leftPos+5 && 
+        topPos-5 <= e.pageY && e.pageY <= topPos+5 && !isMouseDown){
+        ele.css('cursor','nw-resize');
         leftTopJudge = true;
-      } else if (topPos - 5 <= e.pageY && e.pageY <= topPos + 5 &&
-        rightPos - 5 <= e.pageX && e.pageX <= rightPos + 5 && !isMouseDown) {
-        ele.css('cursor', 'ne-resize');
+      }
+      else if(topPos-5 <= e.pageY && e.pageY <= topPos+5 && 
+        rightPos-5 <= e.pageX && e.pageX <= rightPos+5 &&!isMouseDown){
+        ele.css('cursor','ne-resize');
         rightTopJudge = true;
-      } else if (leftPos - 5 <= e.pageX && e.pageX <= leftPos + 5 &&
-        bottomPos - 5 <= e.pageY && e.pageY <= bottomPos + 5 && !isMouseDown) {
-        ele.css('cursor', 'sw-resize');
+      }
+      else if(leftPos-5 <= e.pageX && e.pageX <= leftPos+5 &&
+       bottomPos-5 <= e.pageY && e.pageY <= bottomPos+5 && !isMouseDown){
+        ele.css('cursor','sw-resize');
         leftBottomJudge = true;
-      } else if (bottomPos - 5 <= e.pageY && e.pageY <= bottomPos + 5 &&
-        rightPos - 5 <= e.pageX && e.pageX <= rightPos + 5 && !isMouseDown) {
-        ele.css('cursor', 'se-resize');
+      }
+      else if(bottomPos-5 <= e.pageY && e.pageY <= bottomPos+5 &&
+       rightPos-5 <= e.pageX && e.pageX <= rightPos+5 && !isMouseDown){
+        ele.css('cursor','se-resize');
         rightBottomJudge = true;
-      } else if (leftPos - 5 <= e.pageX && e.pageX <= leftPos + 5 && !isMouseDown) {
-        ele.css('cursor', 'w-resize');
+      }
+      else if(leftPos-5 <= e.pageX && e.pageX <= leftPos+5 && !isMouseDown){
+        ele.css('cursor','w-resize');
         leftJudge = true;
-      } else if (rightPos - 5 <= e.pageX && e.pageX <= rightPos + 5 && !isMouseDown) {
-        ele.css('cursor', 'e-resize');
+      }
+      else if(rightPos-5 <= e.pageX && e.pageX <= rightPos+5 && !isMouseDown){
+        ele.css('cursor','e-resize');
         rightJudge = true;
-      } else if (topPos - 5 <= e.pageY && e.pageY <= topPos + 5 && !isMouseDown) {
-        ele.css('cursor', 'n-resize');
+      }
+      else if(topPos-5 <= e.pageY && e.pageY <= topPos+5 && !isMouseDown){
+        ele.css('cursor','n-resize');
         topJudge = true;
-      } else if (bottomPos - 5 <= e.pageY && e.pageY <= bottomPos + 5 && !isMouseDown) {
-        ele.css('cursor', 's-resize');
+      }
+      else if(bottomPos-5 <= e.pageY && e.pageY <= bottomPos+5 && !isMouseDown){
+        ele.css('cursor','s-resize');
         bottomJudge = true;
-      } else {
-        if (!isMouseDown) {
-          ele.css('cursor', 'move');
+      }
+      else{
+        if(!isMouseDown){
+          ele.css('cursor','move');
 
           leftJudge = false;
           rightJudge = false;
@@ -97,64 +103,72 @@ function dragAble(ele) {
           rightBottomJudge = false;
         }
       }
-      if (isMouseDown) {
-        if (leftTopJudge == true) {
-          if (rightPos - e.pageX - leftBorder - rightBorder >= 0) {
-            ele.width((rightPos - e.pageX - leftBorder - rightBorder) + 'px');
-            ele.css('left', e.pageX + 'px');
+      if(isMouseDown){
+        if(leftTopJudge == true){
+          if(rightPos-e.pageX-leftBorder-rightBorder>=0){
+            ele.width((rightPos-e.pageX-leftBorder-rightBorder)+'px');
+            ele.css('left',e.pageX+'px');
           }
-          if (bottomPos - e.pageY - topBorder - bottomBorder >= 0) {
-            ele.height((bottomPos - e.pageY - topBorder - bottomBorder) + 'px');
-            ele.css('top', e.pageY + 'px');
+          if(bottomPos-e.pageY-topBorder-bottomBorder>=0){
+            ele.height((bottomPos-e.pageY-topBorder-bottomBorder)+'px');
+            ele.css('top',e.pageY+'px');
           }
-        } else if (rightTopJudge == true) {
-          if (e.pageX - leftPos - leftBorder - rightBorder >= 0) {
-            ele.width((e.pageX - leftPos - leftBorder - rightBorder) + 'px');
+        }
+        else if(rightTopJudge == true){
+          if(e.pageX-leftPos-leftBorder-rightBorder>=0){
+            ele.width((e.pageX-leftPos-leftBorder-rightBorder)+'px');
           }
-          if (bottomPos - e.pageY - topBorder - bottomBorder >= 0) {
-            ele.height((bottomPos - e.pageY - topBorder - bottomBorder) + 'px');
-            ele.css('top', e.pageY + 'px');
+          if(bottomPos-e.pageY-topBorder-bottomBorder>=0){
+            ele.height((bottomPos-e.pageY-topBorder-bottomBorder)+'px');
+            ele.css('top',e.pageY+'px');
           }
-        } else if (leftBottomJudge == true) {
-          if (rightPos - e.pageX - leftBorder - rightBorder >= 0) {
-            ele.width((rightPos - e.pageX - leftBorder - rightBorder) + 'px');
-            ele.css('left', e.pageX + 'px');
+        }
+        else if(leftBottomJudge == true){
+          if(rightPos-e.pageX-leftBorder-rightBorder>=0){
+            ele.width((rightPos-e.pageX-leftBorder-rightBorder)+'px');
+            ele.css('left',e.pageX+'px');
           }
-          if (e.pageY - topPos - topBorder - bottomBorder >= 0) {
-            ele.height((e.pageY - topPos - topBorder - bottomBorder) + 'px');
+          if(e.pageY-topPos-topBorder-bottomBorder>=0){
+            ele.height((e.pageY-topPos-topBorder-bottomBorder)+'px');
           }
-        } else if (rightBottomJudge == true) {
-          if (e.pageX - leftPos - leftBorder - rightBorder >= 0) {
-            ele.width((e.pageX - leftPos - leftBorder - rightBorder) + 'px');
+        }
+        else if(rightBottomJudge == true){
+          if(e.pageX-leftPos-leftBorder-rightBorder>=0){
+            ele.width((e.pageX-leftPos-leftBorder-rightBorder)+'px');
           }
-          if (e.pageY - topPos - topBorder - bottomBorder >= 0) {
-            ele.height((e.pageY - topPos - topBorder - bottomBorder) + 'px');
+          if(e.pageY-topPos-topBorder-bottomBorder>=0){
+            ele.height((e.pageY-topPos-topBorder-bottomBorder)+'px');
           }
-        } else if (leftJudge == true) {
-          if (rightPos - e.pageX - leftBorder - rightBorder >= 0) {
-            ele.width((rightPos - e.pageX - leftBorder - rightBorder) + 'px');
-            ele.css('left', e.pageX + 'px');
+        }
+        else if(leftJudge == true){
+          if(rightPos-e.pageX-leftBorder-rightBorder>=0){
+            ele.width((rightPos-e.pageX-leftBorder-rightBorder)+'px');
+            ele.css('left',e.pageX+'px');
           }
-        } else if (rightJudge == true) {
-          if (e.pageX - leftPos - leftBorder - rightBorder >= 0) {
-            ele.width((e.pageX - leftPos - leftBorder - rightBorder) + 'px');
+        }
+        else if(rightJudge == true){
+          if(e.pageX-leftPos-leftBorder-rightBorder>=0){
+            ele.width((e.pageX-leftPos-leftBorder-rightBorder)+'px');
           }
-        } else if (topJudge == true) {
-          if (bottomPos - e.pageY - topBorder - bottomBorder >= 0) {
-            ele.height((bottomPos - e.pageY - topBorder - bottomBorder) + 'px');
-            ele.css('top', e.pageY + 'px');
+        }
+        else if(topJudge == true){
+          if(bottomPos-e.pageY-topBorder-bottomBorder>=0){
+            ele.height((bottomPos-e.pageY-topBorder-bottomBorder)+'px');
+            ele.css('top',e.pageY+'px');
           }
-        } else if (bottomJudge == true) {
-          if (e.pageY - topPos - topBorder - bottomBorder >= 0) {
-            ele.height((e.pageY - topPos - topBorder - bottomBorder) + 'px');
+        }
+        else if(bottomJudge == true){
+          if(e.pageY-topPos-topBorder-bottomBorder>=0){
+            ele.height((e.pageY-topPos-topBorder-bottomBorder)+'px');
           }
-        } else if (insideJudge == true) {
-          ele.css('left', (preLeft + e.pageX - preXPos) + 'px');
-          ele.css('top', (preTop + e.pageY - preYPos) + 'px');
+        }
+        else if(insideJudge == true){
+          ele.css('left',(preLeft+e.pageX-preXPos)+'px');
+          ele.css('top',(preTop+e.pageY-preYPos)+'px');
         }
       }
     },
-    mouseup: function (e) {
+    mouseup:function(e){
       isMouseDown = false;
 
       leftJudge = false;
@@ -167,58 +181,17 @@ function dragAble(ele) {
       rightTopJudge = false;
       leftBottomJudge = false;
       rightBottomJudge = false;
+
       adsorbent(ele);
       $('#mask').remove();
-      
     }
-
   });
-
 };
 
-$('#otherDiv').mouseup(function (e) {
+$('#otherDiv').mouseup(function(e){
   //e.preventDefault(); //阻止默认行为
   e.stopPropagation(); //阻止事件冒泡(导致body捕获不到mouseup事件)
 });
-
-function savePosistionitionObjToPosistionitionArray(ele) {
-  var flag = 0;
-  var borderWidth = parseInt(ele.css("border"));
-  var position = ele.position();
-  var id = ele.attr("id");
-  var x1 = position.left;
-  var x2 = x1 + ele.width() + borderWidth * 2;
-  var y1 = position.top;
-  var y2 = y1 + ele.height() + borderWidth * 2;
-  $.each(positionArray, function(index, value) {
-    if (value.id == id) {
-      value.x1 = x1;
-      value.x2 = x2;
-      value.y1 = y1;
-      value.y2 = y2;
-      flag = 1;
-      //return false;
-    }
-  });
-  if (!flag) {
-    var obj = {
-      id: id,
-      x1: x1,
-      x2: x2,
-      y1: y1,
-      y2: y2
-    };
-    positionArray.push(obj);
-  }
-}
-
-/*
-函数名:边缘吸附函数
-功能:当div超过父容器边缘或者靠近边缘时,自动吸附到父容器边缘
-参数:对象ele(div)
-返回值:无
-*/
-
 function adsorbent(ele) {
   var parentDiv = ele.parent(), //父容器
       parentDivWidth = parentDiv.width(), //父容器宽度
@@ -249,6 +222,37 @@ function adsorbent(ele) {
   }
   if (bottomPosition >= gapJudgeScopeBottom) {
     ele.css("top", adsorbBottomPosition + "px");
+  }
+}
+
+function savePosistionitionObjToPosistionitionArray(ele) {
+  var flag = 0;
+  var borderWidth = parseInt(ele.css("border"));
+  var position = ele.position();
+  var id = ele.attr("id");
+  var x1 = position.left;
+  var x2 = x1 + ele.width() + borderWidth * 2;
+  var y1 = position.top;
+  var y2 = y1 + ele.height() + borderWidth * 2;
+  $.each(positionArray, function(index, value) {
+    if (value.id == id) {
+      value.x1 = x1;
+      value.x2 = x2;
+      value.y1 = y1;
+      value.y2 = y2;
+      flag = 1;
+      //return false;
+    }
+  });
+  if (!flag) {
+    var obj = {
+      id: id,
+      x1: x1,
+      x2: x2,
+      y1: y1,
+      y2: y2
+    };
+    positionArray.push(obj);
   }
 }
 $(document).ready(dragAble($('#myDiv')));
