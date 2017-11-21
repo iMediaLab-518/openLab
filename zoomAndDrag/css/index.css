@@ -9,7 +9,7 @@ body{
 	min-width: 100px;
 	min-height:100px;
 	left: 300px;
-	top: 300px
+	top: 300px;
 }
 #otherDiv{
 	position: absolute;
@@ -29,9 +29,27 @@ body{
 	position:absolute;
 	z-index:9999;
 }
-#ttt{
+#box{
 	position: absolute;
-	width:100px;
-	height: 100px;
-	background: red;
+	border:2px solid red;
+	width:300px;
+	height:50px;
+	min-width: 100px;
+	min-height:100px;
+	left: 300px;
+	top: 300px;
+	overflow: hidden;
+}
+#innerBox{
+	position: relative;
+	width:800px;
+	height: 800px;
+
+}
+#outsideBox{
+	position: absolute;
+	width: 1500px;
+	height: 1200px;
+	background: transparent;
+	border:1px solid red;
 }
