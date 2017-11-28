@@ -46,6 +46,7 @@ function dragAble(ele){
 
   $('body').bind({
     mousemove:function(e){
+      hideIndetity(ele);
       var leftPos = ele.offset().left;
       var rightPos = leftPos + ele.width() + leftBorder + rightBorder;
       var topPos = ele.offset().top;
@@ -257,16 +258,16 @@ function savePosistionitionObjToPosistionitionArray(ele) {
 }
 $(document).ready(dragAble($('#myDiv')));
 
+/* function widthChanging(ele){
+  var eleWidth = ele.width();
+  var 
+} */
 /*Javascript代码片段*/
 
-  
-  
-     
-      
-  
-
-
     $(document).ready(function() {
+      $.ajaxSetup({
+        async: false
+      });
       $('#example').DataTable( {
           "ajax": {
             "url":"php/data.json"
@@ -316,9 +317,49 @@ $(document).ready(dragAble($('#myDiv')));
           }
           
       } );
+      setMinHeight();
+      $.ajaxSetup({
+        async: true
+      });
   } );
   $(function(){
     $("#example_filter input").attr("type","text").addClass("remove-default-style")
     .addClass("search-input");
     $("#example").addClass("border-bottom-and-top");
-  })
+  });
+  function setMinHeight(){
+    var wrapperHeight = $("#example_wrapper").height();
+    console.log(wrapperHeight);
+    var headerHeight = $("#myDiv .div-header").height();
+    console.log(headerHeight);
+    var minHeight = wrapperHeight + headerHeight + 20;
+    $("#myDiv").css("min-height", minHeight + "px");
+  }
+  function hideIndetity(ele){
+    var eleWidth = ele.width();
+    var tr = $("#example_wrapper tr");
+    if(eleWidth < 790){
+      $.each(tr,function(){
+        $(this).find("th").eq(4).hide();
+        $(this).find("td").eq(4).hide();
+      })
+    } 
+    if(eleWidth < 600){
+      $.each(tr,function(){
+        $(this).find("th").eq(6).hide();
+        $(this).find("td").eq(6).hide();
+      })
+    } 
+    if(eleWidth >= 600){
+      $.each(tr,function(){
+      $(this).find("th").eq(6).show();
+      $(this).find("td").eq(6).show();
+    })
+    if(eleWidth >= 790){
+      $.each(tr,function(){
+        $(this).find("th").eq(4).show();
+        $(this).find("td").eq(4).show();
+      })
+    }
+  }
+    }

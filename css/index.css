@@ -6,9 +6,7 @@ body{
 	border:1px solid #333333;
 	border-radius: 5px;
 	width:1000px;
-	height:450px;
-	min-width: 100px;
-	min-height:100px;
+	min-width: 500px;
 	left: 10px;
 	top: 300px
 }
