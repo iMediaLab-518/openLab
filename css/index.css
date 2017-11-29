@@ -1,0 +1,78 @@
+body{
+	height:1000px;
+}
+#myDiv{
+	position: absolute;
+	border:1px solid #333333;
+	border-radius: 5px;
+	width:1000px;
+	min-width: 500px;
+	left: 10px;
+	top: 300px
+}
+#otherDiv{
+	position: absolute;
+	border: 2px solid blue;
+	width: 200px;
+	height: 200px;
+	left: 300px;
+	top:400px;
+}
+#mask{
+	opacity:0.2;
+	top:0px;
+	left:0px;
+	right:0px;
+	bottom: 0px;
+	background-color:lightgreen;
+	position:absolute;
+	z-index:9999;
+}
+#ttt{
+	position: absolute;
+	width:100px;
+	height: 100px;
+	background: red;
+}
+.float-left{
+	float:left;
+}
+.float-right{
+	float:right;
+}
+.div-header{
+	border-bottom: 1px solid #000;
+}
+.padding-10px{
+	padding: 10px;
+}
+.padding-left-10px{
+	padding-left: 10px;
+}
+.padding-right-10px{
+	padding-right: 10px;
+}
+.top-move-3px{
+	position: relative;
+	top:-3px;
+}
+.top-move-20px{
+	position: relative;
+	top:-20px;
+}
+.remove-default-style{
+	-web-kit-appearance:none;
+	-moz-appearance: none;
+}
+.search-input{
+	border:1px solid #333333;
+	border-radius: 5px;
+	width:400px;
+}
+.border-bottom-and-top{
+	border-bottom: 1px solid #333333;
+	border-top: 1px solid #333333;
+}
+.z-index-9999{
+	
+}
