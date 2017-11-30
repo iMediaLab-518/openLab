@@ -326,6 +326,7 @@ $(document).ready(function() {
         }
       }
     ],
+    aLengthMenu: [ 5, 10, 15],
     dom:
       '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
     language: {
@@ -354,6 +355,9 @@ $(document).ready(function() {
     }
   });
   setMinHeight();
+  $("select[name='example_length']").change(function(){
+    setMinHeight();
+  })
   $.ajaxSetup({
     async: true
   });
@@ -433,9 +437,8 @@ $(function() {
       curInfo.isLock = 0;
     } else {
       curInfo.isLock = 1;
-      
+      $("#myDiv").css("cursor","");
     }
-    $("#myDiv").css("cursor","");
     dragAble($('#myDiv'));
   });
 });
