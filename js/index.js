@@ -307,16 +307,17 @@ $(document).ready(function() {
   });
   $("#example").DataTable({
     ajax: {
-      url: "php/data.json"
+      url: "php/staff_management.php"
+      // url: "php/data.json"
     },
     columns: [
-      { data: "id" },
-      { data: "name" },
-      { data: "sex" },
-      { data: "phoneNumber" },
-      { data: "serialNumber" },
-      { data: "job" },
-      { data: "joinTime" }
+      { data: "staff_serial_number" },
+      { data: "staff_name" },
+      { data: "staff_gender" },
+      { data: "staff_phone_num" },
+      { data: "staff_id_card_no" },
+      { data: "staff_role_name" },
+      { data: "staff_create_time" }
     ],
     columnDefs: [
       {
