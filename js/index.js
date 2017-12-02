@@ -48,9 +48,9 @@ function dragAble(ele) {
         ) {
           isMouseDown = true;
           //创建遮罩层，防止mouseup事件被其它元素阻止冒泡，导致mouseup事件无法被body捕获，导致拖动不能停止
-          /* $("body").append(
-            '<div id="mask" style="opacity:0.1;top:0px;right:0px;bottom:0px;left:0px;background-color:green;position:absolute;z-index:9000;"></div>'
-          ); */
+          //  $("body").append(
+          //   '<div id="mask" style="opacity:0.1;top:0px;right:0px;bottom:0px;left:0px;background-color:transparent;position:absolute;z-index:9000;"></div>'
+          // ); 
         }
       }
     });
@@ -293,6 +293,7 @@ function savePosistionitionObjToPosistionitionArray(ele) {
     };
     positionArray.push(obj);
   }
+  console.log(positionArray);
 }
 
 /* function widthChanging(ele){
