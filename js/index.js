@@ -1,11 +1,29 @@
 
 //全局变量定义
 var curInfo = {};
-curInfo.isLock = 1;
-
-
+var requestData = {};
+requestData.curPage = 1;
+function getInfoCard(requestData){
+  $.post("php/data.json",requestData,function(json){
+    var data = json.data;
+    var html = "";
+    $.each(data,function(index,value){
+      html += "<div class='infoCard'>";
+      html += "<div class='avatar'>";
+      html += "<img src='img/avatar1.jpg' alt='用户头像'>";
+      html += "</div><span>" + value.name + "</span>";
+      html += "<span><b>员工类型</b></span>";
+      html += "<span>" + value.job + "</span>";
+      html += "<span><b>入职时间</b></span>";
+      html += "<span>" +value.joinTime + "</span></div>";
+    })
+    $(".infoCardContainer").html(html);
+  })
+}
+getInfoCard();
 function dragAble(ele) {
-  if (!curInfo.isLock) {
+  var eleId = ele.attr("id");
+  if (curInfo[eleId]==0) {
     var isMouseDown = false;
     var leftBorder = parseInt(ele.css("border-left-width"));
     var rightBorder = parseInt(ele.css("border-right-width"));
@@ -47,17 +65,16 @@ function dragAble(ele) {
           e.pageY <= bottomPos + 5
         ) {
           isMouseDown = true;
-          //创建遮罩层，防止mouseup事件被其它元素阻止冒泡，导致mouseup事件无法被body捕获，导致拖动不能停止
-          /* $("body").append(
-            '<div id="mask" style="opacity:0.1;top:0px;right:0px;bottom:0px;left:0px;background-color:green;position:absolute;z-index:9000;"></div>'
-          ); */
         }
       }
     });
 
     $("body").bind({
       mousemove: function(e) {
-        hideIndetity(ele);
+        if(eleId == "myDiv"){
+          hideIndetity(ele);
+        }
+        
         var leftPos = ele.offset().left;
         var rightPos = leftPos + ele.width() + leftBorder + rightBorder;
         var topPos = ele.offset().top;
@@ -215,20 +232,18 @@ function dragAble(ele) {
         rightBottomJudge = false;
 
         adsorbent(ele);
-        $("#mask").remove();
       }
     });
   } else {
     ele.unbind();
-    $("body").unbind();
     return false;
   }
 }
 
-$("#otherDiv").mouseup(function(e) {
-  //e.preventDefault(); //阻止默认行为
-  e.stopPropagation(); //阻止事件冒泡(导致body捕获不到mouseup事件)
-});
+// $("#otherDiv").mouseup(function(e) {
+//   //e.preventDefault(); //阻止默认行为
+//   e.stopPropagation(); //阻止事件冒泡(导致body捕获不到mouseup事件)
+// });
 function adsorbent(ele) {
   var parentDiv = ele.parent(), //父容器
     parentDivWidth = parentDiv.width(), //父容器宽度
@@ -264,6 +279,9 @@ function adsorbent(ele) {
   }
 }
 
+
+
+
 function savePosistionitionObjToPosistionitionArray(ele) {
   var flag = 0;
   var borderWidth = parseInt(ele.css("border"));
@@ -295,10 +313,6 @@ function savePosistionitionObjToPosistionitionArray(ele) {
   }
 }
 
-/* function widthChanging(ele){
-  var eleWidth = ele.width();
-  var 
-} */
 /*Javascript代码片段*/
 
 $(document).ready(function() {
@@ -363,14 +377,28 @@ $(document).ready(function() {
   });
 });
 
+/*
+函数名:setMinHeight 设置最小高度函数
+函数功能:设置每个可拖动的div的最小高度
+参数:无
+返回值:无
+*/
 function setMinHeight() {
-  var wrapperHeight = $("#example_wrapper").height();
-  console.log(wrapperHeight);
-  var headerHeight = $("#myDiv .div-header").height();
-  console.log(headerHeight);
-  var minHeight = wrapperHeight + headerHeight + 20;
-  $("#myDiv").css("min-height", minHeight + "px");
+  var myDiv = $(".myDiv");
+  $.each(myDiv,function(){
+    var minHeight = $(this).height();
+    $(this).css("min-height", minHeight + "px")
+  })
 }
+
+/*
+函数名:hideIndetity 
+函数功能:当宽度到达某个临界值是隐藏或显示某列
+参数:需要隐藏的表格所在的可拖动div
+返回值:无
+*/
+
+
 function hideIndetity(ele) {
   var eleWidth = ele.width();
   var tr = $("#example_wrapper tr");
@@ -424,22 +452,73 @@ function hideIndetity(ele) {
   }
 }
 
+/*当文档加载完成后执行
+执行功能:修改datatable默认搜索框样式
+为表格设置底线和顶线
+点击Lock图标时锁定或解锁可拖动div
+
+*/
+
 $(function() {
+  $(".fa-chevron-left").bind("click",function(){
+    requestData.curPage --;
+    var curDiv = $(this).parents().find(".myDiv");
+    var pageCircles = curDiv.find(".Pagination-container").children();
+    var curPageCircle = pageCircles.filter(function(){
+      return $(this).attr("class") == "fa fa-circle";
+    });
+    var prevPageCircle = curPageCircle.prev();
+    if(prevPageCircle.is("i")){
+      pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
+      prevPageCircle.removeClass("fa-circle-thin").addClass("fa-circle");
+    }
+    
+    getInfoCard(requestData);
+  })
+  $(".fa-chevron-right").bind("click",function(){
+    requestData.curPage ++;
+    var curDiv = $(this).parents().find(".myDiv");
+    var pageCircles = curDiv.find(".Pagination-container").children();
+    var curPageCircle = pageCircles.filter(function(){
+      return $(this).attr("class") == "fa fa-circle";
+    });
+    var nextPageCircle = curPageCircle.next();
+    if(nextPageCircle.is("i")){
+      pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
+      nextPageCircle.removeClass("fa-circle-thin").addClass("fa-circle");
+    }
+    getInfoCard(requestData);
+  })
+  $(".Pagination-container i").bind("click",function(){
+    requestData.curPage = $(this).attr("data-page");
+    var curDiv = $(this).parents().find(".myDiv");
+    var pageCircles = curDiv.find(".Pagination-container").children();
+    pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
+    $(this).removeClass("fa-circle-thin").addClass("fa-circle");
+  })
   $("#example_filter input")
     .attr("type", "text")
     .addClass("remove-default-style")
     .addClass("search-input");
   $("#example").addClass("border-bottom-and-top");
   $(".fa-lock").click(function() {
+    var allDragableDiv = $(".myDiv");
     var faLock = $(this);
+    var dragableParentDiv = $(this).parent().parent().parent();
+    var parentId = dragableParentDiv.attr("id");
+    curInfo[parentId] = 0;
     faLock.toggleClass("fa-unlock");
     if (faLock.hasClass("fa-unlock")) {
-      curInfo.isLock = 0;
+      curInfo[parentId] = 0;
     } else {
-      curInfo.isLock = 1;
-      $("#myDiv").css("cursor","");
+      curInfo[parentId] = 1;
+      $(".myDiv").css("cursor","");
     }
-    dragAble($('#myDiv'));
+    $.each(allDragableDiv,function(){
+      dragAble($(this));
+    })
+    
+    
   });
 });
-$(document).ready(dragAble($('#myDiv')));
+
