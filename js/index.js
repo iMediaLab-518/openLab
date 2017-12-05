@@ -1,13 +1,18 @@
-
 //全局变量定义
 var curInfo = {};
 var requestData = {};
 requestData.curPage = 1;
-function getInfoCard(requestData){
-  $.post("php/data.json",requestData,function(json){
+/*
+函数名:getInfoCard 获取信息卡片内容函数
+功能:异步加载数据到页面的卡片中
+参数:requestData,传回到后端的数据
+返回值:无
+*/
+function getInfoCard(requestData) {
+  $.post("php/data.json", requestData, function(json) {
     var data = json.data;
     var html = "";
-    $.each(data,function(index,value){
+    $.each(data, function(index, value) {
       html += "<div class='infoCard'>";
       html += "<div class='avatar'>";
       html += "<img src='img/avatar1.jpg' alt='用户头像'>";
@@ -15,15 +20,22 @@ function getInfoCard(requestData){
       html += "<span><b>员工类型</b></span>";
       html += "<span>" + value.job + "</span>";
       html += "<span><b>入职时间</b></span>";
-      html += "<span>" +value.joinTime + "</span></div>";
-    })
+      html += "<span>" + value.joinTime + "</span></div>";
+    });
     $(".infoCardContainer").html(html);
-  })
+  });
 }
-getInfoCard();
+
+/*
+函数名:dragAble 使可拖动函数
+功能:将div设置为可拖动和缩放
+参数:ele想要变成可拖动的div对象
+返回值:无
+*/
+
 function dragAble(ele) {
   var eleId = ele.attr("id");
-  if (curInfo[eleId]==0) {
+  if (curInfo[eleId] == 0) {
     var isMouseDown = false;
     var leftBorder = parseInt(ele.css("border-left-width"));
     var rightBorder = parseInt(ele.css("border-right-width"));
@@ -71,10 +83,10 @@ function dragAble(ele) {
 
     $("body").bind({
       mousemove: function(e) {
-        if(eleId == "myDiv"){
+        if (eleId == "myDiv") {
           hideIndetity(ele);
         }
-        
+
         var leftPos = ele.offset().left;
         var rightPos = leftPos + ele.width() + leftBorder + rightBorder;
         var topPos = ele.offset().top;
@@ -240,10 +252,13 @@ function dragAble(ele) {
   }
 }
 
-// $("#otherDiv").mouseup(function(e) {
-//   //e.preventDefault(); //阻止默认行为
-//   e.stopPropagation(); //阻止事件冒泡(导致body捕获不到mouseup事件)
-// });
+/*
+函数名:adsorbent 吸附函数
+功能:当div超过或靠近页面边缘的时候自动吸附在页面边缘
+参数:div对象ele
+返回值:无
+*/
+
 function adsorbent(ele) {
   var parentDiv = ele.parent(), //父容器
     parentDivWidth = parentDiv.width(), //父容器宽度
@@ -279,10 +294,13 @@ function adsorbent(ele) {
   }
 }
 
-
-
-
-function savePosistionitionObjToPosistionitionArray(ele) {
+/* 未完成.
+函数名:savaPositionToArray 存储位置至数组函数
+功能:将div的位置存入数组
+参数:div对象ele
+返回值:无
+*/
+function savePosistionToArray(ele) {
   var flag = 0;
   var borderWidth = parseInt(ele.css("border"));
   var position = ele.position();
@@ -313,7 +331,7 @@ function savePosistionitionObjToPosistionitionArray(ele) {
   }
 }
 
-/*Javascript代码片段*/
+/*datatable的写入*/
 
 $(document).ready(function() {
   $.ajaxSetup({
@@ -340,7 +358,7 @@ $(document).ready(function() {
         }
       }
     ],
-    aLengthMenu: [ 5, 10, 15],
+    aLengthMenu: [5, 10, 15],
     dom:
       '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
     language: {
@@ -369,9 +387,9 @@ $(document).ready(function() {
     }
   });
   setMinHeight();
-  $("select[name='example_length']").change(function(){
+  $("select[name='example_length']").change(function() {
     setMinHeight();
-  })
+  });
   $.ajaxSetup({
     async: true
   });
@@ -385,10 +403,10 @@ $(document).ready(function() {
 */
 function setMinHeight() {
   var myDiv = $(".myDiv");
-  $.each(myDiv,function(){
+  $.each(myDiv, function() {
     var minHeight = $(this).height();
-    $(this).css("min-height", minHeight + "px")
-  })
+    $(this).css("min-height", minHeight + "px");
+  });
 }
 
 /*
@@ -397,8 +415,6 @@ function setMinHeight() {
 参数:需要隐藏的表格所在的可拖动div
 返回值:无
 */
-
-
 function hideIndetity(ele) {
   var eleWidth = ele.width();
   var tr = $("#example_wrapper tr");
@@ -452,50 +468,62 @@ function hideIndetity(ele) {
   }
 }
 
-/*当文档加载完成后执行
-执行功能:修改datatable默认搜索框样式
+/*当文档加载完成后执行(执行顺序从上之下同注释)
+执行功能:
+初次写入中等大小表格的卡片
+点击翻页按钮分页栏发生变化(向前向后各一个)
+点击分页栏,分页栏发生变化
+修改datatable默认搜索框样式
 为表格设置底线和顶线
 点击Lock图标时锁定或解锁可拖动div
-
 */
 
 $(function() {
-  $(".fa-chevron-left").bind("click",function(){
-    requestData.curPage --;
-    var curDiv = $(this).parents().find(".myDiv");
+  getInfoCard();
+  $(".fa-chevron-left").bind("click", function() {
+    requestData.curPage--;
+    var curDiv = $(this)
+      .parents()
+      .find(".myDiv");
     var pageCircles = curDiv.find(".Pagination-container").children();
-    var curPageCircle = pageCircles.filter(function(){
+    var curPageCircle = pageCircles.filter(function() {
       return $(this).attr("class") == "fa fa-circle";
     });
     var prevPageCircle = curPageCircle.prev();
-    if(prevPageCircle.is("i")){
+    if (prevPageCircle.is("i")) {
       pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
       prevPageCircle.removeClass("fa-circle-thin").addClass("fa-circle");
     }
-    
+
     getInfoCard(requestData);
-  })
-  $(".fa-chevron-right").bind("click",function(){
-    requestData.curPage ++;
-    var curDiv = $(this).parents().find(".myDiv");
+  });
+  $(".fa-chevron-right").bind("click", function() {
+    requestData.curPage++;
+    var curDiv = $(this)
+      .parents()
+      .find(".myDiv");
     var pageCircles = curDiv.find(".Pagination-container").children();
-    var curPageCircle = pageCircles.filter(function(){
+    var curPageCircle = pageCircles.filter(function() {
       return $(this).attr("class") == "fa fa-circle";
     });
     var nextPageCircle = curPageCircle.next();
-    if(nextPageCircle.is("i")){
+    if (nextPageCircle.is("i")) {
       pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
       nextPageCircle.removeClass("fa-circle-thin").addClass("fa-circle");
     }
     getInfoCard(requestData);
-  })
-  $(".Pagination-container i").bind("click",function(){
+  });
+  $(".Pagination-container i").bind("click", function() {
     requestData.curPage = $(this).attr("data-page");
-    var curDiv = $(this).parents().find(".myDiv");
+    var curDiv = $(this)
+      .parents()
+      .find(".myDiv");
     var pageCircles = curDiv.find(".Pagination-container").children();
     pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
-    $(this).removeClass("fa-circle-thin").addClass("fa-circle");
-  })
+    $(this)
+      .removeClass("fa-circle-thin")
+      .addClass("fa-circle");
+  });
   $("#example_filter input")
     .attr("type", "text")
     .addClass("remove-default-style")
@@ -504,7 +532,10 @@ $(function() {
   $(".fa-lock").click(function() {
     var allDragableDiv = $(".myDiv");
     var faLock = $(this);
-    var dragableParentDiv = $(this).parent().parent().parent();
+    var dragableParentDiv = $(this)
+      .parent()
+      .parent()
+      .parent();
     var parentId = dragableParentDiv.attr("id");
     curInfo[parentId] = 0;
     faLock.toggleClass("fa-unlock");
@@ -512,13 +543,10 @@ $(function() {
       curInfo[parentId] = 0;
     } else {
       curInfo[parentId] = 1;
-      $(".myDiv").css("cursor","");
+      $(".myDiv").css("cursor", "");
     }
-    $.each(allDragableDiv,function(){
+    $.each(allDragableDiv, function() {
       dragAble($(this));
-    })
-    
-    
+    });
   });
 });
-
