@@ -1,47 +1,10 @@
 //全局变量定义
 var curInfo = {};
 var requestData = {};
-requestData.curPage = 1;
-
-var len = 10;
-var start = 0-len;
-/*
-函数名:getUserInfoMiddle 获取信息卡片内容函数
-功能:异步加载数据到页面的卡片中
-参数:requestData,传回到后端的数据
-返回值:无
-*/
-function getInfoCard(requestData) {
-  start += len;
-  info = new Array();
-  info[0] = start;
-  info[1] = len;
-  $.ajax({  
-      url:'php/staff_management_middle.php',
-      data:{
-        info:info
-      },  
-      type:'get',  
-      cache:false,  
-      dataType:'json',  
-      success:function(data) {
-          console.log(data[1].total);
-          var html = "";
-          data = data[0].data;
-          $.each(data, function(index, value) {
-            html += "<div class='infoCard'>";
-            html += "<div class='avatar'>";
-            html += "<img src='"+value.staff_head_image+"' alt='用户头像'>";
-            html += "</div><span>" + value.staff_name + "</span>";
-            html += "<span><b>员工类型</b></span>";
-            html += "<span>" + value.staff_role_name + "</span>";
-            html += "<span><b>入职时间</b></span>";
-            html += "<span>" + value.staff_create_time + "</span></div>";
-          });
-          $(".infoCardContainer").html(html);
-      }
-    });
-}
+curInfo.curPage = 1;
+curInfo.pageCapacity = 10;
+curInfo.tableType = "big";
+console.log($("#middle-table").children().length);
 
 /*
 函数名:dragAble 使可拖动函数
@@ -109,8 +72,8 @@ function dragAble(ele) {
         var topPos = ele.offset().top;
         var bottomPos = topPos + ele.height() + topBorder + bottomBorder;
         //需要进行修改，锁定的时候cursor不改变
-        console.log($('.myDiv .div-header .fa-lock').hasClass("fa-unlock"));
-        if($('.myDiv .div-header .fa-lock').hasClass("fa-unlock")){
+   
+        if ($(".myDiv .div-header .fa-lock").hasClass("fa-unlock")) {
           if (
             leftPos - 5 <= e.pageX &&
             e.pageX <= leftPos + 5 &&
@@ -351,60 +314,102 @@ function savePosistionToArray(ele) {
   }
 }
 
+$(writeIntoPage());
 /*datatable的写入*/
-
-$(document).ready(function() {
+function writeIntoPage() {
   $.ajaxSetup({
     async: false
   });
-  $("#example").DataTable({
-    ajax: {
-      // url: "php/data.json"
-      url: "php/staff_management_big.php"
-    },
-    columns: [
-      { data: "staff_serial_number" },
-      { data: "staff_name" },
-      { data: "staff_gender" },
-      { data: "staff_phone_num" },
-      { data: "staff_id_card_no" },
-      { data: "staff_role_name" },
-      { data: "staff_create_time" }
-    ],
-    columnDefs: [
-      {
-        targets: 7,
-        render: function() {
-          return '<a href="#">Download</a>';
-        }
-      }
-    ],
-    aLengthMenu: [5, 10, 15],
-    dom:
-      '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
-    language: {
-      emptyTable: "表中没有可用数据",
-      info: "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
-      infoEmpty: "没有记录",
-      infoFiltered: "(从 _MAX_ 条记录中过滤)",
-      infoPostFix: "",
-      thousands: ",",
-      lengthMenu: "每页显示 _MENU_ 条",
-      loadingRecords: "加载中...",
-      processing: "处理中...",
-      search: "搜索:",
-      zeroRecords: "没有找到符合条件的数据",
-      paginate: {
-        first: "首页",
-        last: "尾页",
-        next: "下一页",
-        previous: "上一页"
-      }
-    },
-    aria: {
-      sortAscending: ": activate to sort column ascending", //当一列被按照升序降序的时候添加到表头的ARIA标签，注意列头是这个字符串的前缀
+  $.post("php/staff_management_big.php", function(json) {
+    var data = JSON.parse(json).data;
+    var html = "";
+    if (curInfo.tableType == "big") {
+      $("#example").DataTable({
+        data: data,
+        columns: [
+          { data: "staff_serial_number" },
+          { data: "staff_name" },
+          { data: "staff_gender" },
+          { data: "staff_phone_num" },
+          { data: "staff_id_card_no" },
+          { data: "staff_role_name" },
+          { data: "staff_create_time" }
+        ],
+        columnDefs: [
+          {
+            targets: 7,
+            render: function() {
+              return '<a href="#">Download</a>';
+            }
+          }
+        ],
+        aLengthMenu: [5, 10, 15],
+        dom:
+          '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
+        language: {
+          emptyTable: "表中没有可用数据",
+          info: "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+          infoEmpty: "没有记录",
+          infoFiltered: "(从 _MAX_ 条记录中过滤)",
+          infoPostFix: "",
+          thousands: ",",
+          lengthMenu: "每页显示 _MENU_ 条",
+          loadingRecords: "加载中...",
+          processing: "处理中...",
+          search: "搜索:",
+          zeroRecords: "没有找到符合条件的数据",
+          paginate: {
+            first: "首页",
+            last: "尾页",
+            next: "下一页",
+            previous: "上一页"
+          }
+        },
+        aria: {
+          sortAscending: ": activate to sort column ascending", //当一列被按照升序降序的时候添加到表头的ARIA标签，注意列头是这个字符串的前缀
 
-      sortDescending: ": activate to sort column descending" //当一列被按照升序降序的时候添加到表头的ARIA标签，注意列头是这个字符串的前缀
+          sortDescending: ": activate to sort column descending" //当一列被按照升序降序的时候添加到表头的ARIA标签，注意列头是这个字符串的前缀
+        }
+      });
+    }
+    if (curInfo.tableType == "middle") {
+      $("#staff-info-miantain-container").hide();
+      html +=
+        "<div class='search-bar-container'>" +
+        "<span>搜索:</span>" +
+        "<input type='text' placeholder='  input something' class='search-bar'>" +
+        "<i class='fa fa-trash fa-lg'></i>" +
+        "<i class='fa fa-plus-circle fa-lg'></i></div>" +
+        "<div class='pageBtn-left'>" +
+        "<i class='fa fa-chevron-left page-middle fa-lg'></i>" +
+        "</div><div class='infoCardContainer'></div></div>" +
+        "<div class='pageBtn-right'>" +
+        "<i class='fa fa-chevron-right page-middle fa-lg'></i></div>" +
+        "<div class='Pagination-container'>" +
+        "<i data-page='1' class='fa fa-circle-thin'></i>" +
+        "<i data-page='2' class='fa fa-circle'></i>" +
+        "<i data-page='3' class='fa fa-circle-thin'></i>" +
+        "<i data-page='4' class='fa fa-circle-thin'></i>" +
+        "<i data-page='5' class='fa fa-circle-thin'></i>" +
+        "<i data-page='6' class='fa fa-circle-thin'></i>" +
+        "</div>";
+      $("#middle-table").html(html);
+      var html2 = "";
+      var pageStart = (curInfo.curPage - 1) * curInfo.pageCapacity;
+      var pageEnd = curInfo.curPage * curInfo.pageCapacity;
+      $.each(data, function(index, value) {
+        if (index >= pageStart && index < pageEnd) {
+          html2 += "<div class='infoCard'>";
+          html2 += "<div class='avatar'>";
+          html2 += "<img src='img/avatar.jpg' alt='用户头像'>";
+          html2 += "</div><span>" + value.staff_name + "</span>";
+          html2 += "<span><b>员工类型</b></span>";
+          html2 += "<span>" + value.staff_role_name + "</span>";
+          html2 += "<span><b>入职时间</b></span>";
+          html2 += "<span>" + value.staff_create_time + "</span></div>";
+        }
+      });
+      $(".infoCardContainer").html(html2);
     }
   });
   setMinHeight();
@@ -414,7 +419,8 @@ $(document).ready(function() {
   $.ajaxSetup({
     async: true
   });
-});
+}
+
 
 /*
 函数名:setMinHeight 设置最小高度函数
@@ -439,7 +445,7 @@ function setMinHeight() {
 function hideIndetity(ele) {
   var eleWidth = ele.width();
   var tr = $("#example_wrapper tr");
-  if (eleWidth < 790) {
+  if (eleWidth < 810) {
     $.each(tr, function() {
       $(this)
         .find("th")
@@ -451,7 +457,7 @@ function hideIndetity(ele) {
         .hide();
     });
   }
-  if (eleWidth < 600) {
+  if (eleWidth < 620) {
     $.each(tr, function() {
       $(this)
         .find("th")
@@ -463,7 +469,29 @@ function hideIndetity(ele) {
         .hide();
     });
   }
-  if (eleWidth >= 600) {
+  if(eleWidth < 520){
+    curInfo.tableType = "middle";
+    if($("#middle-table").children().length == 0){
+      writeIntoPage();
+    } else {
+      $("#staff-info-miantain-container").hide();
+      $("#middle-table").show();
+    }
+    
+    
+  }
+  if(eleWidth >= 520 && curInfo.tableType == "middle"){
+    console.log(123);
+    curInfo.tableType = "big";
+    $("#middle-table").hide();
+    $("#staff-info-miantain-container").show();
+    setMinHeight(ele);
+    
+    /* $("#example").css("display","");
+    curInfo.tableType = "big";
+    writeIntoPage(); */
+  }
+  if (eleWidth >= 620) {
     $.each(tr, function() {
       $(this)
         .find("th")
@@ -475,7 +503,7 @@ function hideIndetity(ele) {
         .show();
     });
   }
-  if (eleWidth >= 790) {
+  if (eleWidth >= 810) {
     $.each(tr, function() {
       $(this)
         .find("th")
@@ -500,7 +528,7 @@ function hideIndetity(ele) {
 */
 
 $(function() {
-  getInfoCard();
+  //getInfoCard();
   $(".fa-chevron-left").bind("click", function() {
     requestData.curPage--;
     var curDiv = $(this)

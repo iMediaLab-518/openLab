@@ -9,7 +9,10 @@
 	//获取请求数据
 
 	//编写sql语句
-	$info = $_GET['info'];
+	$curPage = $_REQUEST['curPage'];
+	$pageCapacity = $_REQUEST['pageCapacity'];
+	$pageStart = ($curPage - 1) * $pageCapacity;
+	$pageEnd = $curPage * $pageCapacity;
 	$sql = " (select * from staff_info where staff_is_use=1 order by staff_id asc limit ".$info[0]." ,".$info[1]." )";
 	// echo $sql;
 	//执行sql
