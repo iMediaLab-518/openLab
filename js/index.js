@@ -1,11 +1,58 @@
-
 //全局变量定义
 var curInfo = {};
-curInfo.isLock = 1;
+var requestData = {};
+requestData.curPage = 1;
 
+var len = 10;
+var start = 0-len;
+/*
+函数名:getUserInfoMiddle 获取信息卡片内容函数
+功能:异步加载数据到页面的卡片中
+参数:requestData,传回到后端的数据
+返回值:无
+*/
+function getInfoCard(requestData) {
+  start += len;
+  info = new Array();
+  info[0] = start;
+  info[1] = len;
+  $.ajax({  
+      url:'php/staff_management_middle.php',
+      data:{
+        info:info
+      },  
+      type:'get',  
+      cache:false,  
+      dataType:'json',  
+      success:function(data) {
+          console.log(data[1].total);
+          var html = "";
+          data = data[0].data;
+          $.each(data, function(index, value) {
+            html += "<div class='infoCard'>";
+            html += "<div class='avatar'>";
+            html += "<img src='"+value.staff_head_image+"' alt='用户头像'>";
+            html += "</div><span>" + value.staff_name + "</span>";
+            html += "<span><b>员工类型</b></span>";
+            html += "<span>" + value.staff_role_name + "</span>";
+            html += "<span><b>入职时间</b></span>";
+            html += "<span>" + value.staff_create_time + "</span></div>";
+          });
+          $(".infoCardContainer").html(html);
+      }
+    });
+}
+
+/*
+函数名:dragAble 使可拖动函数
+功能:将div设置为可拖动和缩放
+参数:ele想要变成可拖动的div对象
+返回值:无
+*/
 
 function dragAble(ele) {
-  if (!curInfo.isLock) {
+  var eleId = ele.attr("id");
+  if (curInfo[eleId] == 0) {
     var isMouseDown = false;
     var leftBorder = parseInt(ele.css("border-left-width"));
     var rightBorder = parseInt(ele.css("border-right-width"));
@@ -47,100 +94,102 @@ function dragAble(ele) {
           e.pageY <= bottomPos + 5
         ) {
           isMouseDown = true;
-          //创建遮罩层，防止mouseup事件被其它元素阻止冒泡，导致mouseup事件无法被body捕获，导致拖动不能停止
-          //  $("body").append(
-          //   '<div id="mask" style="opacity:0.1;top:0px;right:0px;bottom:0px;left:0px;background-color:transparent;position:absolute;z-index:9000;"></div>'
-          // ); 
         }
       }
     });
 
     $("body").bind({
       mousemove: function(e) {
-        hideIndetity(ele);
+        if (eleId == "myDiv") {
+          hideIndetity(ele);
+        }
+
         var leftPos = ele.offset().left;
         var rightPos = leftPos + ele.width() + leftBorder + rightBorder;
         var topPos = ele.offset().top;
         var bottomPos = topPos + ele.height() + topBorder + bottomBorder;
+        //需要进行修改，锁定的时候cursor不改变
+        console.log($('.myDiv .div-header .fa-lock').hasClass("fa-unlock"));
+        if($('.myDiv .div-header .fa-lock').hasClass("fa-unlock")){
+          if (
+            leftPos - 5 <= e.pageX &&
+            e.pageX <= leftPos + 5 &&
+            topPos - 5 <= e.pageY &&
+            e.pageY <= topPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "nw-resize");
+            leftTopJudge = true;
+          } else if (
+            topPos - 5 <= e.pageY &&
+            e.pageY <= topPos + 5 &&
+            rightPos - 5 <= e.pageX &&
+            e.pageX <= rightPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "ne-resize");
+            rightTopJudge = true;
+          } else if (
+            leftPos - 5 <= e.pageX &&
+            e.pageX <= leftPos + 5 &&
+            bottomPos - 5 <= e.pageY &&
+            e.pageY <= bottomPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "sw-resize");
+            leftBottomJudge = true;
+          } else if (
+            bottomPos - 5 <= e.pageY &&
+            e.pageY <= bottomPos + 5 &&
+            rightPos - 5 <= e.pageX &&
+            e.pageX <= rightPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "se-resize");
+            rightBottomJudge = true;
+          } else if (
+            leftPos - 5 <= e.pageX &&
+            e.pageX <= leftPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "w-resize");
+            leftJudge = true;
+          } else if (
+            rightPos - 5 <= e.pageX &&
+            e.pageX <= rightPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "e-resize");
+            rightJudge = true;
+          } else if (
+            topPos - 5 <= e.pageY &&
+            e.pageY <= topPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "n-resize");
+            topJudge = true;
+          } else if (
+            bottomPos - 5 <= e.pageY &&
+            e.pageY <= bottomPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "s-resize");
+            bottomJudge = true;
+          } else {
+            if (!isMouseDown) {
+              ele.css("cursor", "move");
 
-        if (
-          leftPos - 5 <= e.pageX &&
-          e.pageX <= leftPos + 5 &&
-          topPos - 5 <= e.pageY &&
-          e.pageY <= topPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "nw-resize");
-          leftTopJudge = true;
-        } else if (
-          topPos - 5 <= e.pageY &&
-          e.pageY <= topPos + 5 &&
-          rightPos - 5 <= e.pageX &&
-          e.pageX <= rightPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "ne-resize");
-          rightTopJudge = true;
-        } else if (
-          leftPos - 5 <= e.pageX &&
-          e.pageX <= leftPos + 5 &&
-          bottomPos - 5 <= e.pageY &&
-          e.pageY <= bottomPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "sw-resize");
-          leftBottomJudge = true;
-        } else if (
-          bottomPos - 5 <= e.pageY &&
-          e.pageY <= bottomPos + 5 &&
-          rightPos - 5 <= e.pageX &&
-          e.pageX <= rightPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "se-resize");
-          rightBottomJudge = true;
-        } else if (
-          leftPos - 5 <= e.pageX &&
-          e.pageX <= leftPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "w-resize");
-          leftJudge = true;
-        } else if (
-          rightPos - 5 <= e.pageX &&
-          e.pageX <= rightPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "e-resize");
-          rightJudge = true;
-        } else if (
-          topPos - 5 <= e.pageY &&
-          e.pageY <= topPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "n-resize");
-          topJudge = true;
-        } else if (
-          bottomPos - 5 <= e.pageY &&
-          e.pageY <= bottomPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "s-resize");
-          bottomJudge = true;
-        } else {
-          if (!isMouseDown) {
-            ele.css("cursor", "move");
+              leftJudge = false;
+              rightJudge = false;
+              topJudge = false;
+              bottomJudge = false;
+              insideJudge = true;
 
-            leftJudge = false;
-            rightJudge = false;
-            topJudge = false;
-            bottomJudge = false;
-            insideJudge = true;
-
-            leftTopJudge = false;
-            rightTopJudge = false;
-            leftBottomJudge = false;
-            rightBottomJudge = false;
+              leftTopJudge = false;
+              rightTopJudge = false;
+              leftBottomJudge = false;
+              rightBottomJudge = false;
+            }
           }
         }
         if (isMouseDown) {
@@ -215,20 +264,21 @@ function dragAble(ele) {
         rightBottomJudge = false;
 
         adsorbent(ele);
-        $("#mask").remove();
       }
     });
   } else {
     ele.unbind();
-    $("body").unbind();
     return false;
   }
 }
 
-$("#otherDiv").mouseup(function(e) {
-  //e.preventDefault(); //阻止默认行为
-  e.stopPropagation(); //阻止事件冒泡(导致body捕获不到mouseup事件)
-});
+/*
+函数名:adsorbent 吸附函数
+功能:当div超过或靠近页面边缘的时候自动吸附在页面边缘
+参数:div对象ele
+返回值:无
+*/
+
 function adsorbent(ele) {
   var parentDiv = ele.parent(), //父容器
     parentDivWidth = parentDiv.width(), //父容器宽度
@@ -264,7 +314,13 @@ function adsorbent(ele) {
   }
 }
 
-function savePosistionitionObjToPosistionitionArray(ele) {
+/* 未完成.
+函数名:savaPositionToArray 存储位置至数组函数
+功能:将div的位置存入数组
+参数:div对象ele
+返回值:无
+*/
+function savePosistionToArray(ele) {
   var flag = 0;
   var borderWidth = parseInt(ele.css("border"));
   var position = ele.position();
@@ -293,14 +349,9 @@ function savePosistionitionObjToPosistionitionArray(ele) {
     };
     positionArray.push(obj);
   }
-  console.log(positionArray);
 }
 
-/* function widthChanging(ele){
-  var eleWidth = ele.width();
-  var 
-} */
-/*Javascript代码片段*/
+/*datatable的写入*/
 
 $(document).ready(function() {
   $.ajaxSetup({
@@ -308,8 +359,8 @@ $(document).ready(function() {
   });
   $("#example").DataTable({
     ajax: {
-      url: "php/staff_management.php"
       // url: "php/data.json"
+      url: "php/staff_management_big.php"
     },
     columns: [
       { data: "staff_serial_number" },
@@ -328,6 +379,7 @@ $(document).ready(function() {
         }
       }
     ],
+    aLengthMenu: [5, 10, 15],
     dom:
       '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
     language: {
@@ -356,19 +408,34 @@ $(document).ready(function() {
     }
   });
   setMinHeight();
+  $("select[name='example_length']").change(function() {
+    setMinHeight();
+  });
   $.ajaxSetup({
     async: true
   });
 });
 
+/*
+函数名:setMinHeight 设置最小高度函数
+函数功能:设置每个可拖动的div的最小高度
+参数:无
+返回值:无
+*/
 function setMinHeight() {
-  var wrapperHeight = $("#example_wrapper").height();
-  console.log(wrapperHeight);
-  var headerHeight = $("#myDiv .div-header").height();
-  console.log(headerHeight);
-  var minHeight = wrapperHeight + headerHeight + 20;
-  $("#myDiv").css("min-height", minHeight + "px");
+  var myDiv = $(".myDiv");
+  $.each(myDiv, function() {
+    var minHeight = $(this).height();
+    $(this).css("min-height", minHeight + "px");
+  });
 }
+
+/*
+函数名:hideIndetity 
+函数功能:当宽度到达某个临界值是隐藏或显示某列
+参数:需要隐藏的表格所在的可拖动div
+返回值:无
+*/
 function hideIndetity(ele) {
   var eleWidth = ele.width();
   var tr = $("#example_wrapper tr");
@@ -422,23 +489,85 @@ function hideIndetity(ele) {
   }
 }
 
+/*当文档加载完成后执行(执行顺序从上之下同注释)
+执行功能:
+初次写入中等大小表格的卡片
+点击翻页按钮分页栏发生变化(向前向后各一个)
+点击分页栏,分页栏发生变化
+修改datatable默认搜索框样式
+为表格设置底线和顶线
+点击Lock图标时锁定或解锁可拖动div
+*/
+
 $(function() {
+  getInfoCard();
+  $(".fa-chevron-left").bind("click", function() {
+    requestData.curPage--;
+    var curDiv = $(this)
+      .parents()
+      .find(".myDiv");
+    var pageCircles = curDiv.find(".Pagination-container").children();
+    var curPageCircle = pageCircles.filter(function() {
+      return $(this).attr("class") == "fa fa-circle";
+    });
+    var prevPageCircle = curPageCircle.prev();
+    if (prevPageCircle.is("i")) {
+      pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
+      prevPageCircle.removeClass("fa-circle-thin").addClass("fa-circle");
+    }
+
+    getInfoCard(requestData);
+  });
+  $(".fa-chevron-right").bind("click", function() {
+    requestData.curPage++;
+    var curDiv = $(this)
+      .parents()
+      .find(".myDiv");
+    var pageCircles = curDiv.find(".Pagination-container").children();
+    var curPageCircle = pageCircles.filter(function() {
+      return $(this).attr("class") == "fa fa-circle";
+    });
+    var nextPageCircle = curPageCircle.next();
+    if (nextPageCircle.is("i")) {
+      pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
+      nextPageCircle.removeClass("fa-circle-thin").addClass("fa-circle");
+    }
+    getInfoCard(requestData);
+  });
+  $(".Pagination-container i").bind("click", function() {
+    requestData.curPage = $(this).attr("data-page");
+    var curDiv = $(this)
+      .parents()
+      .find(".myDiv");
+    var pageCircles = curDiv.find(".Pagination-container").children();
+    pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
+    $(this)
+      .removeClass("fa-circle-thin")
+      .addClass("fa-circle");
+  });
   $("#example_filter input")
     .attr("type", "text")
     .addClass("remove-default-style")
     .addClass("search-input");
   $("#example").addClass("border-bottom-and-top");
   $(".fa-lock").click(function() {
+    var allDragableDiv = $(".myDiv");
     var faLock = $(this);
+    var dragableParentDiv = $(this)
+      .parent()
+      .parent()
+      .parent();
+    var parentId = dragableParentDiv.attr("id");
+    curInfo[parentId] = 0;
     faLock.toggleClass("fa-unlock");
     if (faLock.hasClass("fa-unlock")) {
-      curInfo.isLock = 0;
+      curInfo[parentId] = 0;
     } else {
-      curInfo.isLock = 1;
-      
+      curInfo[parentId] = 1;
+      $(".myDiv").css("cursor", "default");
     }
-    $("#myDiv").css("cursor","");
-    dragAble($('#myDiv'));
+    $.each(allDragableDiv, function() {
+      dragAble($(this));
+    });
   });
 });
-$(document).ready(dragAble($('#myDiv')));
