@@ -530,7 +530,8 @@ function hideIndetity(ele) {
 $(function() {
   //getInfoCard();
   $(".fa-chevron-left").bind("click", function() {
-    requestData.curPage--;
+    console.log(123);
+    curInfo.curPage--;
     var curDiv = $(this)
       .parents()
       .find(".myDiv");
@@ -544,10 +545,10 @@ $(function() {
       prevPageCircle.removeClass("fa-circle-thin").addClass("fa-circle");
     }
 
-    getInfoCard(requestData);
+    writeIntoPage();
   });
   $(".fa-chevron-right").bind("click", function() {
-    requestData.curPage++;
+    curInfo.curPage++;
     var curDiv = $(this)
       .parents()
       .find(".myDiv");
@@ -560,10 +561,10 @@ $(function() {
       pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
       nextPageCircle.removeClass("fa-circle-thin").addClass("fa-circle");
     }
-    getInfoCard(requestData);
+    writeIntoPage();
   });
   $(".Pagination-container i").bind("click", function() {
-    requestData.curPage = $(this).attr("data-page");
+    curInfo.curPage = $(this).attr("data-page");
     var curDiv = $(this)
       .parents()
       .find(".myDiv");
@@ -572,6 +573,7 @@ $(function() {
     $(this)
       .removeClass("fa-circle-thin")
       .addClass("fa-circle");
+      writeIntoPage();
   });
   $("#example_filter input")
     .attr("type", "text")
