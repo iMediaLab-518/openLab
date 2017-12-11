@@ -6,22 +6,16 @@ body {
   border: 1px solid #333333;
   border-radius: 5px;
   width: 1000px;
-  min-width: 400px;
+  min-width: 390px;
   left: 10px;
-  top: 500px;
+  top: 20px;
 }
 .fa-lock {
   margin-right: 5px;
 }
-#myMiddleTable {
-  position: absolute;
-  border: 1px solid #333333;
-  border-radius: 5px;
-  width: 600px;
-  min-width: 400px;
-  left: 10px;
-  top: 10px;
-  box-shadow: 3px 3px 10px #999999;
+#middle-table{
+  float: left;
+  width: 100%;
 }
 .search-bar-container {
   border-bottom: 1px solid #999999;
@@ -51,12 +45,14 @@ body {
 .pageBtn-right {
   float: right;
   width: 2%;
-  margin-right: 3px;
+  margin-right: 5px;
 }
+
+
+
 .infoCardContainer {
-  width: 92.5%;
-  margin: auto;
   float: left;
+  width: 92.5%;
 }
 .avatar img {
   border-radius: 40px;
@@ -66,8 +62,7 @@ body {
 .infoCard {
   float: left;
   border: 1px solid #999999;
-  box-shadow: 3px 3px 10px #999999;
-  width: 19%;
+  width: 85px;
   height: 160px;
   text-align: center;
   margin-top: 12px;
@@ -79,12 +74,20 @@ body {
   display: block;
   margin-top: 3px;
 }
+
+
 .Pagination-container {
-  margin: 5px 0;
+  margin-top: 5px;
   float: left;
   width: 100%;
   text-align: center;
 }
+.Pagination-container i{
+  font-size:10px;
+  padding-left: 5px;
+}
+
+
 /* 通用class定义 */
 .float-left {
   float: left;

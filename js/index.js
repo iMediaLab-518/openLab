@@ -1,10 +1,12 @@
 //全局变量定义
 var curInfo = {};
 var requestData = {};
+var data = {};
 curInfo.curPage = 1;
 curInfo.pageCapacity = 10;
 curInfo.tableType = "big";
-console.log($("#middle-table").children().length);
+curInfo.isLoad = 0;
+$("#middle-table").hide();
 
 /*
 函数名:dragAble 使可拖动函数
@@ -65,6 +67,7 @@ function dragAble(ele) {
       mousemove: function(e) {
         if (eleId == "myDiv") {
           hideIndetity(ele);
+          cardNumberChange(ele);
         }
 
         var leftPos = ele.offset().left;
@@ -72,7 +75,7 @@ function dragAble(ele) {
         var topPos = ele.offset().top;
         var bottomPos = topPos + ele.height() + topBorder + bottomBorder;
         //需要进行修改，锁定的时候cursor不改变
-   
+
         if ($(".myDiv .div-header .fa-lock").hasClass("fa-unlock")) {
           if (
             leftPos - 5 <= e.pageX &&
@@ -320,9 +323,12 @@ function writeIntoPage() {
   $.ajaxSetup({
     async: false
   });
-  $.post("php/staff_management_big.php", function(json) {
-    var data = JSON.parse(json).data;
-    var html = "";
+  if (!curInfo.isLoad){
+    $.post("php/staff_management_big.php", function(json) {
+      curInfo.isLoad++;
+      data = JSON.parse(json).data;
+    });
+  }
     if (curInfo.tableType == "big") {
       $("#example").DataTable({
         data: data,
@@ -373,8 +379,12 @@ function writeIntoPage() {
       });
     }
     if (curInfo.tableType == "middle") {
+      
       $("#staff-info-miantain-container").hide();
-      html +=
+      var html = "";
+      if (curInfo.isLoad==1){
+        curInfo.isLoad++;
+        html +=
         "<div class='search-bar-container'>" +
         "<span>搜索:</span>" +
         "<input type='text' placeholder='  input something' class='search-bar'>" +
@@ -385,15 +395,20 @@ function writeIntoPage() {
         "</div><div class='infoCardContainer'></div></div>" +
         "<div class='pageBtn-right'>" +
         "<i class='fa fa-chevron-right page-middle fa-lg'></i></div>" +
-        "<div class='Pagination-container'>" +
-        "<i data-page='1' class='fa fa-circle-thin'></i>" +
-        "<i data-page='2' class='fa fa-circle'></i>" +
-        "<i data-page='3' class='fa fa-circle-thin'></i>" +
-        "<i data-page='4' class='fa fa-circle-thin'></i>" +
-        "<i data-page='5' class='fa fa-circle-thin'></i>" +
-        "<i data-page='6' class='fa fa-circle-thin'></i>" +
-        "</div>";
+        "<div class='Pagination-container'>";
+        var l = data.length;
+        curInfo.pageNumber = Math.ceil(l / curInfo.pageCapacity);
+        for (var i = 0; i < curInfo.pageNumber; i++) {
+          if (i == 0) {
+            html += "<i data-page='" + (i + 1) + "' class='fa fa-circle'></i>";
+          } else {
+            html += "<i data-page='" + (i + 1) + "' class='fa fa-circle-thin'></i>";
+          }
+        }
+        html += "</div>";
       $("#middle-table").html(html);
+      registEventForMiddleTable($("#middle-table"));
+      } 
       var html2 = "";
       var pageStart = (curInfo.curPage - 1) * curInfo.pageCapacity;
       var pageEnd = curInfo.curPage * curInfo.pageCapacity;
@@ -401,17 +416,23 @@ function writeIntoPage() {
         if (index >= pageStart && index < pageEnd) {
           html2 += "<div class='infoCard'>";
           html2 += "<div class='avatar'>";
-          html2 += "<img src='img/avatar.jpg' alt='用户头像'>";
-          html2 += "</div><span>" + value.staff_name + "</span>";
-          html2 += "<span><b>员工类型</b></span>";
-          html2 += "<span>" + value.staff_role_name + "</span>";
-          html2 += "<span><b>入职时间</b></span>";
-          html2 += "<span>" + value.staff_create_time + "</span></div>";
+          html2 += "<img src='img/avatar1.jpg' alt='用户头像'>";
+          html2 += "</div><span><b>" + value.staff_name + "</b></span>";
+          html2 += "<span>员工类型</span>";
+          html2 += "<span><b>" + value.staff_role_name + "</b></span>";
+          html2 += "<span>入职时间</span>";
+          html2 += "<span><b>" + value.staff_create_time + "</b></span></div>";
         }
       });
       $(".infoCardContainer").html(html2);
+      var cardNumber = $(".infoCard").length;
+      var pagination = $(".Pagination-container");
+      if (curInfo.curPage == curInfo.pageNumber && cardNumber <= curInfo.pageCapacity / 2) {
+        pagination.css("margin-top","158px");
+      } else {
+        pagination.css("margin-top","0");
+      }
     }
-  });
   setMinHeight();
   $("select[name='example_length']").change(function() {
     setMinHeight();
@@ -420,7 +441,6 @@ function writeIntoPage() {
     async: true
   });
 }
-
 
 /*
 函数名:setMinHeight 设置最小高度函数
@@ -469,24 +489,21 @@ function hideIndetity(ele) {
         .hide();
     });
   }
-  if(eleWidth < 520){
+  if (eleWidth < 520) {
     curInfo.tableType = "middle";
-    if($("#middle-table").children().length == 0){
+    if ($("#middle-table").children().length == 0) {
       writeIntoPage();
     } else {
       $("#staff-info-miantain-container").hide();
       $("#middle-table").show();
     }
-    
-    
   }
-  if(eleWidth >= 520 && curInfo.tableType == "middle"){
-    console.log(123);
+  if (eleWidth >= 520 && curInfo.tableType == "middle") {
     curInfo.tableType = "big";
     $("#middle-table").hide();
     $("#staff-info-miantain-container").show();
     setMinHeight(ele);
-    
+
     /* $("#example").css("display","");
     curInfo.tableType = "big";
     writeIntoPage(); */
@@ -517,64 +534,64 @@ function hideIndetity(ele) {
   }
 }
 
-/*当文档加载完成后执行(执行顺序从上之下同注释)
+
+function cardNumberChange(ele){
+  var width = ele.width();
+  var infoCardContainer = ele.find(".infoCardContainer");
+  if(width<485 && curInfo.pageCapacity == 10){
+    curInfo.pageCapacity = 8;
+    writeIntoPage();
+    
+  }
+  if(width>=485 && curInfo.pageCapacity == 8){
+    infoCardContainer.css("margin-left",0);
+    curInfo.pageCapacity = 10;
+    writeIntoPage();
+  }
+}
+
+function registEventForMiddleTable(ele) {
+  var curDiv = ele;
+  var pageCircles = curDiv.find(".Pagination-container").children();
+  var pageCircleChange = function(){
+    pageCircles.attr("class","fa fa-circle-thin");
+    pageCircles.filter(function(){
+      return $(this).attr("data-page") == curInfo.curPage;
+    }).attr("class","fa fa-circle");
+  }
+  $(".fa-chevron-left").click(function() {
+    if (curInfo.curPage != 1) {
+      curInfo.curPage--;
+      pageCircleChange();
+      writeIntoPage();
+    }
+  });
+  $(".fa-chevron-right").click(function() {
+    if (curInfo.curPage != pageCircles.length) {
+      curInfo.curPage++;
+      pageCircleChange();
+      writeIntoPage();
+    }
+  });
+  $(".Pagination-container i").click(function() {
+    curInfo.curPage = $(this).attr("data-page");
+    pageCircles.attr("class","fa fa-circle-thin");
+    pageCircleChange();
+    writeIntoPage();
+  });
+}
+
+
+
+/*
+当文档加载完成后执行(执行顺序从上之下同注释)
 执行功能:
-初次写入中等大小表格的卡片
-点击翻页按钮分页栏发生变化(向前向后各一个)
-点击分页栏,分页栏发生变化
 修改datatable默认搜索框样式
 为表格设置底线和顶线
 点击Lock图标时锁定或解锁可拖动div
 */
 
 $(function() {
-  //getInfoCard();
-  $(".fa-chevron-left").bind("click", function() {
-    console.log(123);
-    curInfo.curPage--;
-    var curDiv = $(this)
-      .parents()
-      .find(".myDiv");
-    var pageCircles = curDiv.find(".Pagination-container").children();
-    var curPageCircle = pageCircles.filter(function() {
-      return $(this).attr("class") == "fa fa-circle";
-    });
-    var prevPageCircle = curPageCircle.prev();
-    if (prevPageCircle.is("i")) {
-      pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
-      prevPageCircle.removeClass("fa-circle-thin").addClass("fa-circle");
-    }
-
-    writeIntoPage();
-  });
-  $(".fa-chevron-right").bind("click", function() {
-    curInfo.curPage++;
-    var curDiv = $(this)
-      .parents()
-      .find(".myDiv");
-    var pageCircles = curDiv.find(".Pagination-container").children();
-    var curPageCircle = pageCircles.filter(function() {
-      return $(this).attr("class") == "fa fa-circle";
-    });
-    var nextPageCircle = curPageCircle.next();
-    if (nextPageCircle.is("i")) {
-      pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
-      nextPageCircle.removeClass("fa-circle-thin").addClass("fa-circle");
-    }
-    writeIntoPage();
-  });
-  $(".Pagination-container i").bind("click", function() {
-    curInfo.curPage = $(this).attr("data-page");
-    var curDiv = $(this)
-      .parents()
-      .find(".myDiv");
-    var pageCircles = curDiv.find(".Pagination-container").children();
-    pageCircles.removeClass("fa-circle").addClass("fa-circle-thin");
-    $(this)
-      .removeClass("fa-circle-thin")
-      .addClass("fa-circle");
-      writeIntoPage();
-  });
   $("#example_filter input")
     .attr("type", "text")
     .addClass("remove-default-style")
