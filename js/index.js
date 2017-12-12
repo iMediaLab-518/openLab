@@ -106,7 +106,6 @@ function dragAble(ele) {
 
     $("body").bind({
       mousemove: function(e) {
-        eleWidthChange(ele);
         var leftPos = ele.offset().left;
         var rightPos = leftPos + ele.width() + leftBorder + rightBorder;
         var topPos = ele.offset().top;
@@ -195,6 +194,7 @@ function dragAble(ele) {
           }
         }
         if (isMouseDown) {
+          eleWidthChange(ele);
           if (leftTopJudge == true) {
             if (rightPos - e.pageX - leftBorder - rightBorder >= 0) {
               ele.width(rightPos - e.pageX - leftBorder - rightBorder + "px");
@@ -326,6 +326,20 @@ function setMinHeight() {
   ele.css("min-height", minHeight + "px");
 }
 
+function setPagination() {
+  curInfo.curPage = 1;
+  var l = data.length;
+  var html = "";
+  curInfo.pageNumber = Math.ceil(l / curInfo.pageCapacity);
+  for (var i = 0; i < curInfo.pageNumber; i++) {
+    if (i == 0) {
+      html += "<i data-page='" + (i + 1) + "' class='fa fa-circle'></i>";
+    } else {
+      html += "<i data-page='" + (i + 1) + "' class='fa fa-circle-thin'></i>";
+    }
+    $(".Pagination-container").html(html);
+  }
+}
 /*datatable的写入*/
 function writeIntoPage() {
   $.ajaxSetup({
@@ -392,9 +406,14 @@ function writeIntoPage() {
     $("#example").addClass("border-bottom-and-top");
     setMinHeight();
     $("select[name='example_length']").change(function() {
-      // eleWidthChange();
+      $("#myDiv").css("width","1000px");
+      $("#staff-info-miantain-container td").show();
+      $("#staff-info-miantain-container th").show();
       setMinHeight();
     });
+    $("#example_paginate").click(function(){
+      setMinHeight();
+    })
   }
   if (curInfo.tableType == "middle" || curInfo.tableType == "small") {
     $("#staff-info-miantain-container").hide();
@@ -413,18 +432,10 @@ function writeIntoPage() {
         "<div class='pageBtn-right'>" +
         "<i class='fa fa-chevron-right page-middle fa-lg'></i></div>" +
         "<div class='Pagination-container'>";
-      var l = data.length;
-      curInfo.pageNumber = Math.ceil(l / curInfo.pageCapacity);
-      for (var i = 0; i < curInfo.pageNumber; i++) {
-        if (i == 0) {
-          html += "<i data-page='" + (i + 1) + "' class='fa fa-circle'></i>";
-        } else {
-          html +=
-            "<i data-page='" + (i + 1) + "' class='fa fa-circle-thin'></i>";
-        }
-      }
+
       html += "</div>";
       $("#middle-table").html(html);
+      setPagination();
       if (curInfo.tableType == "small") {
         $(".page-middle")
           .removeClass("page-middle")
@@ -475,141 +486,142 @@ function eleWidthChange(ele) {
   var eleWidth = ele.width();
   var tr = $("#example_wrapper tr");
   var infoCardContainer = ele.find(".infoCardContainer");
-  if (eleWidth < 810 && curInfo.tableType == "big") {
-    $.each(tr, function() {
-      $(this)
-        .find("th")
-        .eq(4)
-        .hide();
-      $(this)
-        .find("td")
-        .eq(4)
-        .hide();
-    });
-  }
-  if (eleWidth < 620 && curInfo.tableType == "big") {
-    $.each(tr, function() {
-      $(this)
-        .find("th")
-        .eq(6)
-        .hide();
-      $(this)
-        .find("td")
-        .eq(6)
-        .hide();
-    });
-  }
-  if (eleWidth < 520 && curInfo.tableType == "big") {
-    curInfo.tableType = "middle";
-    if ($("#middle-table").children().length == 0) {
+  if (curInfo.tableType == "big") {
+    if (eleWidth < 810) {
+      $.each(tr, function() {
+        $(this)
+          .find("th")
+          .eq(4)
+          .hide();
+        $(this)
+          .find("td")
+          .eq(4)
+          .hide();
+      });
+    }
+    if (eleWidth < 620) {
+      $.each(tr, function() {
+        $(this)
+          .find("th")
+          .eq(6)
+          .hide();
+        $(this)
+          .find("td")
+          .eq(6)
+          .hide();
+      });
+    }
+    if (eleWidth < 520) {
+      curInfo.tableType = "middle";
+      if ($("#middle-table").children().length == 0) {
+        writeIntoPage();
+        $(".infoCardContainer").css("height", "345px");
+        $("#myDiv").css("height", "448px");
+        $("#myDiv").css("min-height", "448px");
+      } else {
+        $("#staff-info-miantain-container").hide();
+        $("#middle-table").show();
+        $("#myDiv").css("height", "448px");
+        $("#myDiv").css("min-height", "448px");
+      }
+    }
+    if (eleWidth >= 620) {
+      $.each(tr, function() {
+        $(this)
+          .find("th")
+          .eq(6)
+          .show();
+        $(this)
+          .find("td")
+          .eq(6)
+          .show();
+      });
+    }
+    if (eleWidth >= 810) {
+      $.each(tr, function() {
+        $(this)
+          .find("th")
+          .eq(4)
+          .show();
+        $(this)
+          .find("td")
+          .eq(4)
+          .show();
+      });
+    }
+  } else if (curInfo.tableType == "middle") {
+    if (eleWidth < 485 && curInfo.pageCapacity == 10) {
+      curInfo.pageCapacity = 8;
+      setPagination();
       writeIntoPage();
+    }
+    if (eleWidth < 410) {
+      curInfo.pageCapacity = 10;
+      curInfo.tableType = "small";
+      $(".infoCardContainer").css("height", "160px");
+      $("#myDiv").css("height", "262px");
+      $("#myDiv").css("min-height", "262px");
+      setPagination();
+      writeIntoPage();
+      $("i.page-middle")
+        .removeClass("page-middle")
+        .addClass("page-middle-small");
+    }
+    if (eleWidth >= 485 && curInfo.pageCapacity == 8) {
+      infoCardContainer.css("margin-left", 0);
+      curInfo.pageCapacity = 10;
+      setPagination();
+      writeIntoPage();
+    }
+    if (eleWidth >= 520) {
+      curInfo.tableType = "big";
+      $("#middle-table").hide();
+      if ($("#example tbody").children().length == 0) {
+        writeIntoPage();
+      }
+      $("#staff-info-miantain-container").show();
+      setMinHeight();
+    }
+    registEventForMiddleTable(ele,1);
+  } else {
+    if (eleWidth <= 382 && curInfo.pageCapacity == 10) {
+      curInfo.pageCapacity = 8;
+      setPagination();
+      writeIntoPage();
+    }
+    if (eleWidth < 330) {
+      curInfo.pageCapacity = 6;
+      $(".infoCardContainer").css("width", "85%");
+      setPagination();
+      writeIntoPage();
+    }
+    if (eleWidth >= 328 && curInfo.pageCapacity == 6) {
+      curInfo.pageCapacity = 8;
+      $(".infoCardContainer").css("width", "92.5%");
+      setPagination();
+      writeIntoPage();
+    }
+    if (eleWidth > 379 && curInfo.pageCapacity == 8) {
+      curInfo.pageCapacity = 10;
+      setPagination();
+      writeIntoPage();
+    }
+    if (eleWidth > 410) {
+      curInfo.tableType = "middle";
+      curInfo.pageCapacity = 8;
+      setPagination();
+      writeIntoPage();
+      $("i.page-middle-small")
+        .removeClass("page-middle-small")
+        .addClass("page-middle");
       $(".infoCardContainer").css("height", "345px");
       $("#myDiv").css("height", "448px");
       $("#myDiv").css("min-height", "448px");
-    } else {
-      $("#staff-info-miantain-container").hide();
-      $("#middle-table").show();
-      $("#myDiv").css("height", "448px");
-      $("#myDiv").css("min-height", "448px");
     }
-  }
-  if (
-    eleWidth < 485 &&
-    curInfo.pageCapacity == 10 &&
-    curInfo.tableType == "middle"
-  ) {
-    curInfo.pageCapacity = 8;
-    writeIntoPage();
-  }
-  if (eleWidth < 410 && curInfo.tableType == "middle") {
-    curInfo.pageCapacity = 10;
-    curInfo.tableType = "small";
-    $(".infoCardContainer").css("height", "160px");
-    $("#myDiv").css("height", "262px");
-    $("#myDiv").css("min-height", "262px");
-    writeIntoPage();
-    $("i.page-middle")
-      .removeClass("page-middle")
-      .addClass("page-middle-small");
-  }
-  if (eleWidth <= 382 && curInfo.pageCapacity == 10) {
-    curInfo.pageCapacity = 8;
-    writeIntoPage();
-  }
-  if (eleWidth < 330) {
-    curInfo.pageCapacity = 6;
-    $(".infoCardContainer").css("width", "85%");
-    writeIntoPage();
-  }
-  if (
-    eleWidth >= 328 &&
-    curInfo.pageCapacity == 6 &&
-    curInfo.tableType == "small"
-  ) {
-    curInfo.pageCapacity = 8;
-    $(".infoCardContainer").css("width", "92.5%");
-    writeIntoPage();
-  }
-  if (
-    eleWidth > 379 &&
-    curInfo.pageCapacity == 8 &&
-    curInfo.tableType == "small"
-  ) {
-    curInfo.pageCapacity = 10;
-    writeIntoPage();
-  }
-  if (eleWidth > 410 && curInfo.tableType == "small") {
-    curInfo.tableType = "middle";
-    curInfo.pageCapacity = 8;
-    writeIntoPage();
-    $("i.page-middle-small")
-      .removeClass("page-middle-small")
-      .addClass("page-middle");
-    $(".infoCardContainer").css("height", "345px");
-    $("#myDiv").css("height", "448px");
-    $("#myDiv").css("min-height", "448px");
-  }
-  if (eleWidth >= 485 && curInfo.pageCapacity == 8) {
-    infoCardContainer.css("margin-left", 0);
-    curInfo.pageCapacity = 10;
-    writeIntoPage();
-  }
-  if (eleWidth >= 520 && curInfo.tableType == "middle") {
-    curInfo.tableType = "big";
-    $("#middle-table").hide();
-    if ($("#example tbody").children().length == 0) {
-      writeIntoPage();
-    }
-    $("#staff-info-miantain-container").show();
-    setMinHeight();
-  }
-  if (eleWidth >= 620) {
-    $.each(tr, function() {
-      $(this)
-        .find("th")
-        .eq(6)
-        .show();
-      $(this)
-        .find("td")
-        .eq(6)
-        .show();
-    });
-  }
-  if (eleWidth >= 810) {
-    $.each(tr, function() {
-      $(this)
-        .find("th")
-        .eq(4)
-        .show();
-      $(this)
-        .find("td")
-        .eq(4)
-        .show();
-    });
-  }
+    registEventForMiddleTable(ele,1);
+  } 
 }
-
-function registEventForMiddleTable(ele) {
+function registEventForMiddleTable(ele,pageCircleOnly) {
   var curDiv = ele;
   var pageCircles = curDiv.find(".Pagination-container").children();
   var pageCircleChange = function() {
@@ -620,20 +632,22 @@ function registEventForMiddleTable(ele) {
       })
       .attr("class", "fa fa-circle");
   };
-  $(".fa-chevron-left").click(function() {
-    if (curInfo.curPage != 1) {
-      curInfo.curPage--;
-      pageCircleChange();
-      writeIntoPage();
-    }
-  });
-  $(".fa-chevron-right").click(function() {
-    if (curInfo.curPage != pageCircles.length) {
-      curInfo.curPage++;
-      pageCircleChange();
-      writeIntoPage();
-    }
-  });
+  if(!pageCircleOnly){
+    $(".fa-chevron-left").click(function() {
+      if (curInfo.curPage != 1) {
+        curInfo.curPage--;
+        pageCircleChange();
+        writeIntoPage();
+      }
+    });
+    $(".fa-chevron-right").click(function() {
+      if (curInfo.curPage != pageCircles.length) {
+        curInfo.curPage++;
+        pageCircleChange();
+        writeIntoPage();
+      }
+    });
+  }
   $(".Pagination-container i").click(function() {
     curInfo.curPage = $(this).attr("data-page");
     pageCircles.attr("class", "fa fa-circle-thin");

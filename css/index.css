@@ -102,6 +102,9 @@ body {
   padding-left: 5px;
 }
 
+i.fa:hover{
+  cursor: pointer;
+}
 
 /* 通用class定义 */
 .float-left {
