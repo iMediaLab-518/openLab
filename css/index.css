@@ -6,7 +6,7 @@ body {
   border: 1px solid #333333;
   border-radius: 5px;
   width: 1000px;
-  min-width: 390px;
+  min-width: 250px;
   left: 10px;
   top: 20px;
 }
@@ -42,6 +42,9 @@ body {
 .page-middle {
   margin-top: 170px;
 }
+.page-middle-small{
+  margin-top:75px;
+}
 .pageBtn-right {
   float: right;
   width: 2%;
@@ -54,7 +57,7 @@ body {
   float: left;
   width: 92.5%;
 }
-.avatar img {
+.infoCard img {
   border-radius: 40px;
   width: 45px;
   height: 45px;
@@ -74,6 +77,18 @@ body {
   display: block;
   margin-top: 3px;
 }
+
+.img-container{
+  float: left;
+  padding: 5px;
+  text-align: center;
+}
+.img-container img{
+  margin-bottom: -10px;
+  width: 60px;
+  height:60px;
+}
+
 
 
 .Pagination-container {
