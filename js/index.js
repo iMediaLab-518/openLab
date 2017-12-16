@@ -1,11 +1,10 @@
 //全局变量定义
-var curInfo = {};
-var requestData = {};
-var data = {};
-curInfo.curPage = 1;
-curInfo.pageCapacity = 10;
-curInfo.tableType = "big";
-curInfo.isLoad = 0;
+var curInfo = {}; //存放目前页面全局变量
+var data = {}; //存放从数据库获得的数据
+curInfo.curPage = 1; //当前页面为1
+curInfo.pageCapacity = 10; //当前页面容量为10
+curInfo.tableType = "small"; //当前页面类型为最小的表格
+curInfo.isLoad = 0; //是否已经从数据库获得数据
 
 /*
 函数名:adsorbent 吸附函数
@@ -13,7 +12,6 @@ curInfo.isLoad = 0;
 参数:div对象ele
 返回值:无
 */
-
 function adsorbent(ele) {
   var parentDiv = ele.parent(), //父容器
     parentDivWidth = parentDiv.width(), //父容器宽度
@@ -55,7 +53,6 @@ function adsorbent(ele) {
 参数:ele想要变成可拖动的div对象
 返回值:无
 */
-
 function dragAble(ele) {
   var eleId = ele.attr("id");
   if (curInfo[eleId] == 0) {
@@ -274,208 +271,6 @@ function dragAble(ele) {
   }
 }
 
-/* 未完成.
-函数名:savaPositionToArray 存储位置至数组函数
-功能:将div的位置存入数组
-参数:div对象ele
-返回值:无
-*/
-function savePosistionToArray(ele) {
-  var flag = 0;
-  var borderWidth = parseInt(ele.css("border"));
-  var position = ele.position();
-  var id = ele.attr("id");
-  var x1 = position.left;
-  var x2 = x1 + ele.width() + borderWidth * 2;
-  var y1 = position.top;
-  var y2 = y1 + ele.height() + borderWidth * 2;
-  $.each(positionArray, function(index, value) {
-    if (value.id == id) {
-      value.x1 = x1;
-      value.x2 = x2;
-      value.y1 = y1;
-      value.y2 = y2;
-      flag = 1;
-      //return false;
-    }
-  });
-  if (!flag) {
-    var obj = {
-      id: id,
-      x1: x1,
-      x2: x2,
-      y1: y1,
-      y2: y2
-    };
-    positionArray.push(obj);
-  }
-}
-
-/*
-函数名:setMinHeight 设置最小高度函数
-函数功能:设置每个可拖动的div的最小高度
-参数:无
-返回值:无
-*/
-function setMinHeight() {
-  var ele = $("#myDiv");
-  var headerHeight = ele.find(".div-header").height();
-  var maintianHeight = ele.find("#staff-info-miantain-container").height() + 25;
-  var minHeight = headerHeight + maintianHeight;
-  ele.css("height", minHeight + "px");
-  ele.css("min-height", minHeight + "px");
-}
-
-function setPagination() {
-  curInfo.curPage = 1;
-  var l = data.length;
-  var html = "";
-  curInfo.pageNumber = Math.ceil(l / curInfo.pageCapacity);
-  for (var i = 0; i < curInfo.pageNumber; i++) {
-    if (i == 0) {
-      html += "<i data-page='" + (i + 1) + "' class='fa fa-circle'></i>";
-    } else {
-      html += "<i data-page='" + (i + 1) + "' class='fa fa-circle-thin'></i>";
-    }
-    $(".Pagination-container").html(html);
-  }
-}
-/*datatable的写入*/
-function writeIntoPage() {
-  $.ajaxSetup({
-    async: false
-  });
-  if (!curInfo.isLoad) {
-    $.post("php/staff_management_big.php", function(json) {
-      curInfo.isLoad++;
-      data = JSON.parse(json).data;
-    });
-  }
-  if (curInfo.tableType == "big") {
-    $("#example").DataTable({
-      data: data,
-      columns: [
-        { data: "staff_serial_number" },
-        { data: "staff_name" },
-        { data: "staff_gender" },
-        { data: "staff_phone_num" },
-        { data: "staff_id_card_no" },
-        { data: "staff_role_name" },
-        { data: "staff_create_time" }
-      ],
-      columnDefs: [
-        {
-          targets: 7,
-          render: function() {
-            return '<a href="#">Download</a>';
-          }
-        }
-      ],
-      aLengthMenu: [5, 10, 15],
-      dom:
-        '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
-      language: {
-        emptyTable: "表中没有可用数据",
-        info: "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
-        infoEmpty: "没有记录",
-        infoFiltered: "(从 _MAX_ 条记录中过滤)",
-        infoPostFix: "",
-        thousands: ",",
-        lengthMenu: "每页显示 _MENU_ 条",
-        loadingRecords: "加载中...",
-        processing: "处理中...",
-        search: "搜索:",
-        zeroRecords: "没有找到符合条件的数据",
-        paginate: {
-          first: "首页",
-          last: "尾页",
-          next: "下一页",
-          previous: "上一页"
-        }
-      },
-      aria: {
-        sortAscending: ": activate to sort column ascending", //当一列被按照升序降序的时候添加到表头的ARIA标签，注意列头是这个字符串的前缀
-
-        sortDescending: ": activate to sort column descending" //当一列被按照升序降序的时候添加到表头的ARIA标签，注意列头是这个字符串的前缀
-      }
-    });
-    $("#example_filter input")
-      .attr("type", "text")
-      .addClass("remove-default-style")
-      .addClass("search-input");
-    $("#example").addClass("border-bottom-and-top");
-    setMinHeight();
-    $("select[name='example_length']").change(function() {
-      $("#myDiv").css("width","1000px");
-      $("#staff-info-miantain-container td").show();
-      $("#staff-info-miantain-container th").show();
-      setMinHeight();
-    });
-    $("#example_paginate").click(function(){
-      setMinHeight();
-    })
-  }
-  if (curInfo.tableType == "middle" || curInfo.tableType == "small") {
-    $("#staff-info-miantain-container").hide();
-    var html = "";
-    if (curInfo.isLoad == 1) {
-      curInfo.isLoad++;
-      html +=
-        "<div class='search-bar-container'>" +
-        "<span>搜索:</span>" +
-        "<input type='text' placeholder='  input something' class='search-bar'>" +
-        "<i class='fa fa-trash fa-lg'></i>" +
-        "<i class='fa fa-plus-circle fa-lg'></i></div>" +
-        "<div class='pageBtn-left'>" +
-        "<i class='fa fa-chevron-left page-middle fa-lg'></i>" +
-        "</div><div class='infoCardContainer'></div></div>" +
-        "<div class='pageBtn-right'>" +
-        "<i class='fa fa-chevron-right page-middle fa-lg'></i></div>" +
-        "<div class='Pagination-container'>";
-
-      html += "</div>";
-      $("#middle-table").html(html);
-      setPagination();
-      if (curInfo.tableType == "small") {
-        $(".page-middle")
-          .removeClass("page-middle")
-          .addClass("page-middle-small");
-      }
-      registEventForMiddleTable($("#middle-table"));
-    }
-    var html2 = "";
-    var pageStart = (curInfo.curPage - 1) * curInfo.pageCapacity;
-    var pageEnd = curInfo.curPage * curInfo.pageCapacity;
-    $.each(data, function(index, value) {
-      if (index >= pageStart && index < pageEnd) {
-        if (curInfo.tableType == "middle") {
-          html2 += "<div class='infoCard'>";
-          html2 += "<div class='avatar'>";
-          html2 +=
-            "<img src='img/avatar1.jpg' alt='用户头像' title='点击头像查看详细信息'>";
-          html2 += "</div><span><b>" + value.staff_name + "</b></span>";
-          html2 += "<span>员工类型</span>";
-          html2 += "<span><b>" + value.staff_role_name + "</b></span>";
-          html2 += "<span>入职时间</span>";
-          html2 += "<span><b>" + value.staff_create_time + "</b></span></div>";
-        } else {
-          html2 += "<div class='img-container'>";
-          html2 += "<div>";
-          html2 += "<img src='img/tubiao1.jpg' alt='放置鼠标'>";
-          html2 += "</div>";
-          html2 += "<span>" + value.staff_name + "</span>";
-          html2 += "</div>";
-        }
-      }
-    });
-    $(".infoCardContainer").html(html2);
-  }
-
-  $.ajaxSetup({
-    async: true
-  });
-}
-
 /*
 函数名:eleWidthChange
 函数功能:当宽度到达某个临界值是隐藏或显示某列
@@ -550,7 +345,8 @@ function eleWidthChange(ele) {
       });
     }
   } else if (curInfo.tableType == "middle") {
-    if (eleWidth < 485 && curInfo.pageCapacity == 10) {
+    if (eleWidth < 480 && curInfo.pageCapacity == 10) {
+      $(".infoCardContainer").css("width", "95%");
       curInfo.pageCapacity = 8;
       setPagination();
       writeIntoPage();
@@ -563,12 +359,9 @@ function eleWidthChange(ele) {
       $("#myDiv").css("min-height", "262px");
       setPagination();
       writeIntoPage();
-      $("i.page-middle")
-        .removeClass("page-middle")
-        .addClass("page-middle-small");
     }
-    if (eleWidth >= 485 && curInfo.pageCapacity == 8) {
-      infoCardContainer.css("margin-left", 0);
+    if (eleWidth >= 480 && curInfo.pageCapacity == 8) {
+      $(".infoCardContainer").css("width", "100%");
       curInfo.pageCapacity = 10;
       setPagination();
       writeIntoPage();
@@ -582,26 +375,28 @@ function eleWidthChange(ele) {
       $("#staff-info-miantain-container").show();
       setMinHeight();
     }
-    registEventForMiddleTable(ele,1);
+    registEventForPagination(ele);
   } else {
-    if (eleWidth <= 382 && curInfo.pageCapacity == 10) {
+    if (eleWidth <= 389 && curInfo.pageCapacity == 10) {
+      $(".infoCardContainer").css("width", "95%");
       curInfo.pageCapacity = 8;
       setPagination();
       writeIntoPage();
     }
-    if (eleWidth < 330) {
+    if (eleWidth < 320) {
       curInfo.pageCapacity = 6;
-      $(".infoCardContainer").css("width", "85%");
-      setPagination();
-      writeIntoPage();
-    }
-    if (eleWidth >= 328 && curInfo.pageCapacity == 6) {
-      curInfo.pageCapacity = 8;
       $(".infoCardContainer").css("width", "92.5%");
       setPagination();
       writeIntoPage();
     }
-    if (eleWidth > 379 && curInfo.pageCapacity == 8) {
+    if (eleWidth >= 320 && curInfo.pageCapacity == 6) {
+      $(".infoCardContainer").css("width", "95%");
+      curInfo.pageCapacity = 8;
+      setPagination();
+      writeIntoPage();
+    }
+    if (eleWidth > 389 && curInfo.pageCapacity == 8) {
+      $(".infoCardContainer").css("width", "100%");
       curInfo.pageCapacity = 10;
       setPagination();
       writeIntoPage();
@@ -611,17 +406,21 @@ function eleWidthChange(ele) {
       curInfo.pageCapacity = 8;
       setPagination();
       writeIntoPage();
-      $("i.page-middle-small")
-        .removeClass("page-middle-small")
-        .addClass("page-middle");
       $(".infoCardContainer").css("height", "345px");
       $("#myDiv").css("height", "448px");
       $("#myDiv").css("min-height", "448px");
     }
-    registEventForMiddleTable(ele,1);
-  } 
+    registEventForPagination(ele);
+  }
 }
-function registEventForMiddleTable(ele,pageCircleOnly) {
+
+/*
+函数名:registEventPagination
+函数功能:为新插入的分页栏注册跳转页面事件
+参数:任意包含分页栏的祖先div
+返回值:无
+*/
+function registEventForPagination(ele) {
   var curDiv = ele;
   var pageCircles = curDiv.find(".Pagination-container").children();
   var pageCircleChange = function() {
@@ -632,22 +431,6 @@ function registEventForMiddleTable(ele,pageCircleOnly) {
       })
       .attr("class", "fa fa-circle");
   };
-  if(!pageCircleOnly){
-    $(".fa-chevron-left").click(function() {
-      if (curInfo.curPage != 1) {
-        curInfo.curPage--;
-        pageCircleChange();
-        writeIntoPage();
-      }
-    });
-    $(".fa-chevron-right").click(function() {
-      if (curInfo.curPage != pageCircles.length) {
-        curInfo.curPage++;
-        pageCircleChange();
-        writeIntoPage();
-      }
-    });
-  }
   $(".Pagination-container i").click(function() {
     curInfo.curPage = $(this).attr("data-page");
     pageCircles.attr("class", "fa fa-circle-thin");
@@ -656,11 +439,276 @@ function registEventForMiddleTable(ele,pageCircleOnly) {
   });
 }
 
+/* 未完成.
+函数名:savaPositionToArray 存储位置至数组函数
+功能:将div的位置存入数组
+参数:div对象ele
+返回值:无
+*/
+function savePosistionToArray(ele) {
+  var flag = 0;
+  var borderWidth = parseInt(ele.css("border"));
+  var position = ele.position();
+  var id = ele.attr("id");
+  var x1 = position.left;
+  var x2 = x1 + ele.width() + borderWidth * 2;
+  var y1 = position.top;
+  var y2 = y1 + ele.height() + borderWidth * 2;
+  $.each(positionArray, function(index, value) {
+    if (value.id == id) {
+      value.x1 = x1;
+      value.x2 = x2;
+      value.y1 = y1;
+      value.y2 = y2;
+      flag = 1;
+      //return false;
+    }
+  });
+  if (!flag) {
+    var obj = {
+      id: id,
+      x1: x1,
+      x2: x2,
+      y1: y1,
+      y2: y2
+    };
+    positionArray.push(obj);
+  }
+}
+
+/*
+函数名:showDetails
+功能:当鼠标悬停在小表格的头像上时使用悬浮窗显示详细信息
+参数:无
+返回值:无
+*/
+function showDetails() {
+  var count = 0;
+  var hoverWindowIsExist = 0;
+  $(".img-container img").hover(function(event) {
+    count++;
+    if (count % 2 == 1) {
+      if (hoverWindowIsExist) {
+        $(".hoverWindow").remove();
+      }
+      hoverWindowIsExist = 1;
+      var img = $(this);
+      var container = img.parent();
+      var staff_name = container.next().text();
+      var staff_role_name = img.attr("data-role-name");
+      var staff_create_time = img.attr("data-create-time");
+      var positionNumber = img.attr("data-position-number");
+      var myDiv = $("#myDiv");
+      var divX = myDiv.offset().left;
+      var divY = myDiv.offset().top;
+      var positionNumberForX =
+        positionNumber >= curInfo.pageCapacity / 2
+          ? positionNumber - 5
+          : positionNumber;
+      var hoverWindowX = divX + positionNumberForX * 70;
+      var hoverWindowY = divY + 70 + Math.floor(positionNumber / 5) * 70;
+      var html2 = "";
+      html2 += "<div class='infoCard hoverWindow'>";
+      html2 += "<div class='avatar'>";
+      html2 +=
+        "<img src='img/avatar1.jpg' alt='用户头像' title='点击头像查看详细信息'>";
+      html2 += "</div><span><b>" + staff_name + "</b></span>";
+      html2 += "<span>员工类型</span>";
+      html2 += "<span><b>" + staff_role_name + "</b></span>";
+      html2 += "<span>入职时间</span>";
+      html2 += "<span><b>" + staff_create_time + "</b></span></div>";
+      container.append(html2);
+      var hoverWindow = img.next();
+      hoverWindow
+        .css({ left: hoverWindowX + "px", top: hoverWindowY + "px" })
+        .show();
+      hoverWindow.mouseleave(function() {
+        $(this).hide();
+        hoverWindowIsExist = 0;
+      });
+    }
+  });
+}
+
+/*
+函数名:setMinHeight 设置最小高度函数
+函数功能:设置每个可拖动的div的最小高度
+参数:无
+返回值:无
+*/
+function setMinHeight() {
+  var ele = $("#myDiv");
+  var headerHeight = ele.find(".div-header").height();
+  var maintianHeight = ele.find("#staff-info-miantain-container").height() + 25;
+  var minHeight = headerHeight + maintianHeight;
+  ele.css("height", minHeight + "px");
+  ele.css("min-height", minHeight + "px");
+}
+
+/*
+函数名:setPagination
+函数功能:当页面容量变化时,相应修改总的页数以及分页栏
+参数:无
+返回值:无
+*/
+function setPagination() {
+  curInfo.curPage = 1;
+  var l = data.length;
+  var html = "";
+  curInfo.pageNumber = Math.ceil(l / curInfo.pageCapacity);
+  for (var i = 0; i < curInfo.pageNumber; i++) {
+    if (i == 0) {
+      html += "<i data-page='" + (i + 1) + "' class='fa fa-circle'></i>";
+    } else {
+      html += "<i data-page='" + (i + 1) + "' class='fa fa-circle-thin'></i>";
+    }
+    $(".Pagination-container").html(html);
+  }
+}
+
+/*
+函数名:writeIntoPage
+函数功能:为当前页面的可拖动div写入数据(大中小三种表格)
+参数:无
+返回值:无
+*/
+function writeIntoPage() {
+  $.ajaxSetup({
+    async: false
+  });
+  if (!curInfo.isLoad) {
+    $.post("php/staff_management_big.php", function(json) {
+      curInfo.isLoad++;
+      data = JSON.parse(json).data;
+    });
+  }
+  if (curInfo.tableType == "big") {
+    $("#example").DataTable({
+      data: data,
+      columns: [
+        { data: "staff_serial_number" },
+        { data: "staff_name" },
+        { data: "staff_gender" },
+        { data: "staff_phone_num" },
+        { data: "staff_id_card_no" },
+        { data: "staff_role_name" },
+        { data: "staff_create_time" }
+      ],
+      columnDefs: [
+        {
+          targets: 7,
+          render: function() {
+            return '<a href="#">Download</a>';
+          }
+        }
+      ],
+      aLengthMenu: [5, 10, 15],
+      dom:
+        '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
+      language: {
+        emptyTable: "表中没有可用数据",
+        info: "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
+        infoEmpty: "没有记录",
+        infoFiltered: "(从 _MAX_ 条记录中过滤)",
+        infoPostFix: "",
+        thousands: ",",
+        lengthMenu: "每页显示 _MENU_ 条",
+        loadingRecords: "加载中...",
+        processing: "处理中...",
+        search: "搜索:",
+        zeroRecords: "没有找到符合条件的数据",
+        paginate: {
+          first: "首页",
+          last: "尾页",
+          next: "下一页",
+          previous: "上一页"
+        }
+      },
+      aria: {
+        sortAscending: ": activate to sort column ascending", //当一列被按照升序降序的时候添加到表头的ARIA标签，注意列头是这个字符串的前缀
+
+        sortDescending: ": activate to sort column descending" //当一列被按照升序降序的时候添加到表头的ARIA标签，注意列头是这个字符串的前缀
+      }
+    });
+    $("#example_filter input")
+      .attr("type", "text")
+      .addClass("remove-default-style")
+      .addClass("search-input")
+      .attr("placeholder", "  input something");
+    $("#example").addClass("border-bottom-and-top");
+    setMinHeight();
+    $("select[name='example_length']").change(function() {
+      $("#myDiv").css("width", "1000px");
+      $("#staff-info-miantain-container td").show();
+      $("#staff-info-miantain-container th").show();
+      setMinHeight();
+    });
+    $("#example_paginate").click(function() {
+      setMinHeight();
+    });
+  }
+  if (curInfo.tableType == "middle" || curInfo.tableType == "small") {
+    $("#staff-info-miantain-container").hide();
+    var html = "";
+    if (curInfo.isLoad == 1) {
+      curInfo.isLoad++;
+      html +=
+        "<div class='search-bar-container'>" +
+        "<span>搜索:</span>" +
+        "<input type='text' placeholder='  input something' class='search-bar'>" +
+        "<i class='fa fa-trash fa-lg'></i>" +
+        "<i class='fa fa-plus-circle fa-lg'></i></div>" +
+        "</div><div class='infoCardContainer'></div></div>" +
+        "<div class='Pagination-container'>";
+      html += "</div>";
+      $("#middle-table").html(html);
+      setPagination();
+      registEventForPagination($("#middle-table"));
+    }
+    var html2 = "";
+    var pageStart = (curInfo.curPage - 1) * curInfo.pageCapacity;
+    var pageEnd = curInfo.curPage * curInfo.pageCapacity;
+    $.each(data, function(index, value) {
+      if (index >= pageStart && index < pageEnd) {
+        if (curInfo.tableType == "middle") {
+          html2 += "<div class='infoCard'>";
+          html2 += "<div class='avatar'>";
+          html2 +=
+            "<img src='img/avatar1.jpg' alt='用户头像' title='点击头像查看详细信息'>";
+          html2 += "</div><span><b>" + value.staff_name + "</b></span>";
+          html2 += "<span>员工类型</span>";
+          html2 += "<span><b>" + value.staff_role_name + "</b></span>";
+          html2 += "<span>入职时间</span>";
+          html2 += "<span><b>" + value.staff_create_time + "</b></span></div>";
+        } else {
+          html2 += "<div class='img-container'>";
+          html2 += "<div>";
+          html2 +=
+            "<img src='img/tubiao1.jpg' alt='放置鼠标' data-role-name='" +
+            value.staff_role_name;
+          html2 += "' data-position-number='" + (index - pageStart);
+          html2 += "' data-create-time='" + value.staff_create_time + "'>";
+          html2 += "</div>";
+          html2 += "<span>" + value.staff_name + "</span>";
+          html2 += "</div>";
+        }
+      }
+    });
+    $(".infoCardContainer").html(html2);
+    if (curInfo.tableType == "small") {
+      showDetails();
+    }
+  }
+
+  $.ajaxSetup({
+    async: true
+  });
+}
+
 /*
 当文档加载完成后执行(执行顺序从上之下同注释)
 执行功能:
-修改datatable默认搜索框样式
-为表格设置底线和顶线
+初次写入数据到可拖动div
 点击Lock图标时锁定或解锁可拖动div
 */
 

@@ -5,8 +5,8 @@ body {
   position: absolute;
   border: 1px solid #333333;
   border-radius: 5px;
-  width: 1000px;
-  min-width: 250px;
+  width: 400px;
+  min-width: 255px;
   left: 10px;
   top: 20px;
 }
@@ -32,30 +32,14 @@ body {
 .search-bar-container i.fa {
   float: right;
   position: relative;
-  margin: 10px 0px 0 8px;
-}
-.pageBtn-left {
-  float: left;
-  width: 3%;
-  margin-left: 3px;
-}
-.page-middle {
-  margin-top: 170px;
-}
-.page-middle-small{
-  margin-top:75px;
-}
-.pageBtn-right {
-  float: right;
-  width: 2%;
-  margin-right: 5px;
+  margin: 10px 0px 0 8px; 
 }
 
 
 
 .infoCardContainer {
-  float: left;
-  width: 92.5%;
+ width: 100%;
+ padding: 0 10px;
 }
 .infoCard img {
   border-radius: 40px;
@@ -69,7 +53,7 @@ body {
   height: 160px;
   text-align: center;
   margin-top: 12px;
-  margin-left: 1%;
+  margin-left: 5px;
   padding-top: 7px;
 }
 .infoCard span {
@@ -87,6 +71,11 @@ body {
   margin-bottom: -10px;
   width: 60px;
   height:60px;
+}
+.img-container .infoCard img{
+  margin-bottom: 0px;
+  width: 45px;
+  height:45px;
 }
 
 
@@ -146,4 +135,10 @@ i.fa:hover{
 .border-bottom-and-top {
   border-bottom: 1px solid #333333;
   border-top: 1px solid #333333;
+}
+.hoverWindow{
+  position: fixed;  
+  z-index: 10;  
+  background-color: rgba(255,255,255,1);   
+  display: none;   /* 默认隐藏 */  
 }
