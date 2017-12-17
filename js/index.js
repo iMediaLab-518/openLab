@@ -117,6 +117,17 @@ function dragAble(ele) {
             !isMouseDown
           ) {
             ele.css("cursor", "nw-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+            
             leftTopJudge = true;
           } else if (
             topPos - 5 <= e.pageY &&
@@ -126,6 +137,17 @@ function dragAble(ele) {
             !isMouseDown
           ) {
             ele.css("cursor", "ne-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+            
             rightTopJudge = true;
           } else if (
             leftPos - 5 <= e.pageX &&
@@ -135,6 +157,17 @@ function dragAble(ele) {
             !isMouseDown
           ) {
             ele.css("cursor", "sw-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+            
             leftBottomJudge = true;
           } else if (
             bottomPos - 5 <= e.pageY &&
@@ -144,6 +177,17 @@ function dragAble(ele) {
             !isMouseDown
           ) {
             ele.css("cursor", "se-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+
             rightBottomJudge = true;
           } else if (
             leftPos - 5 <= e.pageX &&
@@ -151,6 +195,17 @@ function dragAble(ele) {
             !isMouseDown
           ) {
             ele.css("cursor", "w-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+            
             leftJudge = true;
           } else if (
             rightPos - 5 <= e.pageX &&
@@ -158,6 +213,17 @@ function dragAble(ele) {
             !isMouseDown
           ) {
             ele.css("cursor", "e-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+            
             rightJudge = true;
           } else if (
             topPos - 5 <= e.pageY &&
@@ -165,6 +231,17 @@ function dragAble(ele) {
             !isMouseDown
           ) {
             ele.css("cursor", "n-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+            
             topJudge = true;
           } else if (
             bottomPos - 5 <= e.pageY &&
@@ -172,16 +249,46 @@ function dragAble(ele) {
             !isMouseDown
           ) {
             ele.css("cursor", "s-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+            
             bottomJudge = true;
-          } else {
+          } 
+          else if (
+            topPos + 6 <= e.pageY &&
+            e.pageY <= topPos + 40 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "move");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+            
+            insideJudge = true;
+          }else {
             if (!isMouseDown) {
-              ele.css("cursor", "move");
+              ele.css("cursor", "default");
 
               leftJudge = false;
               rightJudge = false;
               topJudge = false;
               bottomJudge = false;
-              insideJudge = true;
+              insideJudge = false;
 
               leftTopJudge = false;
               rightTopJudge = false;
@@ -192,54 +299,61 @@ function dragAble(ele) {
         }
         if (isMouseDown) {
           eleWidthChange(ele);
+
+          getMinHeight();
+          var minHeight = parseInt(ele.css("min-height")) - leftBorder - rightBorder;
+          var minWidth = parseInt(ele.css("min-width")) - topBorder - bottomBorder;
+          console.log(minHeight,parseInt(ele.height()));
+          console.log(parseInt(ele.width()),minWidth);
+
           if (leftTopJudge == true) {
-            if (rightPos - e.pageX - leftBorder - rightBorder >= 0) {
+            if (rightPos - e.pageX - leftBorder - rightBorder  > minWidth) {
               ele.width(rightPos - e.pageX - leftBorder - rightBorder + "px");
               ele.css("left", e.pageX + "px");
             }
-            if (bottomPos - e.pageY - topBorder - bottomBorder >= 0) {
+            if (bottomPos - e.pageY - topBorder - bottomBorder  > minHeight) {
               ele.height(bottomPos - e.pageY - topBorder - bottomBorder + "px");
               ele.css("top", e.pageY + "px");
             }
           } else if (rightTopJudge == true) {
-            if (e.pageX - leftPos - leftBorder - rightBorder >= 0) {
+            if (e.pageX - leftPos - leftBorder - rightBorder > minWidth) {
               ele.width(e.pageX - leftPos - leftBorder - rightBorder + "px");
             }
-            if (bottomPos - e.pageY - topBorder - bottomBorder >= 0) {
+            if (bottomPos - e.pageY - topBorder - bottomBorder > minHeight) {
               ele.height(bottomPos - e.pageY - topBorder - bottomBorder + "px");
               ele.css("top", e.pageY + "px");
             }
           } else if (leftBottomJudge == true) {
-            if (rightPos - e.pageX - leftBorder - rightBorder >= 0) {
+            if (rightPos - e.pageX - leftBorder - rightBorder > minWidth) {
               ele.width(rightPos - e.pageX - leftBorder - rightBorder + "px");
               ele.css("left", e.pageX + "px");
             }
-            if (e.pageY - topPos - topBorder - bottomBorder >= 0) {
+            if (e.pageY - topPos - topBorder - bottomBorder > minHeight) {
               ele.height(e.pageY - topPos - topBorder - bottomBorder + "px");
             }
           } else if (rightBottomJudge == true) {
-            if (e.pageX - leftPos - leftBorder - rightBorder >= 0) {
+            if (e.pageX - leftPos - leftBorder - rightBorder  > minWidth) {
               ele.width(e.pageX - leftPos - leftBorder - rightBorder + "px");
             }
-            if (e.pageY - topPos - topBorder - bottomBorder >= 0) {
+            if (e.pageY - topPos - topBorder - bottomBorder  > minHeight) {
               ele.height(e.pageY - topPos - topBorder - bottomBorder + "px");
             }
           } else if (leftJudge == true) {
-            if (rightPos - e.pageX - leftBorder - rightBorder >= 0) {
+            if (rightPos - e.pageX - leftBorder - rightBorder  > minWidth) {
               ele.width(rightPos - e.pageX - leftBorder - rightBorder + "px");
               ele.css("left", e.pageX + "px");
             }
           } else if (rightJudge == true) {
-            if (e.pageX - leftPos - leftBorder - rightBorder >= 0) {
+            if (e.pageX - leftPos - leftBorder - rightBorder  > minWidth) {
               ele.width(e.pageX - leftPos - leftBorder - rightBorder + "px");
             }
           } else if (topJudge == true) {
-            if (bottomPos - e.pageY - topBorder - bottomBorder >= 0) {
+            if (bottomPos - e.pageY - topBorder - bottomBorder > minHeight) {
               ele.height(bottomPos - e.pageY - topBorder - bottomBorder + "px");
               ele.css("top", e.pageY + "px");
             }
           } else if (bottomJudge == true) {
-            if (e.pageY - topPos - topBorder - bottomBorder >= 0) {
+            if (e.pageY - topPos - topBorder - bottomBorder  > minHeight) {
               ele.height(e.pageY - topPos - topBorder - bottomBorder + "px");
             }
           } else if (insideJudge == true) {
@@ -529,7 +643,19 @@ function showDetails() {
     }
   });
 }
-
+/*
+函数名:getMinHeight 设置最小高度函数
+函数功能:设置每个可拖动的div的最小高度,但是不设置高度
+参数:无
+返回值:无
+*/
+function getMinHeight(){
+  var ele = $("#myDiv");
+  var headerHeight = ele.find(".div-header").height();
+  var maintianHeight = ele.find("#staff-info-miantain-container").height() + 25;
+  var minHeight = headerHeight + maintianHeight;
+  ele.css("min-height", minHeight + "px");
+}
 /*
 函数名:setMinHeight 设置最小高度函数
 函数功能:设置每个可拖动的div的最小高度
@@ -704,7 +830,29 @@ function writeIntoPage() {
     async: true
   });
 }
+//获取保存的坐标数据
+function getTheModulePos(){
+  $(function(){
+  $.ajax({  
+        url:'php/get_the_module_pos.php',
+        data:{
+          
+        },  
+        type:'get',  
+        cache:false,  
+        dataType:'json',  
+        success:function(data) {
+          var allDragableDiv = $(".myDiv");
+          $(".myDiv").css("width",data.module_width+"px");
+          $(".myDiv").css("height",data.module_height+"px");
+          $(".myDiv").css("left",data.module_x+"px");
+          $(".myDiv").css("top",data.module_y+"px");
+        }
+    })
 
+  })
+
+}
 /*
 当文档加载完成后执行(执行顺序从上之下同注释)
 执行功能:
@@ -713,7 +861,9 @@ function writeIntoPage() {
 */
 
 $(function() {
+  
   writeIntoPage();
+  getTheModulePos();
 
   $(".fa-lock").click(function() {
     var allDragableDiv = $(".myDiv");
@@ -726,13 +876,41 @@ $(function() {
     curInfo[parentId] = 0;
     faLock.toggleClass("fa-unlock");
     if (faLock.hasClass("fa-unlock")) {
-      curInfo[parentId] = 0;
+        curInfo[parentId] = 0;
     } else {
-      curInfo[parentId] = 1;
-      $(".myDiv").css("cursor", "default");
+        curInfo[parentId] = 1;
+        $(".myDiv").css("cursor", "default");
+        var info = new Array();
+        info[0] = parseInt(allDragableDiv.css("left"));
+        info[1] = parseInt(allDragableDiv.css("top"));
+        info[2] = parseInt(allDragableDiv.css("width"));
+        info[3] = parseInt(allDragableDiv.css("height"));
+        console.log(info);
+        $.ajax({
+          url:'php/save_the_module_pos.php',
+          data:{
+            'info':info
+          },  
+          type:'post',  
+          cache:false,  
+          dataType:'json',  
+          success:function(data) {
+            if(data=="ok"){
+              console.log("记录成功");
+            }
+            else{
+               console.log("记录出错");
+            }
+          }
+       })
     }
     $.each(allDragableDiv, function() {
       dragAble($(this));
     });
   });
+
+
+
+
+
 });
