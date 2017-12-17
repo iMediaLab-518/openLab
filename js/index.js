@@ -300,7 +300,7 @@ function dragAble(ele) {
         if (isMouseDown) {
           eleWidthChange(ele);
 
-          getMinHeight();
+
           var minHeight = parseInt(ele.css("min-height")) - leftBorder - rightBorder;
           var minWidth = parseInt(ele.css("min-width")) - topBorder - bottomBorder;
           console.log(minHeight,parseInt(ele.height()));
@@ -863,6 +863,7 @@ function getTheModulePos(){
 $(function() {
   
   writeIntoPage();
+  getMinHeight();
   getTheModulePos();
 
   $(".fa-lock").click(function() {
