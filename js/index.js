@@ -3,7 +3,7 @@ var curInfo = {}; //存放目前页面全局变量
 var data = {}; //存放从数据库获得的数据
 curInfo.curPage = 1; //当前页面为1
 curInfo.pageCapacity = 10; //当前页面容量为10
-curInfo.tableType = "small"; //当前页面类型为最小的表格
+curInfo.tableType = "middle"; //当前页面类型为最小的表格
 curInfo.isLoad = 0; //是否已经从数据库获得数据
 
 /*
@@ -108,7 +108,6 @@ function dragAble(ele) {
         var topPos = ele.offset().top;
         var bottomPos = topPos + ele.height() + topBorder + bottomBorder;
         //需要进行修改，锁定的时候cursor不改变
-        if ($(".myDiv .div-header .fa-lock").hasClass("fa-unlock")) {
           if (
             leftPos - 5 <= e.pageX &&
             e.pageX <= leftPos + 5 &&
@@ -296,15 +295,14 @@ function dragAble(ele) {
               rightBottomJudge = false;
             }
           }
-        }
         if (isMouseDown) {
           eleWidthChange(ele);
 
 
           var minHeight = parseInt(ele.css("min-height")) - leftBorder - rightBorder;
           var minWidth = parseInt(ele.css("min-width")) - topBorder - bottomBorder;
-          console.log(minHeight,parseInt(ele.height()));
-          console.log(parseInt(ele.width()),minWidth);
+          //console.log(minHeight,parseInt(ele.height()));
+         // console.log(parseInt(ele.width()),minWidth);
 
           if (leftTopJudge == true) {
             if (rightPos - e.pageX - leftBorder - rightBorder  > minWidth) {
@@ -394,95 +392,55 @@ function dragAble(ele) {
 function eleWidthChange(ele) {
   var eleWidth = ele.width();
   var tr = $("#example_wrapper tr");
-  var infoCardContainer = ele.find(".infoCardContainer");
-  if (curInfo.tableType == "big") {
-    if (eleWidth < 810) {
-      $.each(tr, function() {
-        $(this)
-          .find("th")
-          .eq(4)
-          .hide();
-        $(this)
-          .find("td")
-          .eq(4)
-          .hide();
-      });
-    }
-    if (eleWidth < 620) {
-      $.each(tr, function() {
-        $(this)
-          .find("th")
-          .eq(6)
-          .hide();
-        $(this)
-          .find("td")
-          .eq(6)
-          .hide();
-      });
-    }
-    if (eleWidth < 520) {
+  var middleTable = $("#middle-table");
+  if (curInfo.tableType == "big"){
+    if (eleWidth < 785) {
       curInfo.tableType = "middle";
-      if ($("#middle-table").children().length == 0) {
+      if (middleTable.children().length == 0) {
         writeIntoPage();
-        $(".infoCardContainer").css("height", "345px");
-        $("#myDiv").css("height", "448px");
-        $("#myDiv").css("min-height", "448px");
       } else {
         $("#staff-info-miantain-container").hide();
-        $("#middle-table").show();
-        $("#myDiv").css("height", "448px");
-        $("#myDiv").css("min-height", "448px");
-      }
-    }
-    if (eleWidth >= 620) {
-      $.each(tr, function() {
-        $(this)
-          .find("th")
-          .eq(6)
-          .show();
-        $(this)
-          .find("td")
-          .eq(6)
-          .show();
-      });
-    }
-    if (eleWidth >= 810) {
-      $.each(tr, function() {
-        $(this)
-          .find("th")
-          .eq(4)
-          .show();
-        $(this)
-          .find("td")
-          .eq(4)
-          .show();
-      });
+        $(".not-for-big-table").show();
+      } 
+      ele.css("height","430px");
+      ele.css("min-Height","430px");
     }
   } else if (curInfo.tableType == "middle") {
-    if (eleWidth < 480 && curInfo.pageCapacity == 10) {
-      $(".infoCardContainer").css("width", "95%");
+    if (eleWidth < 760 && curInfo.pageCapacity == 10) {
       curInfo.pageCapacity = 8;
+      middleTable.css("width","96%");
       setPagination();
       writeIntoPage();
     }
-    if (eleWidth < 410) {
+    if (eleWidth < 626 && curInfo.pageCapacity == 8) {
+      curInfo.pageCapacity = 6;
+      middleTable.css("width","94%");
+      setPagination();
+      writeIntoPage();
+    }
+    if (eleWidth < 480) {
       curInfo.pageCapacity = 10;
       curInfo.tableType = "small";
-      $(".infoCardContainer").css("height", "160px");
-      $("#myDiv").css("height", "262px");
-      $("#myDiv").css("min-height", "262px");
+      ele.css("height", "282px");
+      ele.css("min-height", "282px");
       setPagination();
       writeIntoPage();
     }
-    if (eleWidth >= 480 && curInfo.pageCapacity == 8) {
-      $(".infoCardContainer").css("width", "100%");
+    if (eleWidth >= 636 && curInfo.pageCapacity == 6){
+      curInfo.pageCapacity = 8;
+      middleTable.css("width","96%");
+      setPagination();
+      writeIntoPage();
+    }
+    if (eleWidth >= 770 && curInfo.pageCapacity == 8) {
       curInfo.pageCapacity = 10;
+      middleTable.css("width","100%");
       setPagination();
       writeIntoPage();
     }
-    if (eleWidth >= 520) {
+    if (eleWidth >= 785) {
       curInfo.tableType = "big";
-      $("#middle-table").hide();
+      $(".not-for-big-table").hide();
       if ($("#example tbody").children().length == 0) {
         writeIntoPage();
       }
@@ -491,64 +449,42 @@ function eleWidthChange(ele) {
     }
     registEventForPagination(ele);
   } else {
-    if (eleWidth <= 389 && curInfo.pageCapacity == 10) {
-      $(".infoCardContainer").css("width", "95%");
+    if (eleWidth <= 430 && curInfo.pageCapacity == 10) {
+      middleTable.css("width", "90%");
       curInfo.pageCapacity = 8;
       setPagination();
       writeIntoPage();
     }
-    if (eleWidth < 320) {
-      curInfo.pageCapacity = 6;
-      $(".infoCardContainer").css("width", "92.5%");
-      setPagination();
-      writeIntoPage();
-    }
-    if (eleWidth >= 320 && curInfo.pageCapacity == 6) {
-      $(".infoCardContainer").css("width", "95%");
-      curInfo.pageCapacity = 8;
-      setPagination();
-      writeIntoPage();
-    }
-    if (eleWidth > 389 && curInfo.pageCapacity == 8) {
-      $(".infoCardContainer").css("width", "100%");
+    if (eleWidth > 435 && curInfo.pageCapacity == 8) {
+      middleTable.css("width", "100%");
       curInfo.pageCapacity = 10;
       setPagination();
       writeIntoPage();
     }
-    if (eleWidth > 410) {
+    if (eleWidth > 480) {
       curInfo.tableType = "middle";
       curInfo.pageCapacity = 8;
       setPagination();
       writeIntoPage();
-      $(".infoCardContainer").css("height", "345px");
-      $("#myDiv").css("height", "448px");
-      $("#myDiv").css("min-height", "448px");
+      ele.css("height", "440px");
+      ele.css("min-height", "440px");
     }
     registEventForPagination(ele);
   }
 }
 
 /*
-函数名:registEventPagination
+函数名:registEventForPagination
 函数功能:为新插入的分页栏注册跳转页面事件
-参数:任意包含分页栏的祖先div
+参数:无
 返回值:无
 */
-function registEventForPagination(ele) {
-  var curDiv = ele;
-  var pageCircles = curDiv.find(".Pagination-container").children();
-  var pageCircleChange = function() {
-    pageCircles.attr("class", "fa fa-circle-thin");
-    pageCircles
-      .filter(function() {
-        return $(this).attr("data-page") == curInfo.curPage;
-      })
-      .attr("class", "fa fa-circle");
-  };
-  $(".Pagination-container i").click(function() {
+function registEventForPagination() {
+  var pageCircles = $(".pagination i");
+  pageCircles.click(function() {
     curInfo.curPage = $(this).attr("data-page");
-    pageCircles.attr("class", "fa fa-circle-thin");
-    pageCircleChange();
+    pageCircles.attr("class","fa fa-circle-thin");
+    $(this).attr("class","fa fa-circle");
     writeIntoPage();
   });
 }
@@ -599,40 +535,41 @@ function savePosistionToArray(ele) {
 function showDetails() {
   var count = 0;
   var hoverWindowIsExist = 0;
-  $(".img-container img").hover(function(event) {
-    count++;
-    if (count % 2 == 1) {
-      if (hoverWindowIsExist) {
-        $(".hoverWindow").remove();
-      }
+  $(".condensed-info i").hover(function(event) {
+      $(".hover-window").hide();
       hoverWindowIsExist = 1;
-      var img = $(this);
-      var container = img.parent();
-      var staff_name = container.next().text();
-      var staff_role_name = img.attr("data-role-name");
-      var staff_create_time = img.attr("data-create-time");
-      var positionNumber = img.attr("data-position-number");
+      var icon = $(this);
+      var container = icon.parent();
+      var childCount = container.children().length;
+      var staff_name = icon.next().next().text();
+      var staff_role_name = icon.attr("data-role-name");
+      var staff_create_time = icon.attr("data-create-time");
+      var staff_gender = icon.attr("data-gender");
+      var positionNumber = icon.attr("data-position-number");
       var myDiv = $("#myDiv");
       var divX = myDiv.offset().left;
       var divY = myDiv.offset().top;
       var positionNumberForX =
         positionNumber >= curInfo.pageCapacity / 2
-          ? positionNumber - 5
+          ? positionNumber - curInfo.pageCapacity / 2
           : positionNumber;
-      var hoverWindowX = divX + positionNumberForX * 70;
-      var hoverWindowY = divY + 70 + Math.floor(positionNumber / 5) * 70;
-      var html2 = "";
-      html2 += "<div class='infoCard hoverWindow'>";
-      html2 += "<div class='avatar'>";
-      html2 +=
-        "<img src='img/avatar1.jpg' alt='用户头像' title='点击头像查看详细信息'>";
-      html2 += "</div><span><b>" + staff_name + "</b></span>";
-      html2 += "<span>员工类型</span>";
-      html2 += "<span><b>" + staff_role_name + "</b></span>";
-      html2 += "<span>入职时间</span>";
-      html2 += "<span><b>" + staff_create_time + "</b></span></div>";
-      container.append(html2);
-      var hoverWindow = img.next();
+      var hoverWindowX = divX + positionNumberForX * 80 - 30;
+      var hoverWindowY = divY + 50 + Math.floor(positionNumber / 5) * 100;
+      if(childCount == 3){
+        var html2 = "";
+        html2 += "<div class='info-card hover-window'>";
+            html2 += "<p><span class='staff-name'><b>" + staff_name + "</b></span></p>";
+            html2 += "<p>";
+            html2 += "<span class='join-time-title'>入职时间</span><br>";
+            html2 += "<span class='join-time'><b>" + staff_create_time + "</b></span>";    
+            html2 += "</p><p><i class='fa fa-user " + 
+            (staff_gender == "男" ? "male-color" : "female-color") + "'></i>"
+            html2 += "<span class='staff-type'> " + staff_role_name + "</span> </p>";
+            html2 += "<div class='staff-status leave-color'>离职";
+            html2 += "</div></div>";
+            container.append(html2);
+      }
+      var hoverWindow = icon.next().next().next();
       hoverWindow
         .css({ left: hoverWindowX + "px", top: hoverWindowY + "px" })
         .show();
@@ -640,7 +577,6 @@ function showDetails() {
         $(this).hide();
         hoverWindowIsExist = 0;
       });
-    }
   });
 }
 /*
@@ -665,7 +601,7 @@ function getMinHeight(){
 function setMinHeight() {
   var ele = $("#myDiv");
   var headerHeight = ele.find(".div-header").height();
-  var maintianHeight = ele.find("#staff-info-miantain-container").height() + 25;
+  var maintianHeight = ele.find("#staff-info-miantain-container").height() + 40;
   var minHeight = headerHeight + maintianHeight;
   ele.css("height", minHeight + "px");
   ele.css("min-height", minHeight + "px");
@@ -688,7 +624,7 @@ function setPagination() {
     } else {
       html += "<i data-page='" + (i + 1) + "' class='fa fa-circle-thin'></i>";
     }
-    $(".Pagination-container").html(html);
+    $(".pagination").html(html);
   }
 }
 
@@ -759,7 +695,7 @@ function writeIntoPage() {
     $("#example_filter input")
       .attr("type", "text")
       .addClass("remove-default-style")
-      .addClass("search-input")
+      .addClass("search-input-for-big")
       .attr("placeholder", "  input something");
     $("#example").addClass("border-bottom-and-top");
     setMinHeight();
@@ -772,24 +708,15 @@ function writeIntoPage() {
     $("#example_paginate").click(function() {
       setMinHeight();
     });
+    $(".not-for-big-table").hide();
   }
   if (curInfo.tableType == "middle" || curInfo.tableType == "small") {
     $("#staff-info-miantain-container").hide();
+    $(".not-for-big-table").show();
     var html = "";
     if (curInfo.isLoad == 1) {
       curInfo.isLoad++;
-      html +=
-        "<div class='search-bar-container'>" +
-        "<span>搜索:</span>" +
-        "<input type='text' placeholder='  input something' class='search-bar'>" +
-        "<i class='fa fa-trash fa-lg'></i>" +
-        "<i class='fa fa-plus-circle fa-lg'></i></div>" +
-        "</div><div class='infoCardContainer'></div></div>" +
-        "<div class='Pagination-container'>";
-      html += "</div>";
-      $("#middle-table").html(html);
       setPagination();
-      registEventForPagination($("#middle-table"));
     }
     var html2 = "";
     var pageStart = (curInfo.curPage - 1) * curInfo.pageCapacity;
@@ -797,30 +724,31 @@ function writeIntoPage() {
     $.each(data, function(index, value) {
       if (index >= pageStart && index < pageEnd) {
         if (curInfo.tableType == "middle") {
-          html2 += "<div class='infoCard'>";
-          html2 += "<div class='avatar'>";
-          html2 +=
-            "<img src='img/avatar1.jpg' alt='用户头像' title='点击头像查看详细信息'>";
-          html2 += "</div><span><b>" + value.staff_name + "</b></span>";
-          html2 += "<span>员工类型</span>";
-          html2 += "<span><b>" + value.staff_role_name + "</b></span>";
-          html2 += "<span>入职时间</span>";
-          html2 += "<span><b>" + value.staff_create_time + "</b></span></div>";
+          html2 += "<div class='info-card'>";
+          html2 += "<p><span class='staff-name'><b>" + value.staff_name + "</b></span></p>";
+          html2 += "<p>";
+          html2 += "<span class='join-time-title'>入职时间</span><br>";
+          html2 += "<span class='join-time'><b>" + value.staff_create_time + "</b></span>";    
+          html2 += "</p><p><i class='fa fa-user " + 
+          (value.staff_gender == "男" ? "male-color" : "female-color") + "'></i>"
+          html2 += "<span class='staff-type'> " + value.staff_role_name + "</span> </p>";
+          html2 += "<div class='staff-status leave-color'>离职";
+          html2 += "</div></div>";
         } else {
-          html2 += "<div class='img-container'>";
-          html2 += "<div>";
-          html2 +=
-            "<img src='img/tubiao1.jpg' alt='放置鼠标' data-role-name='" +
-            value.staff_role_name;
-          html2 += "' data-position-number='" + (index - pageStart);
-          html2 += "' data-create-time='" + value.staff_create_time + "'>";
-          html2 += "</div>";
-          html2 += "<span>" + value.staff_name + "</span>";
-          html2 += "</div>";
+          html2 += "<div class='condensed-info float-left'>";
+          html2 += "<i class='fa fa-user fa-4x " +
+          (value.staff_gender == "男" ? "male-color" : "female-color") + "'";
+          html2 += "data-create-time='" + value.staff_create_time + "' ";
+          html2 += "data-gender='" + value.staff_gender + "' ";
+          html2 += "data-role-name='" + value.staff_role_name + "'"; 
+          html2 += "data-position-number='" + (index - pageStart ) + "'"; 
+          html2 += "></i><br>";
+          html2 += "<span class='staff-name'>" + value.staff_name + "</span></div>";
         }
       }
     });
-    $(".infoCardContainer").html(html2);
+    $("#middle-table").html(html2);
+    registEventForPagination();
     if (curInfo.tableType == "small") {
       showDetails();
     }
@@ -864,9 +792,10 @@ $(function() {
   
   writeIntoPage();
   getMinHeight();
-  getTheModulePos();
+  
+  //getTheModulePos();
 
-  $(".fa-lock").click(function() {
+ $(".fa-send").click(function() {
     var allDragableDiv = $(".myDiv");
     var faLock = $(this);
     var dragableParentDiv = $(this)
@@ -874,13 +803,12 @@ $(function() {
       .parent()
       .parent();
     var parentId = dragableParentDiv.attr("id");
-    curInfo[parentId] = 0;
-    faLock.toggleClass("fa-unlock");
-    if (faLock.hasClass("fa-unlock")) {
+    faLock.toggleClass("fa-send-o").toggleClass("fa-send");
+    if (faLock.hasClass("fa-send-o")) {
         curInfo[parentId] = 0;
     } else {
         curInfo[parentId] = 1;
-        $(".myDiv").css("cursor", "default");
+        /* $(".myDiv").css("cursor", "default");
         var info = new Array();
         info[0] = parseInt(allDragableDiv.css("left"));
         info[1] = parseInt(allDragableDiv.css("top"));
@@ -903,7 +831,7 @@ $(function() {
                console.log("记录出错");
             }
           }
-       })
+       }) */
     }
     $.each(allDragableDiv, function() {
       dragAble($(this));
