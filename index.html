@@ -18,17 +18,22 @@
 
 <body>
     <div id="myDiv" class="myDiv largeDiv">
-        <div class="div-header padding-10px">
+        <div class="padding-20px remove-padding-bottom">
             <span>
-                <i class="fa fa-user float-left"></i>
-                <span class="padding-left-10px top-move-3px">员工信息</span>
+                <i class="fa fa-users fa-lg float-left common-color"></i>
+                <span class="padding-left-10px top-move-3px font-size-15px">员工信息</span>
             </span>
+            
             <span>
-                <i class="fa fa-ellipsis-v float-right padding-right-10px"></i>
+                <i class="fa fa-clone fa-lg float-right common-color"></i>
             </span>
             <a>
-                <i class="fa fa-lock float-right padding-right-10px"></i>
+                <i class="fa fa-send fa-lg float-right padding-right-10px common-color"></i>
             </a>
+            <a>
+                <i class="fa fa-search fa-lg float-right padding-right-20px common-color z-index-20 not-for-big-table"></i>
+            </a>
+            <input type="text" class="float-right search-input not-for-big-table">
 
         </div>
         <div id="staff-info-miantain-container">
@@ -47,7 +52,11 @@
                 </thead>
             </table>
         </div>
-        <div id="middle-table"></div>
+        <div id="middle-table" class="clear-float not-for-big-table">   
+        </div>
+        <div class="pagination not-for-big-table">
+            <i class="fa fa-circle"></i>
+        </div>
     </div>
 </body>
 <script src="lib/jquery.js"></script>
