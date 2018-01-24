@@ -1,160 +1,201 @@
-
-
 /* index页面css */
 
 body {
   height: 1000px;
 }
-#myDiv {
-  background-color: #f9f9f9;
+#staff-info {
   position: absolute;
-  border: 1px solid #f2f2f2;
-  border-radius: 5px;
-  box-shadow:0 1px 3px #BCBCBC;
-  width: 790px;
-  min-width: 360px;
   left: 50px;
   top: 50px;
-}
-.search-input{
-  outline: none;
-  border: none;
+  width: 790px;
+  min-width: 360px;
+  background-color: #f9f9f9;
+  border: 1px solid #f2f2f2;
   border-radius: 5px;
-  box-shadow: 0px 1px 2px #868686;
-  width:40%;
-  
-  height: 26px;
+  box-shadow: 0 1px 3px #bcbcbc;
+}
+#equipment-info {
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  width: 790px;
+  min-width: 360px;
+  background-color: #f9f9f9;
+  border: 1px solid #f2f2f2;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px #bcbcbc;
+}
+#warning-info {
+  position: absolute;
+  left: 200px;
+  top: 200px;
+  width: 790px;
+  min-width: 360px;
+  background-color: #f9f9f9;
+  border: 1px solid #f2f2f2;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px #bcbcbc;
+}
+
+.search-input {
   position: relative;
-  bottom:7px;
-  left:25px;
-  background:rgba(255, 255, 255, 0)
-}
-.search-input-for-big{
+  bottom: 7px;
+  left: 25px;
+  width: 40%;
+  height: 26px;
   outline: none;
   border: none;
   border-radius: 5px;
   box-shadow: 0px 1px 2px #868686;
-  width:50%;
+  background: rgba(255, 255, 255, 0);
+}
+.search-input-for-big {
+  width: 50%;
   min-width: 276px;
   height: 26px;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0px 1px 2px #868686;
 }
+
 .info-card {
   float: left;
   background-color: #fff;
   width: 130px;
   height: 160px;
   text-align: center;
-  padding-top:18px;
-  margin:20px 0 0px 20px;
-  box-shadow: 0 1px 3px #BCBCBC;
+  padding-top: 18px;
+  margin: 20px 0 0px 20px;
+  box-shadow: 0 1px 3px #bcbcbc;
 }
-.staff-name{
-  font-size:20px;
+.equipment-info-card {
+  float: left;
+  background-color: #fff;
+  width: 130px;
+  height: 150px;
+  text-align: center;
+  padding-top: 10px;
+  margin: 20px 0 0px 20px;
+  box-shadow: 0 1px 3px #bcbcbc;
 }
-.join-time-title{
-  font-size:13px;
+.staff-name {
+  font-size: 20px;
 }
-.join-time{
+.join-time-title {
+  font-size: 13px;
+}
+.join-time {
   font-size: 12px;
   position: relative;
   bottom: 4px;
 }
-.staff-status{
-  padding:5px;
-  color:#fff;
+.staff-status {
+  padding: 5px;
+  color: #fff;
   position: relative;
   bottom: 7px;
 }
-.leave-color{
+.leave-color {
   background-color: #da4548;
 }
-.working-color{
+.working-color {
   background-color: #59a7a7;
 }
-.vocation-color{
+.vocation-color {
   background-color: #ccc;
 }
-.pagination{
+.pagination {
   width: 100%;
   text-align: center;
   position: relative;
- 
 }
-.pagination i{
+.pagination i {
   font-size: 2px;
   color: #ccc;
   margin-right: 10px;
 }
-i.fa:hover{
+i.fa:hover {
   cursor: pointer;
 }
-.condensed-info{
+.condensed-info {
   text-align: center;
-  margin:20px 0 0 20px;
-  width:60px;
+  margin: 20px 0 0 20px;
+  width: 60px;
+}
+.equipment-bind-icon{
+  position: relative;
+  left:50px;
+  top:-5px;
 }
 
+/* index页面css END */
 
 /* 通用css */
 
 /* 颜色css */
-.common-color{
-  color: #56A7a7;
+.common-color {
+  color: #56a7a7;
 }
-.female-color{
-  color:#f47382;
+.female-color {
+  color: #f47382;
 }
-.male-color{
-  color: #5782BB;
+.male-color {
+  color: #5782bb;
 }
 
 /* 间距相关css */
 .padding-10px {
   padding: 10px;
 }
-.padding-20px{
+.padding-20px {
   padding: 20px;
 }
-.padding-top-20px{
+.padding-top-20px {
   padding-top: 20px;
 }
-.remove-padding-bottom{
+.remove-padding-top{
+  padding-top: 0px;
+}
+.remove-padding-bottom {
   padding-bottom: 0px;
 }
-.margin-left-20px{
+.margin-left-20px {
   margin-left: 20px;
 }
-.margin-right-20px{
+.margin-right-20px {
   margin-right: 20px;
 }
-.margin-top-20px{
+.margin-top-20px {
   margin-top: 20px;
 }
+.margin-bottom-10px{
+  margin-bottom: 10px;
+}
+.margin-bottom-20px{
+  margin-bottom: 20px;
+}
 
-
-.z-index-20{
- z-index: 20;
+.z-index-20 {
+  z-index: 20;
 }
 
 /* 字体css */
-.font-size-20px{
-  font-size:20px;
+.font-size-20px {
+  font-size: 20px;
 }
-.font-size-15px{
+.font-size-15px {
   font-size: 15px;
 }
-.clear-float{
+.font-size-13px{
+  font-size: 13px;
+}
+.font-size-10px{
+  font-size: 10px;
+}
+.clear-float {
   float: left;
 }
-
-
-
-
-
-
-
-
-
 
 /* 通用class定义 */
 .float-left {
@@ -169,7 +210,7 @@ i.fa:hover{
 .padding-right-10px {
   padding-right: 10px;
 }
-.padding-right-20px{
+.padding-right-20px {
   padding-right: 20px;
 }
 .top-move-3px {
@@ -180,9 +221,9 @@ i.fa:hover{
   position: relative;
   top: -20px;
 }
-.hover-window{
-  position: fixed;  
-  z-index: 10;  
-  background-color: rgba(255,255,255,1);   
-  display: none;   /* 默认隐藏 */  
+.hover-window {
+  position: fixed;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 1);
+  display: none; /* 默认隐藏 */
 }

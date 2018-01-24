@@ -17,13 +17,13 @@
 </head>
 
 <body>
-    <div id="myDiv" class="myDiv largeDiv">
-        <div class="padding-20px remove-padding-bottom">
+    <div id="staff-info" class="myDiv">
+        <div class="padding-20px remove-padding-bottom div-header">
             <span>
                 <i class="fa fa-users fa-lg float-left common-color"></i>
                 <span class="padding-left-10px top-move-3px font-size-15px">员工信息</span>
             </span>
-            
+
             <span>
                 <i class="fa fa-clone fa-lg float-right common-color"></i>
             </span>
@@ -34,10 +34,9 @@
                 <i class="fa fa-search fa-lg float-right padding-right-20px common-color z-index-20 not-for-big-table"></i>
             </a>
             <input type="text" class="float-right search-input not-for-big-table">
-
         </div>
-        <div id="staff-info-miantain-container">
-            <table id="example" class="display" cellspacing="0" width="100%">
+        <div id="staff-info-big-table-wrapper" class="big-table-wrapper">
+            <table id="staff-info-big-table" class="display" cellspacing="0" width="100%">
                 <thead>
                     <tr>
                         <th>工号</th>
@@ -52,7 +51,122 @@
                 </thead>
             </table>
         </div>
-        <div id="middle-table" class="clear-float not-for-big-table">   
+        <div id="staff-info-middle-table" class="clear-float not-for-big-table">
+
+        </div>
+        <div class="pagination not-for-big-table">
+            <i class="fa fa-circle"></i>
+        </div>
+    </div>
+    <div id="equipment-info" class="myDiv">
+        <div class="padding-20px remove-padding-bottom div-header">
+            <span>
+                <i class="fa fa-cog fa-lg float-left common-color"></i>
+                <span class="padding-left-10px top-move-3px font-size-15px">设备信息</span>
+            </span>
+
+            <span>
+                <i class="fa fa-clone fa-lg float-right common-color"></i>
+            </span>
+            <a>
+                <i class="fa fa-send fa-lg float-right padding-right-10px common-color"></i>
+            </a>
+            <a>
+                <i class="fa fa-search fa-lg float-right padding-right-20px common-color z-index-20 not-for-big-table"></i>
+            </a>
+            <input type="text" class="float-right search-input not-for-big-table">
+
+        </div>
+        <div id="equipment-info-big-table-wrapper" class="big-table-wrapper">
+            <table id="equipment-info-big-table" class="display" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>楼号</th>
+                        <th>房间号</th>
+                        <th>床号</th>
+                        <th>设备</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+            </table>
+            </div>
+        <div id="equipment-info-middle-table" class="clear-float not-for-big-table middle-table">
+            <div class='equipment-info-card'>
+                <i class="fa fa-link fa-lg equipment-bind-icon common-color"></i>
+                <p>
+                    <span class='font-size-13px'>
+                        <b>1号楼1层</b><br>
+                        <b>101房1床</b>
+                    </span>
+                </p>
+                <p>
+                    <span class='join-time-title'>使用时间</span>
+                    <br>
+                    <span class='join-time'>
+                        <b>2017-09-11</b>
+                    </span>
+                </p>
+                <div class='staff-status leave-color'>
+                    异常
+                </div>
+            </div>
+        </div>
+        <div class="pagination not-for-big-table">
+            <i class="fa fa-circle"></i>
+        </div>
+    </div>
+    <div id="warning-info" class="myDiv">
+        <div class="padding-20px remove-padding-bottom div-header">
+            <span>
+                <i class="fa fa-heartbeat fa-lg float-left common-color"></i>
+                <span class="padding-left-10px top-move-3px font-size-15px">设备信息</span>
+            </span>
+
+            <span>
+                <i class="fa fa-clone fa-lg float-right common-color"></i>
+            </span>
+            <a>
+                <i class="fa fa-send fa-lg float-right padding-right-10px common-color"></i>
+            </a>
+            <a>
+                <i class="fa fa-search fa-lg float-right padding-right-20px common-color z-index-20 not-for-big-table"></i>
+            </a>
+            <input type="text" class="float-right search-input not-for-big-table">
+
+        </div>
+        <div id="warning-info-big-table-wrapper" class="big-table-wrapper">
+        <table id="warning-info-big-table" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>姓名</th>
+                    <th>房间位置</th>
+                    <th>症状</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+        <div id="warning-info-middle-table" class="clear-float not-for-big-table middle-table">
+            <div class='equipment-info-card'>
+                <i class="fa fa-tag equipment-bind-icon common-color"></i>
+                <p>
+                    <span class='font-size-13px'>
+                        1号楼1层
+                        101房1床
+                    </span>
+                </p>
+                <p class="margin-bottom-20px">
+                    <span class='font-size-20px'><b>懒洋洋</b></span>
+                    <br>
+                    <span class='join-time'>
+                        <b>高血压 糖尿病</b>
+                    </span>
+                </p>
+                <div class='staff-status leave-color'>
+                    异常
+                </div>
+            </div>
         </div>
         <div class="pagination not-for-big-table">
             <i class="fa fa-circle"></i>
