@@ -1,26 +1,28 @@
-//全局变量定义
-var curInfo = {}; //存放目前页面全局变量
-curInfo["staff-info"] = {};
-curInfo["equipment-info"] = {};
-curInfo["warning-info"] = {};
-curInfo["staff-info"].curPage = 1; //当前页面为1
-curInfo["staff-info"].pageCapacity = 10; //当前页面容量为10
-curInfo["staff-info"].tableType = "middle"; //当前页面类型为最小的表格
-curInfo["staff-info"].isLoad = 0; //是否已经从数据库获得数据
-curInfo["staff-info"].isLock = 0; //是否已经从数据库获得数据
-curInfo["staff-info"].data = {};
-curInfo["equipment-info"].curPage = 1; //当前页面为1
-curInfo["equipment-info"].pageCapacity = 10; //当前页面容量为10
-curInfo["equipment-info"].tableType = "middle"; //当前页面类型为最小的表格
-curInfo["equipment-info"].isLoad = 0; //是否已经从数据库获得数据
-curInfo["equipment-info"].isLock = 1; //是否已经从数据库获得数据
-curInfo["equipment-info"].data = {};
-curInfo["warning-info"].curPage = 1; //当前页面为1
-curInfo["warning-info"].pageCapacity = 10; //当前页面容量为10
-curInfo["warning-info"].tableType = "middle"; //当前页面类型为最小的表格
-curInfo["warning-info"].isLoad = 0; //是否已经从数据库获得数据
-curInfo["warning-info"].isLock = 0; //是否已经从数据库获得数据
-curInfo["warning-info"].data = {};
+/* 全局对象定义 */
+var curInfo = {}; //此页面的唯一全局变量
+
+/* 构造函数定义 */
+
+/*
+函数名:InfoObject 信息对象
+功能:创建一个信息对象
+参数:无
+返回值:信息对象info
+*/
+function InfoObject() {
+  var info = {
+    curPage: 1, //当前页
+    pageCapacity: 10, //页容量(中小表格适用6/8/10)
+    tableType: "big", //表格类型(大中小)
+    isLoad: 0, //是否已经从后台加载数据
+    isLock: 0, //是否被锁定(可以拖动和改变大小)
+    data: {} //存放后台加载的数据
+  };
+  return info;
+}
+
+/* 函数定义 */
+
 /*
 函数名:adsorbent 吸附函数
 功能:当div超过或靠近页面边缘的时候自动吸附在页面边缘
@@ -59,6 +61,22 @@ function adsorbent(ele) {
   }
   if (bottomPosition >= gapJudgeScopeBottom) {
     ele.css("top", adsorbBottomPosition + "px");
+  }
+}
+
+/*
+函数名:chooseWriteIntoPage 选择写入页面函数
+功能:根据传入的Id选择正确的写入函数
+参数:id
+返回值:无
+*/
+function chooseWriteIntoPage(id) {
+  if (id == "staff-info") {
+    writeIntoPageForStaffInfo();
+  } else if (id == "equipment-info") {
+    writeIntoPageForEquipmentInfo();
+  } else {
+    writeIntoPageForWarningInfo();
   }
 }
 
@@ -397,15 +415,7 @@ function dragAble(ele) {
     return false;
   }
 }
-function chooseWriteIntoPage(id) {
-  if (id == "staff-info") {
-    writeIntoPageForStaffInfo();
-  } else if (id == "equipment-info") {
-    writeIntoPageForEquipmentInfo();
-  } else {
-    writeIntoPageForWarningInfo();
-  }
-}
+
 /*
 函数名:eleWidthChange
 函数功能:当宽度到达某个临界值是隐藏或显示某列
@@ -421,8 +431,6 @@ function eleWidthChange(ele) {
     if (eleWidth < 785) {
       infoObject.tableType = "middle";
       chooseWriteIntoPage(ele_id);
-      ele.css("height", "430px");
-      ele.css("min-Height", "430px");
     }
   } else if (infoObject.tableType == "middle") {
     if (eleWidth < 760 && infoObject.pageCapacity == 10) {
@@ -440,12 +448,7 @@ function eleWidthChange(ele) {
     if (eleWidth < 480) {
       infoObject.pageCapacity = 10;
       infoObject.tableType = "small";
-      ele.css("height", "282px");
-      ele.css("min-height", "282px");
-      if (ele_id == "equipment-info") {
-        ele.css("height", "302px");
-        ele.css("min-height", "302px");
-      }
+
       setPagination(ele);
       chooseWriteIntoPage(ele_id);
     }
@@ -469,7 +472,6 @@ function eleWidthChange(ele) {
       } else {
         chooseWriteIntoPage(ele_id);
       }
-      setMinHeight(ele);
     }
     registEventForPagination(ele);
   } else {
@@ -490,13 +492,70 @@ function eleWidthChange(ele) {
       infoObject.pageCapacity = 8;
       setPagination(ele);
       chooseWriteIntoPage(ele_id);
-      ele.css("height", "440px");
-      ele.css("min-height", "440px");
     }
     registEventForPagination(ele);
   }
 }
 
+/*
+函数名:firstLoad 初次载入
+函数功能:第一次载入的页面初始化
+参数:无
+返回值:无
+*/
+function firstLoad() {
+  //创建页面三个表格相关的信息对象
+  curInfo["staff-info"] = new InfoObject();
+  curInfo["equipment-info"] = new InfoObject();
+  curInfo["warning-info"] = new InfoObject();
+  //初次写入三个表格
+  writeIntoPageForEquipmentInfo();
+  writeIntoPageForStaffInfo();
+  writeIntoPageForWarningInfo();
+  //为页面的可拖动开关注册事件
+  $(".fa-send").click(function() {
+    var allDragableDiv = $(".myDiv");
+    var faLock = $(this);
+    var dragableParentDiv = faLock
+      .parent()
+      .parent()
+      .parent();
+    var parentId = dragableParentDiv.attr("id");
+    faLock.toggleClass("fa-send-o").toggleClass("fa-send");
+    if (faLock.hasClass("fa-send-o")) {
+      curInfo[parentId].isLock = 0;
+    } else {
+      curInfo[parentId].isLock = 1;
+      /* $(".myDiv").css("cursor", "default");
+        var info = new Array();
+        info[0] = parseInt(allDragableDiv.css("left"));
+        info[1] = parseInt(allDragableDiv.css("top"));
+        info[2] = parseInt(allDragableDiv.css("width"));
+        info[3] = parseInt(allDragableDiv.css("height"));
+        console.log(info);
+        $.ajax({
+          url:'php/save_the_module_pos.php',
+          data:{
+            'info':info
+          },  
+          type:'post',  
+          cache:false,  
+          dataType:'json',  
+          success:function(data) {
+            if(data=="ok"){
+              console.log("记录成功");
+            }
+            else{
+               console.log("记录出错");
+            }
+          }
+       }) */
+    }
+    $.each(allDragableDiv, function() {
+      dragAble($(this));
+    });
+  });
+}
 /*
 函数名:registEventForPagination
 函数功能:为新插入的分页栏注册跳转页面事件
@@ -552,7 +611,7 @@ function savePosistionToArray(ele) {
   }
 }
 
-/*
+/* 未完成
 函数名:showDetails
 功能:当鼠标悬停在小表格的头像上时使用悬浮窗显示详细信息
 参数:无
@@ -615,31 +674,6 @@ function showDetails() {
     });
   });
 }
-/*
-函数名:getMinHeight 设置最小高度函数
-函数功能:设置每个可拖动的div的最小高度,但是不设置高度
-参数:无
-返回值:无
-*/
-function getMinHeight(ele) {
-  var headerHeight = ele.find(".div-header").height();
-  var maintianHeight = ele.find("#staff-info-miantain-container").height() + 25;
-  var minHeight = headerHeight + maintianHeight;
-  ele.css("min-height", minHeight + "px");
-}
-/*
-函数名:setMinHeight ele设置最小高度函数
-函数功能:设置每个可拖动的div的最小高度
-参数:无
-返回值:无
-*/
-function setMinHeight(ele) {
-  var headerHeight = ele.find(".div-header").height();
-  var maintianHeight = ele.find(".big-table-wrapper").height() + 40;
-  var minHeight = headerHeight + maintianHeight;
-  ele.css("height", minHeight + "px");
-  ele.css("min-height", minHeight + "px");
-}
 
 /*
 函数名:setPagination
@@ -664,9 +698,9 @@ function setPagination(ele) {
   }
 }
 
-/*
-函数名:writeIntoPage
-函数功能:为当前页面的可拖动div写入数据(大中小三种表格)
+/* 
+函数名:writeIntoPageForStaffInfo
+函数功能:为当前页面的员工信息可拖动div写入数据(大中小三种表格)
 参数:无
 返回值:无
 */
@@ -736,13 +770,9 @@ function writeIntoPageForStaffInfo() {
       .addClass("search-input-for-big")
       .attr("placeholder", "  input something");
     $("#staff-info-big-table").addClass("border-bottom-and-top");
-    setMinHeight(ele);
-    $("select[name='staff-info-big-table_length']").change(function() {
-      setMinHeight(ele);
-    });
-    $("#staff-info-big-table_paginate").click(function() {
-      setMinHeight(ele);
-    });
+
+    $("select[name='staff-info-big-table_length']").change(function() {});
+    $("#staff-info-big-table_paginate").click(function() {});
     ele.find(".not-for-big-table").hide();
   }
   if (infoObject.tableType == "middle" || infoObject.tableType == "small") {
@@ -807,8 +837,15 @@ function writeIntoPageForStaffInfo() {
     async: true
   });
 }
+
+/*
+函数名:writeIntoPageForEquipmentInfo
+函数功能:为当前页面的设备信息可拖动div写入数据(大中小三种表格)
+参数:无
+返回值:无
+*/
 function writeIntoPageForEquipmentInfo() {
-  var ele = $("#staff-equipment");
+  var ele = $("#equipment-info");
   var infoObject = curInfo["equipment-info"];
   $.ajaxSetup({
     async: false
@@ -928,13 +965,9 @@ function writeIntoPageForEquipmentInfo() {
       .addClass("search-input-for-big")
       .attr("placeholder", "  input something");
     $("#equipment-info-big-table").addClass("border-bottom-and-top");
-    setMinHeight(ele);
-    $("select[name='equipment-info-big-table_length']").change(function() {
-      setMinHeight(ele);
-    });
-    $("#equipment-info-big-table_paginate").click(function() {
-      setMinHeight(ele);
-    });
+
+    $("select[name='equipment-info-big-table_length']").change(function() {});
+    $("#equipment-info-big-table_paginate").click(function() {});
     ele.find(".not-for-big-table").hide();
   }
   if (infoObject.tableType == "middle" || infoObject.tableType == "small") {
@@ -1010,6 +1043,13 @@ function writeIntoPageForEquipmentInfo() {
     async: true
   });
 }
+
+/*
+函数名:writeIntoPageForWarningInfo
+函数功能:为当前页面的预警信息可拖动div写入数据(大中小三种表格)
+参数:无
+返回值:无
+*/
 function writeIntoPageForWarningInfo() {
   var ele = $("#warning-info");
   var infoObject = curInfo["warning-info"];
@@ -1099,13 +1139,9 @@ function writeIntoPageForWarningInfo() {
       .addClass("search-input-for-big")
       .attr("placeholder", "  input something");
     $("#warning-info-big-table").addClass("border-bottom-and-top");
-    setMinHeight(ele);
-    $("select[name='warning-info-big-table_length']").change(function() {
-      setMinHeight(ele);
-    });
-    $("#warning-info-big-table_paginate").click(function() {
-      setMinHeight(ele);
-    });
+
+    $("select[name='warning-info-big-table_length']").change(function() {});
+    $("#warning-info-big-table_paginate").click(function() {});
     ele.find(".not-for-big-table").hide();
   }
   if (infoObject.tableType == "middle" || infoObject.tableType == "small") {
@@ -1128,14 +1164,14 @@ function writeIntoPageForWarningInfo() {
           html2 += "<span class='font-size-13px'>";
           html2 += value.position + "</span></p>";
           html2 += "<p class='margin-bottom-20px'>";
-          html2 += "<span class='font-size-20px'><b>" + value.name + "</b></span><br>";
+          html2 +=
+            "<span class='font-size-20px'><b>" + value.name + "</b></span><br>";
           html2 += "<span class='join-time'>";
           html2 += "<b>" + value.disease + "</b></span></p>";
           html2 += "<div class='staff-status leave-color'>异常</div></div>";
         } else {
           html2 += "<div class='condensed-info float-left'>";
-          html2 +=
-            "<i class='fa fa-line-chart fa-4x female-color' "
+          html2 += "<i class='fa fa-line-chart fa-4x female-color' ";
           html2 += "data-position='" + value.position + "' ";
           html2 += "data-disease='" + value.disease + "' ";
           html2 += "data-name='" + value.name + "'";
@@ -1176,61 +1212,7 @@ function getTheModulePos() {
   });
 }
 
-/*
-当文档加载完成后执行(执行顺序从上之下同注释)
-执行功能:
-初次写入数据到可拖动div
-点击Lock图标时锁定或解锁可拖动div
-*/
-
 $(function() {
-  writeIntoPageForEquipmentInfo();
-  writeIntoPageForStaffInfo();
-  writeIntoPageForWarningInfo();
-  //`getMinHeight();
-
+  firstLoad();
   //getTheModulePos();
-
-  $(".fa-send").click(function() {
-    var allDragableDiv = $(".myDiv");
-    var faLock = $(this);
-    var dragableParentDiv = $(this)
-      .parent()
-      .parent()
-      .parent();
-    var parentId = dragableParentDiv.attr("id");
-    faLock.toggleClass("fa-send-o").toggleClass("fa-send");
-    if (faLock.hasClass("fa-send-o")) {
-      curInfo[parentId].isLock = 0;
-    } else {
-      curInfo[parentId].isLock = 1;
-      /* $(".myDiv").css("cursor", "default");
-        var info = new Array();
-        info[0] = parseInt(allDragableDiv.css("left"));
-        info[1] = parseInt(allDragableDiv.css("top"));
-        info[2] = parseInt(allDragableDiv.css("width"));
-        info[3] = parseInt(allDragableDiv.css("height"));
-        console.log(info);
-        $.ajax({
-          url:'php/save_the_module_pos.php',
-          data:{
-            'info':info
-          },  
-          type:'post',  
-          cache:false,  
-          dataType:'json',  
-          success:function(data) {
-            if(data=="ok"){
-              console.log("记录成功");
-            }
-            else{
-               console.log("记录出错");
-            }
-          }
-       }) */
-    }
-    $.each(allDragableDiv, function() {
-      dragAble($(this));
-    });
-  });
 });
