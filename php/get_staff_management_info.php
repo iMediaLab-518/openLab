@@ -9,7 +9,6 @@
 	//获取请求数据
 
 	//编写sql语句
-	$sql = "select * from"; 
 
 	$sql = " (select * from staff_info where staff_is_use=1 )";
 

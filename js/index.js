@@ -711,7 +711,7 @@ function writeIntoPageForStaffInfo() {
     async: false
   });
   if (!infoObject.isLoad) {
-    $.post("php/staff_management_big.php", function(json) {
+    $.post("php/get_staff_management_info.php", function(json) {
       infoObject.isLoad++;
       infoObject.data = JSON.parse(json).data;
     });
@@ -850,77 +850,19 @@ function writeIntoPageForEquipmentInfo() {
   $.ajaxSetup({
     async: false
   });
-  /* if (!curInfo.isLoad) {
-    $.post("php/staff_management_big.php", function(json) {
+  if (!curInfo.isLoad) {
+    $.post("php/get_equipment_info.php", function(json) {
       curInfo.isLoad++;
-      data = JSON.parse(json).data;
+      infoObject.data = JSON.parse(json).data;
     });
-  } */
-  infoObject.data = [
-    {
-      building_no: "1",
-      floor_no: "1",
-      room_no: "1",
-      bed_no: "1",
-      equipment_status: "未绑定",
-      equipment_create_time: "2017-11-11"
-    },
-    {
-      building_no: "1",
-      floor_no: "1",
-      room_no: "1",
-      bed_no: "1",
-      equipment_status: "未绑定",
-      equipment_create_time: "2017-11-11"
-    },
-    {
-      building_no: "1",
-      floor_no: "1",
-      room_no: "1",
-      bed_no: "1",
-      equipment_status: "未绑定",
-      equipment_create_time: "2017-11-11"
-    },
-    {
-      building_no: "1",
-      floor_no: "1",
-      room_no: "1",
-      bed_no: "1",
-      equipment_status: "未绑定",
-      equipment_create_time: "2017-11-11"
-    },
-    {
-      building_no: "1",
-      floor_no: "1",
-      room_no: "1",
-      bed_no: "1",
-      equipment_status: "未绑定",
-      equipment_create_time: "2017-11-11"
-    },
-    {
-      building_no: "1",
-      floor_no: "1",
-      room_no: "1",
-      bed_no: "1",
-      equipment_status: "未绑定",
-      equipment_create_time: "2017-11-11"
-    },
-    {
-      building_no: "1",
-      floor_no: "1",
-      room_no: "1",
-      bed_no: "1",
-      equipment_status: "未绑定",
-      equipment_create_time: "2017-11-11"
-    }
-  ];
+  }
   if (infoObject.tableType == "big") {
     $("#equipment-info-big-table").DataTable({
       data: infoObject.data,
       columns: [
-        { data: "building_no" },
-        { data: "room_no" },
-        { data: "bed_no" },
+        { data: "building_name" },
+        { data: "room_id" },
+        { data: "bed_name" },
         { data: "equipment_status" }
       ],
       columnDefs: [
@@ -1056,46 +998,20 @@ function writeIntoPageForWarningInfo() {
   $.ajaxSetup({
     async: false
   });
-  /* if (!curInfo.isLoad) {
-    $.post("php/staff_management_big.php", function(json) {
+  if (!curInfo.isLoad) {
+    $.post("php/get_bed_info.php", function(json) {
       curInfo.isLoad++;
-      data = JSON.parse(json).data;
+      infoObject.data = JSON.parse(json).data;
     });
-  } */
-  infoObject.data = [
-    {
-      name: "懒洋洋",
-      position: "1楼1层101号房1号床",
-      disease: "高血压,糖尿病",
-      status: "正常"
-    },
-    {
-      name: "懒洋洋",
-      position: "1楼1层101号房1号床",
-      disease: "高血压,糖尿病",
-      status: "正常"
-    },
-    {
-      name: "懒洋洋",
-      position: "1楼1层101号房1号床",
-      disease: "高血压,糖尿病",
-      status: "正常"
-    },
-    {
-      name: "懒洋洋",
-      position: "1楼1层101号房1号床",
-      disease: "高血压,糖尿病",
-      status: "正常"
-    }
-  ];
+  } 
   if (infoObject.tableType == "big") {
     $("#warning-info-big-table").DataTable({
       data: infoObject.data,
       columns: [
-        { data: "name" },
-        { data: "position" },
-        { data: "disease" },
-        { data: "status" }
+        { data: "patient_name" },
+        { data: "room_pos" },
+        { data: "symptom_info" },
+        { data: "patient_status" }
       ],
       columnDefs: [
         {
