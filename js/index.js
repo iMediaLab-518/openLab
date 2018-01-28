@@ -15,7 +15,7 @@ function InfoObject() {
     pageCapacity: 10, //页容量(中小表格适用6/8/10)
     tableType: "big", //表格类型(大中小)
     isLoad: 0, //是否已经从后台加载数据
-    isLock: 0, //是否被锁定(可以拖动和改变大小)
+    isLock: 1, //是否被锁定(可以拖动和改变大小)
     data: {} //存放后台加载的数据
   };
   return info;
@@ -88,6 +88,11 @@ function chooseWriteIntoPage(id) {
 */
 function dragAble(ele) {
   var eleId = ele.attr("id");
+  console.log("--------");
+  console.log("staff-info" ,curInfo["staff-info"].isLock);
+  console.log("equipment-info", curInfo["equipment-info"].isLock);
+  console.log("warning-info", curInfo["warning-info"].isLock);
+  console.log("--------");
   if (curInfo[eleId].isLock == 0) {
     var isMouseDown = false;
     var leftBorder = parseInt(ele.css("border-left-width"));
@@ -141,180 +146,15 @@ function dragAble(ele) {
         var topPos = ele.offset().top;
         var bottomPos = topPos + ele.height() + topBorder + bottomBorder;
         //需要进行修改，锁定的时候cursor不改变
-        if (
-          leftPos - 5 <= e.pageX &&
-          e.pageX <= leftPos + 5 &&
-          topPos - 5 <= e.pageY &&
-          e.pageY <= topPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "nw-resize");
-          leftJudge = false;
-          rightJudge = false;
-          topJudge = false;
-          bottomJudge = false;
-          insideJudge = false;
-
-          leftTopJudge = false;
-          rightTopJudge = false;
-          leftBottomJudge = false;
-          rightBottomJudge = false;
-
-          leftTopJudge = true;
-        } else if (
-          topPos - 5 <= e.pageY &&
-          e.pageY <= topPos + 5 &&
-          rightPos - 5 <= e.pageX &&
-          e.pageX <= rightPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "ne-resize");
-          leftJudge = false;
-          rightJudge = false;
-          topJudge = false;
-          bottomJudge = false;
-          insideJudge = false;
-
-          leftTopJudge = false;
-          rightTopJudge = false;
-          leftBottomJudge = false;
-          rightBottomJudge = false;
-
-          rightTopJudge = true;
-        } else if (
-          leftPos - 5 <= e.pageX &&
-          e.pageX <= leftPos + 5 &&
-          bottomPos - 5 <= e.pageY &&
-          e.pageY <= bottomPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "sw-resize");
-          leftJudge = false;
-          rightJudge = false;
-          topJudge = false;
-          bottomJudge = false;
-          insideJudge = false;
-
-          leftTopJudge = false;
-          rightTopJudge = false;
-          leftBottomJudge = false;
-          rightBottomJudge = false;
-
-          leftBottomJudge = true;
-        } else if (
-          bottomPos - 5 <= e.pageY &&
-          e.pageY <= bottomPos + 5 &&
-          rightPos - 5 <= e.pageX &&
-          e.pageX <= rightPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "se-resize");
-          leftJudge = false;
-          rightJudge = false;
-          topJudge = false;
-          bottomJudge = false;
-          insideJudge = false;
-
-          leftTopJudge = false;
-          rightTopJudge = false;
-          leftBottomJudge = false;
-          rightBottomJudge = false;
-
-          rightBottomJudge = true;
-        } else if (
-          leftPos - 5 <= e.pageX &&
-          e.pageX <= leftPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "w-resize");
-          leftJudge = false;
-          rightJudge = false;
-          topJudge = false;
-          bottomJudge = false;
-          insideJudge = false;
-
-          leftTopJudge = false;
-          rightTopJudge = false;
-          leftBottomJudge = false;
-          rightBottomJudge = false;
-
-          leftJudge = true;
-        } else if (
-          rightPos - 5 <= e.pageX &&
-          e.pageX <= rightPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "e-resize");
-          leftJudge = false;
-          rightJudge = false;
-          topJudge = false;
-          bottomJudge = false;
-          insideJudge = false;
-
-          leftTopJudge = false;
-          rightTopJudge = false;
-          leftBottomJudge = false;
-          rightBottomJudge = false;
-
-          rightJudge = true;
-        } else if (
-          topPos - 5 <= e.pageY &&
-          e.pageY <= topPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "n-resize");
-          leftJudge = false;
-          rightJudge = false;
-          topJudge = false;
-          bottomJudge = false;
-          insideJudge = false;
-
-          leftTopJudge = false;
-          rightTopJudge = false;
-          leftBottomJudge = false;
-          rightBottomJudge = false;
-
-          topJudge = true;
-        } else if (
-          bottomPos - 5 <= e.pageY &&
-          e.pageY <= bottomPos + 5 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "s-resize");
-          leftJudge = false;
-          rightJudge = false;
-          topJudge = false;
-          bottomJudge = false;
-          insideJudge = false;
-
-          leftTopJudge = false;
-          rightTopJudge = false;
-          leftBottomJudge = false;
-          rightBottomJudge = false;
-
-          bottomJudge = true;
-        } else if (
-          topPos + 6 <= e.pageY &&
-          e.pageY <= topPos + 40 &&
-          !isMouseDown
-        ) {
-          ele.css("cursor", "move");
-          leftJudge = false;
-          rightJudge = false;
-          topJudge = false;
-          bottomJudge = false;
-          insideJudge = false;
-
-          leftTopJudge = false;
-          rightTopJudge = false;
-          leftBottomJudge = false;
-          rightBottomJudge = false;
-
-          insideJudge = true;
-        } else {
-          if (!isMouseDown) {
-            ele.css("cursor", "default");
-
+        if (curInfo[eleId].isLock == 0) {
+          if (
+            leftPos - 5 <= e.pageX &&
+            e.pageX <= leftPos + 5 &&
+            topPos - 5 <= e.pageY &&
+            e.pageY <= topPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "nw-resize");
             leftJudge = false;
             rightJudge = false;
             topJudge = false;
@@ -325,10 +165,185 @@ function dragAble(ele) {
             rightTopJudge = false;
             leftBottomJudge = false;
             rightBottomJudge = false;
+
+            leftTopJudge = true;
+          } else if (
+            topPos - 5 <= e.pageY &&
+            e.pageY <= topPos + 5 &&
+            rightPos - 5 <= e.pageX &&
+            e.pageX <= rightPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "ne-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+
+            rightTopJudge = true;
+          } else if (
+            leftPos - 5 <= e.pageX &&
+            e.pageX <= leftPos + 5 &&
+            bottomPos - 5 <= e.pageY &&
+            e.pageY <= bottomPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "sw-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+
+            leftBottomJudge = true;
+          } else if (
+            bottomPos - 5 <= e.pageY &&
+            e.pageY <= bottomPos + 5 &&
+            rightPos - 5 <= e.pageX &&
+            e.pageX <= rightPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "se-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+
+            rightBottomJudge = true;
+          } else if (
+            leftPos - 5 <= e.pageX &&
+            e.pageX <= leftPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "w-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+
+            leftJudge = true;
+          } else if (
+            rightPos - 5 <= e.pageX &&
+            e.pageX <= rightPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "e-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+
+            rightJudge = true;
+          } else if (
+            topPos - 5 <= e.pageY &&
+            e.pageY <= topPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "n-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+
+            topJudge = true;
+          } else if (
+            bottomPos - 5 <= e.pageY &&
+            e.pageY <= bottomPos + 5 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "s-resize");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+
+            bottomJudge = true;
+          } else if (
+            topPos + 6 <= e.pageY &&
+            e.pageY <= topPos + 40 &&
+            !isMouseDown
+          ) {
+            ele.css("cursor", "move");
+            leftJudge = false;
+            rightJudge = false;
+            topJudge = false;
+            bottomJudge = false;
+            insideJudge = false;
+
+            leftTopJudge = false;
+            rightTopJudge = false;
+            leftBottomJudge = false;
+            rightBottomJudge = false;
+
+            insideJudge = true;
+          } else {
+            if (!isMouseDown) {
+              ele.css("cursor", "default");
+
+              leftJudge = false;
+              rightJudge = false;
+              topJudge = false;
+              bottomJudge = false;
+              insideJudge = false;
+
+              leftTopJudge = false;
+              rightTopJudge = false;
+              leftBottomJudge = false;
+              rightBottomJudge = false;
+            }
           }
         }
         if (isMouseDown) {
           eleWidthChange(ele);
+
+            // console.log("--------");
+            // console.log("staff-info" ,curInfo["staff-info"].isLock);
+            // console.log("equipment-info", curInfo["equipment-info"].isLock);
+            // console.log("warning-info", curInfo["warning-info"].isLock);
+            // console.log("--------");
+
+
 
           var minHeight =
             parseInt(ele.css("min-height")) - leftBorder - rightBorder;
@@ -521,13 +536,20 @@ function firstLoad() {
       .parent()
       .parent();
     var parentId = dragableParentDiv.attr("id");
+
+    // console.log(curInfo["staff-info"].isLock);
+    // console.log(curInfo["equipment-info"].isLock);
+    // console.log(curInfo["warning-info"].isLock);
+
     faLock.toggleClass("fa-send-o").toggleClass("fa-send");
     if (faLock.hasClass("fa-send-o")) {
       curInfo[parentId].isLock = 0;
+      dragableParentDiv.css("cursor", "default");
     } else {
       curInfo[parentId].isLock = 1;
-      /* $(".myDiv").css("cursor", "default");
-        var info = new Array();
+      dragableParentDiv.css("cursor", "default");
+
+      /*  var info = new Array();
         info[0] = parseInt(allDragableDiv.css("left"));
         info[1] = parseInt(allDragableDiv.css("top"));
         info[2] = parseInt(allDragableDiv.css("width"));
