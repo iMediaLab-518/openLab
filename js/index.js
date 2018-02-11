@@ -882,9 +882,9 @@ function writeIntoPageForEquipmentInfo() {
     $("#equipment-info-big-table").DataTable({
       data: infoObject.data,
       columns: [
-        { data: "building_name" },
-        { data: "room_id" },
-        { data: "bed_name" },
+        { data: "building_no" },
+        { data: "room_no" },
+        { data: "bed_no" },
         { data: "equipment_status" }
       ],
       columnDefs: [
@@ -1030,10 +1030,10 @@ function writeIntoPageForWarningInfo() {
     $("#warning-info-big-table").DataTable({
       data: infoObject.data,
       columns: [
-        { data: "patient_name" },
-        { data: "room_pos" },
-        { data: "symptom_info" },
-        { data: "patient_status" }
+        { data: "name" },
+        { data: "position" },
+        { data: "disease" },
+        { data: "status" }
       ],
       columnDefs: [
         {

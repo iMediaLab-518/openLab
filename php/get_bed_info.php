@@ -19,7 +19,7 @@
 
 	while ($row = mysqli_fetch_array($rs)) {
 		//汇总输出
-		$bed_info_id[] = array('patient_name' => $row['patient_name'], 'room_pos' => $row['room_pos'], 'symptom_info' => $row['symptom_info'], 'patient_status' => $row['patient_status']);
+		$bed_info_id[] = array('name' => $row['patient_name'], 'position' => $row['room_pos'], 'disease' => $row['symptom_info'], 'status' => $row['patient_status']);
 
 	}
 		//获取数据库bed_info_id表总记录条数
