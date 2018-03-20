@@ -48,7 +48,7 @@
 
 
 		//汇总输出
-		$equipment_info[] = array('equipment_status' => $row['equipment_status'], 'bed_no' => $row_bed_info['bed_name'], 'room_no' => $row_bed_info['room_id'], 'building_no' => $row_building_info['building_name']);
+		$equipment_info[] = array('equipment_install_date' => $row['equipment_install_date'],'equipment_status' => $row['equipment_status'], 'bed_no' => $row_bed_info['bed_name'], 'room_no' => $row_bed_info['room_id'], 'building_no' => $row_building_info['building_name']);
 
 	}
 		//获取数据库equipment_info表总记录条数

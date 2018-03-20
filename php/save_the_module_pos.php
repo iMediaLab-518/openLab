@@ -11,8 +11,17 @@
     $module_y=$info[1];
     $module_width = $info[2];
     $module_height = $info[3];
-
-	$sql = " UPDATE `module_info` SET `module_x` = '$module_x',`module_y` = '$module_y',`module_width` = '$module_width',`module_height` = '$module_height' WHERE `module_info`.`module_id` = 1;
+    $module_id = 0;
+    if($info[4]=="staff-info"){
+    	$module_id = 1;
+    }
+    else if($info[4]=="warning-info"){
+    	$module_id = 2;
+    }
+    else if($info[4]=="equipment-info"){
+    	$module_id = 3;
+    }
+	$sql = " UPDATE `module_info` SET `module_x` = '$module_x',`module_y` = '$module_y',`module_width` = '$module_width',`module_height` = '$module_height' WHERE `module_info`.`module_id` = '$module_id';
 	";
 	echo $sql;
 	$res = "wrong";

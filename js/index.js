@@ -1,6 +1,7 @@
 /* 全局对象定义 */
 var curInfo = {}; //此页面的唯一全局变量
 
+
 /* 构造函数定义 */
 
 /*
@@ -88,11 +89,11 @@ function chooseWriteIntoPage(id) {
 */
 function dragAble(ele) {
   var eleId = ele.attr("id");
-  console.log("--------");
-  console.log("staff-info" ,curInfo["staff-info"].isLock);
-  console.log("equipment-info", curInfo["equipment-info"].isLock);
-  console.log("warning-info", curInfo["warning-info"].isLock);
-  console.log("--------");
+  // console.log("--------");
+  // console.log("staff-info" ,curInfo["staff-info"].isLock);
+  // console.log("equipment-info", curInfo["equipment-info"].isLock);
+  // console.log("warning-info", curInfo["warning-info"].isLock);
+  // console.log("--------");
   if (curInfo[eleId].isLock == 0) {
     var isMouseDown = false;
     var leftBorder = parseInt(ele.css("border-left-width"));
@@ -445,7 +446,9 @@ function eleWidthChange(ele) {
   if (infoObject.tableType == "big") {
     if (eleWidth < 785) {
       infoObject.tableType = "middle";
+      setMinHeight(ele);
       chooseWriteIntoPage(ele_id);
+      
     }
   } else if (infoObject.tableType == "middle") {
     if (eleWidth < 760 && infoObject.pageCapacity == 10) {
@@ -484,6 +487,7 @@ function eleWidthChange(ele) {
       if (ele.find("td").length > 0) {
         ele.find(".big-table-wrapper").show();
         ele.find(".not-for-big-table").hide();
+        setMinHeight(ele);
       } else {
         chooseWriteIntoPage(ele_id);
       }
@@ -527,6 +531,7 @@ function firstLoad() {
   writeIntoPageForEquipmentInfo();
   writeIntoPageForStaffInfo();
   writeIntoPageForWarningInfo();
+  registEventForZIndexIcon();
   //为页面的可拖动开关注册事件
   $(".fa-send").click(function() {
     var allDragableDiv = $(".myDiv");
@@ -548,13 +553,14 @@ function firstLoad() {
     } else {
       curInfo[parentId].isLock = 1;
       dragableParentDiv.css("cursor", "default");
-
-      /*  var info = new Array();
-        info[0] = parseInt(allDragableDiv.css("left"));
-        info[1] = parseInt(allDragableDiv.css("top"));
-        info[2] = parseInt(allDragableDiv.css("width"));
-        info[3] = parseInt(allDragableDiv.css("height"));
-        console.log(info);
+      // console.log(dragableParentDiv.css("z-index"));
+        var info = new Array();
+        info[0] = parseInt(dragableParentDiv.css("left"));
+        info[1] = parseInt(dragableParentDiv.css("top"));
+        info[2] = parseInt(dragableParentDiv.css("width"));
+        info[3] = parseInt(dragableParentDiv.css("height"));
+        info[4] = parentId;
+        console.log(dragableParentDiv);
         $.ajax({
           url:'php/save_the_module_pos.php',
           data:{
@@ -571,7 +577,7 @@ function firstLoad() {
                console.log("记录出错");
             }
           }
-       }) */
+       }) 
     }
     $.each(allDragableDiv, function() {
       dragAble($(this));
@@ -584,6 +590,17 @@ function firstLoad() {
 参数:无
 返回值:无
 */
+
+function idToName(id){
+  if (id == "staff-info") {
+    return "员工信息";
+  } else if (id == "equipment-info") {
+    return "设备信息";
+  } else {
+    return "预警信息";
+  }
+}
+
 function registEventForPagination(ele) {
   var ele_id = ele.attr("id");
   var pageCircles = ele.find(".pagination i");
@@ -596,6 +613,119 @@ function registEventForPagination(ele) {
   });
 }
 
+function registEventForZIndexChange(){
+  $(".z-index-icon-wrapper").click(function(event){
+    event.stopPropagation();
+    var icon = $(this).find("i");
+    var icon_class_name = icon.attr("class");
+    var cur_z_index_div = $(".cur-z-index-div");
+    var next_z_index_div = cur_z_index_div.next();
+    var prev_z_index_div = cur_z_index_div.prev();
+    var cur_table_selecter = "#" + cur_z_index_div.attr("data-id");
+    var next_table_selecter = "#" + next_z_index_div.attr("data-id");
+    var prev_table_selecter = "#" + prev_z_index_div.attr("data-id");
+    var cur_table = $(cur_table_selecter);
+    var next_table = $(next_table_selecter);
+    var prev_table = $(prev_table_selecter);
+    var cur_table_z_index = cur_table.css("z-index");
+    var next_table_z_index = next_table.css("z-index");
+    var prev_table_z_index = prev_table.css("z-index");
+    var info = new Array();
+    if(icon_class_name == "fa fa-arrow-circle-down"){
+      next_z_index_div.after(cur_z_index_div);
+      next_table.css("z-index",cur_table_z_index);
+      cur_table.css("z-index",next_table_z_index);
+      info.push(next_table.attr("id"),next_table.css('z-index'));
+      info.push(cur_table.attr("id"),cur_table.css('z-index'));
+    } else {
+      if (prev_z_index_div.attr("data-icon") != 1) {
+        cur_z_index_div.after(prev_z_index_div);
+        prev_table.css("z-index",cur_table_z_index);
+        cur_table.css("z-index",prev_table_z_index);
+        info.push(prev_table.attr("id"),prev_table.css('z-index'));
+        info.push(cur_table.attr("id"),cur_table.css('z-index'));
+      } 
+    }
+    $.ajax({
+      url:'php/save_the_module_index.php',
+      data:{
+        'info':info
+      },  
+      type:'post',  
+      cache:false,  
+      dataType:'json',  
+      success:function(data) {
+        if(data=="ok"){
+          console.log("记录成功");
+        }
+        else{
+           console.log("记录出错");
+        }
+      }
+   }) 
+
+
+
+
+  })
+}
+
+function registEventForZIndexIcon() {
+  $(".fa-clone").click(function(event){
+    event.stopPropagation();
+    $(".z-index-div-wrapper").remove();
+    var fa_clone = $(this);
+    var div_header = fa_clone.parent().parent();
+    var cur_table_id = div_header.parent().attr("id");
+    var html = "";
+    var index_array = [0,0,0];
+    $(".myDiv").each(function(){
+      if ($(this).css("z-index") == 500 ) {
+        index_array[0] = $(this).attr("id");
+      } else if ($(this).css("z-index") == 400) {
+        index_array[1] = $(this).attr("id");
+      } else {
+        index_array[2] = $(this).attr("id");
+      }
+    })
+    console.log(index_array);
+    html += "<div class='z-index-div-wrapper float-right'>";
+    html += "<div class='z-index-div' data-icon='1'>";
+    html += "<div class='z-index-icon-wrapper'>";
+    html += "<i class='fa fa-arrow-circle-up'></i>";
+    html += "<span>向上一层</span>";
+    html += "</div> ";
+    html += "<div class='z-index-icon-wrapper'>";
+    html += "<i class='fa fa-arrow-circle-down'></i>";
+    html += "<span>向下一层</span>";
+    html += "</div>";
+    html += "</div>";
+    html += "<div class='z-index-div' data-id='" + index_array[0] + "'>";
+    html += idToName(index_array[0]);
+    html += "</div>";
+    html += "<div class='z-index-div' data-id='" + index_array[1] + "'>";
+    html += idToName(index_array[1]);
+    html += "</div>";
+    html += "<div class='z-index-div' data-id='" + index_array[2] + "'>";
+    html += idToName(index_array[2]);
+    html += "</div>";
+    div_header.append(html);
+    $(".z-index-div").each(function(){
+      if ($(this).attr("data-id") == cur_table_id) {
+        $(this).addClass("cur-z-index-div");
+      }
+    })
+    $(".z-index-div-wrapper").show().css("height","1px");
+    $("body").bind("click",function(){
+      $(".z-index-div-wrapper").remove();
+      $("body").unbind("click");
+    })
+    registEventForZIndexChange();
+
+    
+
+  })
+}
 /* 未完成.
 函数名:savaPositionToArray 存储位置至数组函数
 功能:将div的位置存入数组
@@ -639,60 +769,106 @@ function savePosistionToArray(ele) {
 参数:无
 返回值:无
 */
+
+function setMinHeight(ele) {
+  var divHeaderHeight = ele.find(".div-header").height();
+  var eleId = ele.attr("id");
+  var maintainType = curInfo[eleId].tableType;
+  var bigTableHeight = ele.find(".big-table-wrapper").height();
+  var middleTableHeight = ele.find(".middle-table").height() + ele.find(".pagination").height();
+  var maintainHeight = (maintainType == "big" ? bigTableHeight : middleTableHeight);
+  var totalHeight = divHeaderHeight + maintainHeight + 20;
+  if (maintainType != "big") {
+    totalHeight += 10;
+  }
+  ele.css("height",totalHeight + "px");
+  ele.css("min-height",totalHeight + "px");
+}
 function showDetails() {
-  var count = 0;
-  var hoverWindowIsExist = 0;
   $(".condensed-info i").hover(function(event) {
-    $(".hover-window").hide();
-    hoverWindowIsExist = 1;
     var icon = $(this);
+    var dragale_parent_id = icon.parent().parent().parent().attr("id");
     var container = icon.parent();
-    var childCount = container.children().length;
-    var staff_name = icon
+    var info_object = curInfo[dragale_parent_id];
+    $(".hover-window").remove();
+    if (dragale_parent_id == "staff-info") {
+      var staff_name = icon
       .next()
       .next()
       .text();
     var staff_role_name = icon.attr("data-role-name");
     var staff_create_time = icon.attr("data-create-time");
     var staff_gender = icon.attr("data-gender");
-    var positionNumber = icon.attr("data-position-number");
-    var myDiv = $("#staff-info");
-    var divX = myDiv.offset().left;
-    var divY = myDiv.offset().top;
-    var positionNumberForX =
-      positionNumber >= curInfo.pageCapacity / 2
-        ? positionNumber - curInfo.pageCapacity / 2
-        : positionNumber;
-    var hoverWindowX = divX + positionNumberForX * 80 - 30;
-    var hoverWindowY = divY + 50 + Math.floor(positionNumber / 5) * 100;
-    if (childCount == 3) {
+    var html2 = "";
+    html2 += "<div class='info-card hover-window'>";
+    html2 +=
+      "<p><span class='staff-name'><b>" + staff_name + "</b></span></p>";
+    html2 += "<p>";
+    html2 += "<span class='join-time-title'>入职时间</span><br>";
+    html2 +=
+      "<span class='join-time'><b>" + staff_create_time + "</b></span>";
+    html2 +=
+      "</p><p><i class='fa fa-user " +
+      (staff_gender == "男" ? "male-color" : "female-color") +
+      "'></i>";
+    html2 += "<span class='staff-type'> " + staff_role_name + "</span> </p>";
+    html2 += "<div class='staff-status leave-color'>离职";
+    html2 += "</div></div>";
+    container.append(html2);
+    container.css("height","84px");
+    $(".hover-window").css("bottom","100px");
+    } else if (dragale_parent_id == "warning-info") {
+      var position = icon.attr("data-position");
+      var name = icon.attr("data-name");
+      var disease = icon.attr("data-disease");
       var html2 = "";
-      html2 += "<div class='info-card hover-window'>";
+      html2 += "<div class='equipment-info-card hover-window'>";
       html2 +=
-        "<p><span class='staff-name'><b>" + staff_name + "</b></span></p>";
-      html2 += "<p>";
-      html2 += "<span class='join-time-title'>入职时间</span><br>";
+        "<i class='fa fa-tag equipment-bind-icon common-color'></i><p>";
+      html2 += "<span class='font-size-13px'>";
+      html2 += position + "</span></p>";
+      html2 += "<p class='margin-bottom-20px'>";
       html2 +=
-        "<span class='join-time'><b>" + staff_create_time + "</b></span>";
-      html2 +=
-        "</p><p><i class='fa fa-user " +
-        (staff_gender == "男" ? "male-color" : "female-color") +
-        "'></i>";
-      html2 += "<span class='staff-type'> " + staff_role_name + "</span> </p>";
-      html2 += "<div class='staff-status leave-color'>离职";
-      html2 += "</div></div>";
+        "<span class='font-size-20px'><b>" + name + "</b></span><br>";
+      html2 += "<span class='join-time'>";
+      html2 += "<b>" + disease + "</b></span></p>";
+      html2 += "<div class='staff-status leave-color'>异常</div></div>";
       container.append(html2);
+      container.css("height","96px");
+      $(".hover-window").css("bottom","120px");
+    } else {
+      var building_no = icon.attr("data-building-no");
+      var room_no = icon.attr("data-room-no");
+      var bed_no = icon.attr("data-bed-no");
+      var equipment_install_date = icon.attr("data-install-date");
+      var equipment_status = icon.attr("data-equipment-status");
+      html2 = "";
+      html2 += "<div class='equipment-info-card hover-window'>";
+      html2 +=
+        "<i class='fa fa-link fa-lg equipment-bind-icon common-color'></i>";
+      html2 += "<p><span class='font-size-13px'>";
+      html2 += "<b>" + building_no + "</b><br>";
+      html2 +=
+        "<b>" +
+        room_no +
+        "号房" +
+        bed_no +
+        "床</b></span></p><p>";
+      html2 += "<span class='join-time-title'>使用时间</span><br>";
+      html2 += "<span class='join-time'>";
+      html2 += "<b>" + equipment_install_date + "</b></span></p>";
+      html2 +=
+        "<div class='staff-status leave-color'>" +
+        equipment_status +
+        "</div></div>";
+      container.append(html2);
+      container.css("height","136px");
+      $(".hover-window").css("bottom","160px");
     }
-    var hoverWindow = icon
-      .next()
-      .next()
-      .next();
-    hoverWindow
-      .css({ left: hoverWindowX + "px", top: hoverWindowY + "px" })
-      .show();
+    var hoverWindow = $(".hover-window");
+    hoverWindow.show();
     hoverWindow.mouseleave(function() {
-      $(this).hide();
-      hoverWindowIsExist = 0;
+      $(this).remove();
     });
   });
 }
@@ -854,6 +1030,7 @@ function writeIntoPageForStaffInfo() {
       showDetails();
     }
   }
+  setMinHeight(ele);
 
   $.ajaxSetup({
     async: true
@@ -952,18 +1129,16 @@ function writeIntoPageForEquipmentInfo() {
           html2 +=
             "<i class='fa fa-link fa-lg equipment-bind-icon common-color'></i>";
           html2 += "<p><span class='font-size-13px'>";
-          html2 += "<b>" + value.building_no + "号楼</b><br>";
+          html2 += "<b>" + value.building_no + "</b><br>";
           html2 +=
             "<b>" +
-            value.floor_no +
-            "层" +
             value.room_no +
             "号房" +
             value.bed_no +
             "床</b></span></p><p>";
           html2 += "<span class='join-time-title'>使用时间</span><br>";
           html2 += "<span class='join-time'>";
-          html2 += "<b>" + value.equipment_create_time + "</b></span></p>";
+          html2 += "<b>" + value.equipment_install_date + "</b></span></p>";
           html2 +=
             "<div class='staff-status leave-color'>" +
             value.equipment_status +
@@ -976,23 +1151,22 @@ function writeIntoPageForEquipmentInfo() {
               ? "leave-color"
               : "female-color") +
             "'";
-          html2 += "data-create-time='" + value.equipment_create_time + "' ";
+          html2 += "data-install-date='" + value.equipment_install_date + "' ";
           html2 += "data-building-no='" + value.building_no + "' ";
-          html2 += "data-room-no='" + value.room_no + "'";
-          html2 += "data-equipment-status='" + value.equipment_status + "'";
+          html2 += "data-room-no='" + value.room_no + "' ";
+          html2 += "data-bed-no='" + value.bed_no + "' ";
+          html2 += "data-equipment-status='" + value.equipment_status + "' ";
           html2 += "></i><br>";
           html2 +=
-            "<span class='font-size-13px'>" +
+            "<span class='font-size-5px'>" +
             value.building_no +
-            "号楼" +
-            value.floor_no +
-            "层</span><br>";
+            "</span><br>";
           html2 +=
-            "<span class='font-size-13px'>" +
+            "<span class='font-size-5px'>" +
             value.room_no +
             "号房" +
             value.bed_no +
-            "床</span></div>";
+            "</span></div>";
         }
       }
     });
@@ -1002,6 +1176,7 @@ function writeIntoPageForEquipmentInfo() {
       showDetails();
     }
   }
+  setMinHeight(ele);
 
   $.ajaxSetup({
     async: true
@@ -1125,6 +1300,7 @@ function writeIntoPageForWarningInfo() {
       showDetails();
     }
   }
+  setMinHeight(ele);
 
   $.ajaxSetup({
     async: true
@@ -1140,11 +1316,17 @@ function getTheModulePos() {
       cache: false,
       dataType: "json",
       success: function(data) {
-        var allDragableDiv = $(".myDiv");
-        $(".myDiv").css("width", data.module_width + "px");
-        $(".myDiv").css("height", data.module_height + "px");
-        $(".myDiv").css("left", data.module_x + "px");
-        $(".myDiv").css("top", data.module_y + "px");
+        $.each(data,function(index,value){
+          var curParentId = "#"+value.module_id;
+          // console.log(value);
+          // console.log(curParentId);
+          $(curParentId).css("z-index", value.zindex);
+          $(curParentId).css("width", value.module_width + "px");
+          $(curParentId).css("height", value.module_height + "px");
+          $(curParentId).css("left", value.module_x + "px");
+          $(curParentId).css("top", value.module_y + "px");
+        })
+        
       }
     });
   });
@@ -1152,5 +1334,5 @@ function getTheModulePos() {
 
 $(function() {
   firstLoad();
-  //getTheModulePos();
+  getTheModulePos();
 });
