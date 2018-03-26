@@ -3,6 +3,11 @@
 body {
   height: 1000px;
 }
+#hide-menu{
+  width:0.1%;
+  height:60px;
+  background-color: #56a7a7;
+}
 .faLock::before{
     display: inline-block;
     transform: rotate(45deg);
