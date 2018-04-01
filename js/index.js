@@ -9,7 +9,7 @@ var curInfo = {}; //此页面的唯一全局变量
 参数:无
 返回值:信息对象info
 */
-function InfoObject(x, y, height, width, z_index) {
+function InfoObject() {
   var info = {
     curPage: 1, //当前页
     pageCapacity: 10, //页容量(中小表格适用6/8/10)
@@ -17,11 +17,13 @@ function InfoObject(x, y, height, width, z_index) {
     isLoad: 0, //是否已经从后台加载数据
     isLock: 1, //是否被锁定(可以拖动和改变大小)
     data: {}, //存放后台加载的数据
-    x: x || 0, //存放x坐标,默认为0
-    y: y || 0, //存放y坐标,默认为0
-    height: height || 400, //存放表格高度,默认为400,
-    width: width || 800, //存放表格宽度,默认800
-    z_index: z_index || 300 //存放z-index值,默认为300
+    x: 0, //存放x坐标,默认为0
+    y: 0, //存放y坐标,默认为0
+    height: 400, //存放表格高度,默认为400,
+    width: 800, //存放表格宽度,默认800
+    z_index: 300, //存放z-index值,默认为300
+    is_seraching: 0,
+    search_result: {}
   };
   return info;
 }
@@ -92,6 +94,16 @@ function arrayDuplicateAndSort(array) {
   }
 }
 
+function arraySortByProperty(array, property) {
+  function compare(property) {
+    return function(a, b) {
+      var value1 = a[property];
+      var value2 = b[property];
+      return value1 - value2;
+    };
+  }
+  return array.sort(compare(property));
+}
 /*
 函数名:chooseWriteIntoPage 选择写入页面函数
 功能:根据传入的Id选择正确的写入函数
@@ -555,24 +567,25 @@ function firstLoad() {
   writeIntoPageForEquipmentInfo();
   writeIntoPageForStaffInfo();
   writeIntoPageForWarningInfo();
-  searchStaffInfo();
-  searchEquipmentInfo();
-  searchWarningInfo();
-  registEventForZIndexIcon();
+  //为三个表格的搜索功能注册事件
+  searchInfoFromMiddleTable();
   //为页面的可拖动开关注册事件
   $(".fa-thumb-tack").click(function() {
+    //获取所有可拖动Div
     var allDragableDiv = $(".myDiv");
+    //获取点击的按钮
     var faLock = $(this);
+    //获取被点击按钮的可拖动的祖先Div
     var dragableParentDiv = faLock
       .parent()
       .parent()
       .parent();
+    //获取div的ID
     var parentId = dragableParentDiv.attr("id");
 
     // console.log(curInfo["staff-info"].isLock);
     // console.log(curInfo["equipment-info"].isLock);
     // console.log(curInfo["warning-info"].isLock);
-
     faLock.toggleClass("faLock");
     if (faLock.hasClass("faLock")) {
       curInfo[parentId].isLock = 0;
@@ -653,7 +666,7 @@ function idToName(id) {
 参数:无
 返回值:无
 */
-function registEventForPagination(ele, is_searching) {
+function registEventForPagination(ele) {
   var ele_id = ele.attr("id");
   var pageCircles = ele.find(".pagination i");
   var infoObject = curInfo[ele_id];
@@ -672,7 +685,72 @@ function registEventForPagination(ele, is_searching) {
 返回值:无
 */
 function registEventForZIndexChange() {
-  $(".z-index-icon-wrapper").click(function(event) {
+  var dragable_divs = $(".myDiv");
+  $(".fa-arrow").click(function() {
+    var z_index_array = [];
+    $.each(dragable_divs, function() {
+      var obj = {
+        div_name: $(this).attr("id"),
+        z_index: $(this).css("z-index")
+      };
+      z_index_array.push(obj);
+    });
+    z_index_array = arraySortByProperty(z_index_array, "z_index");
+    var arrow_icon = $(this);
+    var dragable_div_id = arrow_icon
+    .parent()
+    .parent()
+    .parent().attr("id");
+    var info_obj = curInfo[dragable_div_id];
+    var info = new Array();
+    $.each(z_index_array, function(index, value) {
+      if (arrow_icon.hasClass("fa-arrow-circle-down")) {
+        if (index != 0 && dragable_div_id == value.div_name) {
+          curInfo[dragable_div_id].z_index = (
+            parseInt(curInfo[dragable_div_id].z_index) - 100
+          ).toString();
+          curInfo[z_index_array[index - 1].div_name].z_index = (
+            parseInt(curInfo[z_index_array[index - 1].div_name].z_index) + 100
+          ).toString();
+          info.push(dragable_div_id, curInfo[dragable_div_id].z_index);
+          info.push(z_index_array[index - 1].div_name, curInfo[z_index_array[index - 1].div_name].z_index);
+        }
+      } else if (index != 2 && dragable_div_id == value.div_name) {
+        curInfo[dragable_div_id].z_index = (
+          parseInt(curInfo[dragable_div_id].z_index) + 100
+        ).toString();
+        curInfo[z_index_array[index + 1].div_name].z_index = (
+          parseInt(curInfo[z_index_array[index + 1].div_name].z_index) - 100
+        ).toString();
+        info.push(dragable_div_id, curInfo[dragable_div_id].z_index);
+        info.push(z_index_array[index + 1].div_name, curInfo[z_index_array[index + 1].div_name].z_index);
+      }
+    });
+
+    $.ajax({
+      url: "php/save_the_module_index.php",
+      data: {
+        info: info
+      },
+      type: "post",
+      cache: false,
+      dataType: "json",
+      success: function(data) {
+        if (data == "ok") {
+          console.log("记录成功");
+        } else {
+          console.log("记录出错");
+        }
+      }
+    });
+
+
+    $.each(dragable_divs, function() {
+      var obj = curInfo[$(this).attr("id")];
+      $(this).css("z-index", obj.z_index);
+    });
+  });
+  /* $(".z-index-icon-wrapper").click(function(event) {
     event.stopPropagation();
     var icon = $(this).find("i");
     var icon_class_name = icon.attr("class");
@@ -720,7 +798,7 @@ function registEventForZIndexChange() {
         }
       }
     });
-  });
+  }); */
 }
 
 /*
@@ -729,7 +807,7 @@ function registEventForZIndexChange() {
 参数:无
 返回值:无
 */
-function registEventForZIndexIcon() {
+/* function registEventForZIndexIcon() {
   $(".fa-clone").click(function(event) {
     event.stopPropagation();
     $(".z-index-div-wrapper").remove();
@@ -792,7 +870,7 @@ function registEventForZIndexIcon() {
     });
     registEventForZIndexChange();
   });
-}
+} */
 /* 
 函数名:setMinHeight 设置最小高度
 功能:当表格的大小类型发生改变时,设置对应的最小高度
@@ -907,6 +985,10 @@ function showDetails() {
     hoverWindow.mouseleave(function() {
       $(this).remove();
     });
+    $("body").bind("click", function() {
+      hoverWindow.remove();
+      $("body").unbind("click");
+    });
   });
 }
 
@@ -916,14 +998,16 @@ function showDetails() {
 参数:无
 返回值:无
 */
-function setPagination(ele, is_searching) {
+function setPagination(ele) {
   var ele_id = ele.attr("id");
   var infoObject = curInfo[ele_id];
   infoObject.curPage = 1;
-  var l = infoObject.data.length;
+  var l = infoObject.is_searching
+    ? infoObject.search_result.length
+    : infoObject.data.length;
   var html = "";
-  infoObject.pageNumber = Math.ceil(l / infoObject.pageCapacity);
-  for (var i = 0; i < infoObject.pageNumber; i++) {
+  var pageNumber = Math.ceil(l / infoObject.pageCapacity);
+  for (var i = 0; i < pageNumber; i++) {
     if (i == 0) {
       html += "<i data-page='" + (i + 1) + "' class='fa fa-circle'></i>";
     } else {
@@ -934,34 +1018,51 @@ function setPagination(ele, is_searching) {
 }
 
 /* 
-函数名:searchStaffInfo 搜索员工信息
+函数名:searchInfoFromMiddleTable 搜索员工信息
 函数功能:输入内容返回匹配项
 参数:无
 返回值:无
 */
-function searchStaffInfo() {
-  //将员工信息数组转换为可搜索的数组
-  var staff_info_obj = getInformationArray(curInfo["staff-info"].data);
-  //获取员工信息表格对象
-  var ele = $("#staff-info");
-  //获取存放员工信息表格相关信息的对象
-  var infoObject = curInfo["staff-info"];
+function searchInfoFromMiddleTable() {
+  var eval_str, info_object, parent_id, input_val;
   //为搜索框注册keydown事件
-  ele.find(".search-input").on("keydown", function(event) {
+  $(".search-input").on("keydown", function(event) {
     //获取输入内容
-    var input_val = $(this).val();
-    //定义存放返回的下标的数组
-    var result = [];
+    input_val = $(this).val();
+    //获取当前搜索框所在的表格的id
+    parent_id = $(this)
+      .parent()
+      .parent()
+      .attr("id");
+    //获取存放员工信息表格相关信息的对象
+    info_object = curInfo[parent_id];
     //当输入内容不为空并敲下回车时执行
     if (input_val != "" && event.keyCode == 13) {
+      //获取员工信息表格对象
+      var ele_selecter = "#" + parent_id;
+      var ele = $(ele_selecter);
+
+      //将员工信息数组转换为可搜索的数组
+      var staff_info_obj = getInformationArray(info_object.data);
+      //定义存放返回的下标的数组
+      var result = [];
+      //设置为正在搜索
+      info_object.is_searching = 1;
       //遍历数组并返回匹配的项的下标,下标存放在result数组中
+      if (parent_id == "staff-info") {
+        eval_str =
+          "index == 'staff_name' || index == 'staff_create_time' || index == 'staff_role_name'";
+      } else if (parent_id == "equipment-info") {
+        eval_str =
+          "index == 'bed_no' || index == 'building_no' || index == 'room_no' || index == 'equipment_install_date'";
+      } else {
+        eval_str =
+          "index == 'name' || index == 'position' || index == 'disease'";
+      }
+
       $.each(staff_info_obj, function(index, value) {
         //只搜索这三项
-        if (
-          index == "staff_name" ||
-          index == "staff_create_time" ||
-          index == "staff_role_name"
-        ) {
+        if (eval(eval_str)) {
           $.each(value, function(key, val) {
             if (val.indexOf(input_val) != -1) {
               result.push(key);
@@ -971,245 +1072,13 @@ function searchStaffInfo() {
       });
       //对下标结果进行排序和去重
       arrayDuplicateAndSort(result);
-      var html2 = "";
-      infoObject.curPage = 1;
-      var pageStart = (infoObject.curPage - 1) * infoObject.pageCapacity;
-      var pageEnd = infoObject.curPage * infoObject.pageCapacity;
-      $.each(result, function(index, val) {
-        var value = infoObject.data[val];
-        if (index >= pageStart && index < pageEnd) {
-          if (infoObject.tableType == "middle") {
-            html2 += "<div class='info-card'>";
-            html2 +=
-              "<p><span class='staff-name'><b>" +
-              value.staff_name +
-              "</b></span></p>";
-            html2 += "<p>";
-            html2 += "<span class='join-time-title'>入职时间</span><br>";
-            html2 +=
-              "<span class='join-time'><b>" +
-              value.staff_create_time +
-              "</b></span>";
-            html2 +=
-              "</p><p><i class='fa fa-user " +
-              (value.staff_gender == "男" ? "male-color" : "female-color") +
-              "'></i>";
-            html2 +=
-              "<span class='staff-type'> " +
-              value.staff_role_name +
-              "</span> </p>";
-            html2 += "<div class='staff-status leave-color'>离职";
-            html2 += "</div></div>";
-          } else {
-            html2 += "<div class='condensed-info float-left'>";
-            html2 +=
-              "<i class='fa fa-user fa-4x " +
-              (value.staff_gender == "男" ? "male-color" : "female-color") +
-              "'";
-            html2 += "data-create-time='" + value.staff_create_time + "' ";
-            html2 += "data-gender='" + value.staff_gender + "' ";
-            html2 += "data-role-name='" + value.staff_role_name + "'";
-            html2 += "data-position-number='" + (index - pageStart) + "'";
-            html2 += "></i><br>";
-            html2 +=
-              "<span class='staff-name'>" + value.staff_name + "</span></div>";
-          }
-        }
-      });
-      $("#staff-info-middle-table").html(html2);
-      registEventForPagination(ele);
-      if (infoObject.tableType == "small") {
-        showDetails();
-      }
-      setMinHeight(ele);
+      info_object.search_result = result;
+      setPagination(ele);
+      chooseWriteIntoPage(parent_id);
     }
     if (input_val == "" && event.keyCode == 13) {
-      writeIntoPageForStaffInfo();
-    }
-  });
-}
-
-/* 
-函数名:searchEquipmentInfo 搜索设备信息
-函数功能:输入内容返回匹配项
-参数:无
-返回值:无
-*/
-function searchEquipmentInfo() {
-  //将员工信息数组转换为可搜索的数组
-  var equipment_info_obj = getInformationArray(curInfo["equipment-info"].data);
-  //获取员工信息表格对象
-  var ele = $("#equipment-info");
-  //获取存放员工信息表格相关信息的对象
-  var infoObject = curInfo["equipment-info"];
-  //为搜索框注册keydown事件
-  ele.find(".search-input").on("keydown", function(event) {
-    //获取输入内容
-    var input_val = $(this).val();
-    //定义存放返回的下标的数组
-    var result = [];
-    //当输入内容不为空并敲下回车时执行
-    if (input_val != "" && event.keyCode == 13) {
-      //遍历数组并返回匹配的项的下标,下标存放在result数组中
-      $.each(equipment_info_obj, function(index, value) {
-        //只搜索这三项
-        if (
-          index == "bed_no" ||
-          index == "building_no" ||
-          index == "room_no" ||
-          index == "equipment_install_date"
-        ) {
-          $.each(value, function(key, val) {
-            if (val.indexOf(input_val) != -1) {
-              result.push(key);
-            }
-          });
-        }
-      });
-      //对下标结果进行排序和去重
-      arrayDuplicateAndSort(result);
-      var html2 = "";
-      infoObject.curPage = 1;
-      var pageStart = (infoObject.curPage - 1) * infoObject.pageCapacity;
-      var pageEnd = infoObject.curPage * infoObject.pageCapacity;
-      $.each(result, function(index, val) {
-        var value = infoObject.data[val];
-        if (index >= pageStart && index < pageEnd) {
-          if (infoObject.tableType == "middle") {
-            html2 += "<div class='equipment-info-card'>";
-          html2 +=
-            "<i class='fa fa-link fa-lg equipment-bind-icon common-color'></i>";
-          html2 += "<p><span class='font-size-13px'>";
-          html2 += "<b>" + value.building_no + "</b><br>";
-          html2 +=
-            "<b>" +
-            value.room_no +
-            "号房" +
-            value.bed_no +
-            "床</b></span></p><p>";
-          html2 += "<span class='join-time-title'>使用时间</span><br>";
-          html2 += "<span class='join-time'>";
-          html2 += "<b>" + value.equipment_install_date + "</b></span></p>";
-          html2 +=
-            "<div class='staff-status leave-color'>" +
-            value.equipment_status +
-            "</div></div>";
-        } else {
-          html2 += "<div class='condensed-info float-left'>";
-          html2 +=
-            "<i class='fa fa-hdd-o fa-4x " +
-            (value.equipment_status == "异常"
-              ? "leave-color"
-              : "female-color") +
-            "'";
-          html2 += "data-install-date='" + value.equipment_install_date + "' ";
-          html2 += "data-building-no='" + value.building_no + "' ";
-          html2 += "data-room-no='" + value.room_no + "' ";
-          html2 += "data-bed-no='" + value.bed_no + "' ";
-          html2 += "data-equipment-status='" + value.equipment_status + "' ";
-          html2 += "></i><br>";
-          html2 +=
-            "<span class='font-size-5px'>" + value.building_no + "</span><br>";
-          html2 +=
-            "<span class='font-size-5px'>" +
-            value.room_no +
-            "号房" +
-            value.bed_no +
-            "</span></div>";
-          }
-        }
-      });
-      $("#equipment-info-middle-table").html(html2);
-      registEventForPagination(ele);
-      if (infoObject.tableType == "small") {
-        showDetails();
-      }
-      setMinHeight(ele);
-    }
-    if (input_val == "" && event.keyCode == 13) {
-      writeIntoPageForEquipmentInfo();
-    }
-  });
-}
-/* 
-函数名:searchWarningInfo 搜索预警信息
-函数功能:输入内容返回匹配项
-参数:无
-返回值:无
-*/
-function searchWarningInfo() {
-  //将员工信息数组转换为可搜索的数组
-  var warning_info_obj = getInformationArray(curInfo["warning-info"].data);
-  //获取员工信息表格对象
-  var ele = $("#warning-info");
-  //获取存放员工信息表格相关信息的对象
-  var infoObject = curInfo["warning-info"];
-  //为搜索框注册keydown事件
-  ele.find(".search-input").on("keydown", function(event) {
-    //获取输入内容
-    var input_val = $(this).val();
-    //定义存放返回的下标的数组
-    var result = [];
-    //当输入内容不为空并敲下回车时执行
-    if (input_val != "" && event.keyCode == 13) {
-      //遍历数组并返回匹配的项的下标,下标存放在result数组中
-      $.each(warning_info_obj, function(index, value) {
-        //只搜索这三项
-        if (
-          index == "name" ||
-          index == "position" ||
-          index == "disease"
-        ) {
-          $.each(value, function(key, val) {
-            if (val.indexOf(input_val) != -1) {
-              result.push(key);
-            }
-          });
-        }
-      });
-      //对下标结果进行排序和去重
-      arrayDuplicateAndSort(result);
-      var html2 = "";
-      infoObject.curPage = 1;
-      console.log(infoObject.tableType);
-      var pageStart = (infoObject.curPage - 1) * infoObject.pageCapacity;
-      var pageEnd = infoObject.curPage * infoObject.pageCapacity;
-      $.each(result, function(index, val) {
-        var value = infoObject.data[val];
-        if (index >= pageStart && index < pageEnd) {
-          if (infoObject.tableType == "middle") {
-            html2 += "<div class='equipment-info-card'>";
-            html2 +=
-              "<i class='fa fa-tag equipment-bind-icon common-color'></i><p>";
-            html2 += "<span class='font-size-13px'>";
-            html2 += value.position + "</span></p>";
-            html2 += "<p class='margin-bottom-20px'>";
-            html2 +=
-              "<span class='font-size-20px'><b>" + value.name + "</b></span><br>";
-            html2 += "<span class='join-time'>";
-            html2 += "<b>" + value.disease + "</b></span></p>";
-            html2 += "<div class='staff-status leave-color'>异常</div></div>";
-          } else {
-            html2 += "<div class='condensed-info float-left'>";
-            html2 += "<i class='fa fa-line-chart fa-4x female-color' ";
-            html2 += "data-position='" + value.position + "' ";
-            html2 += "data-disease='" + value.disease + "' ";
-            html2 += "data-name='" + value.name + "'";
-            html2 += "></i><br>";
-            html2 +=
-              "<span class='font-size-10px'>" + value.position + "</span></div>";
-          }
-        }
-      });
-      $("#warning-info-middle-table").html(html2);
-      registEventForPagination(ele);
-      if (infoObject.tableType == "small") {
-        showDetails();
-      }
-      setMinHeight(ele);
-    }
-    if (input_val == "" && event.keyCode == 13) {
-      writeIntoPageForWarningInfo();
+      info_object.is_searching = 0;
+      chooseWriteIntoPage(parent_id);
     }
   });
 }
@@ -1283,7 +1152,7 @@ function writeIntoPageForStaffInfo() {
       .attr("type", "text")
       .addClass("remove-default-style")
       .addClass("search-input-for-big")
-      .attr("placeholder", "  input something");
+      .attr("placeholder", "  搜索姓名 性别等");
     $("#staff-info-big-table").addClass("border-bottom-and-top");
 
     $("select[name='staff-info-big-table_length']").change(function() {});
@@ -1300,7 +1169,13 @@ function writeIntoPageForStaffInfo() {
     var html2 = "";
     var pageStart = (infoObject.curPage - 1) * infoObject.pageCapacity;
     var pageEnd = infoObject.curPage * infoObject.pageCapacity;
-    $.each(infoObject.data, function(index, value) {
+    var loop_array = infoObject.is_searching
+      ? infoObject.search_result
+      : infoObject.data;
+    $.each(loop_array, function(index, value) {
+      if (infoObject.is_searching) {
+        value = infoObject.data[value];
+      }
       if (index >= pageStart && index < pageEnd) {
         if (infoObject.tableType == "middle") {
           html2 += "<div class='info-card'>";
@@ -1340,6 +1215,11 @@ function writeIntoPageForStaffInfo() {
         }
       }
     });
+    if (!html2) {
+      html2 += "<h4 class='no-data-info'>表中暂无数据</h4>";
+      $("#staff-info-middle-table").css("width", "100%");
+      ele.find(".pagination").hide();
+    }
     $("#staff-info-middle-table").html(html2);
     registEventForPagination(ele);
     if (infoObject.tableType == "small") {
@@ -1347,7 +1227,6 @@ function writeIntoPageForStaffInfo() {
     }
   }
   setMinHeight(ele);
-
   $.ajaxSetup({
     async: true
   });
@@ -1420,7 +1299,7 @@ function writeIntoPageForEquipmentInfo() {
       .attr("type", "text")
       .addClass("remove-default-style")
       .addClass("search-input-for-big")
-      .attr("placeholder", "  input something");
+      .attr("placeholder", "  搜索位置 设备号等");
     $("#equipment-info-big-table").addClass("border-bottom-and-top");
 
     $("select[name='equipment-info-big-table_length']").change(function() {});
@@ -1438,7 +1317,13 @@ function writeIntoPageForEquipmentInfo() {
     var html2 = "";
     var pageStart = (infoObject.curPage - 1) * infoObject.pageCapacity;
     var pageEnd = infoObject.curPage * infoObject.pageCapacity;
-    $.each(infoObject.data, function(index, value) {
+    var loop_array = infoObject.is_searching
+      ? infoObject.search_result
+      : infoObject.data;
+    $.each(loop_array, function(index, value) {
+      if (infoObject.is_searching) {
+        value = infoObject.data[value];
+      }
       if (index >= pageStart && index < pageEnd) {
         if (infoObject.tableType == "middle") {
           html2 += "<div class='equipment-info-card'>";
@@ -1484,6 +1369,11 @@ function writeIntoPageForEquipmentInfo() {
         }
       }
     });
+    if (!html2) {
+      html2 += "<h4 class='no-data-info'>表中暂无数据</h4>";
+      $("#equipment-info-middle-table").css("width", "100%");
+      ele.find(".pagination").hide();
+    }
     $("#equipment-info-middle-table").html(html2);
     registEventForPagination(ele);
     if (infoObject.tableType == "small") {
@@ -1564,7 +1454,7 @@ function writeIntoPageForWarningInfo() {
       .attr("type", "text")
       .addClass("remove-default-style")
       .addClass("search-input-for-big")
-      .attr("placeholder", "  input something");
+      .attr("placeholder", "  搜索姓名 位置等");
     $("#warning-info-big-table").addClass("border-bottom-and-top");
 
     $("select[name='warning-info-big-table_length']").change(function() {});
@@ -1582,7 +1472,13 @@ function writeIntoPageForWarningInfo() {
     var html2 = "";
     var pageStart = (infoObject.curPage - 1) * infoObject.pageCapacity;
     var pageEnd = infoObject.curPage * infoObject.pageCapacity;
-    $.each(infoObject.data, function(index, value) {
+    var loop_array = infoObject.is_searching
+      ? infoObject.search_result
+      : infoObject.data;
+    $.each(loop_array, function(index, value) {
+      if (infoObject.is_searching) {
+        value = infoObject.data[value];
+      }
       if (index >= pageStart && index < pageEnd) {
         if (infoObject.tableType == "middle") {
           html2 += "<div class='equipment-info-card'>";
@@ -1608,7 +1504,13 @@ function writeIntoPageForWarningInfo() {
         }
       }
     });
+    if (!html2) {
+      html2 += "<h4 class='no-data-info'>表中暂无数据</h4>";
+      $("#warning-info-middle-table").css("width", "100%");
+      ele.find(".pagination").hide();
+    }
     $("#warning-info-middle-table").html(html2);
+
     registEventForPagination(ele);
     if (infoObject.tableType == "small") {
       showDetails();
@@ -1635,30 +1537,35 @@ function getTheModulePos() {
           var id = value.module_id;
           var curParentId = "#" + id;
           var curDiv = $(curParentId);
+          var info_obj = curInfo[id];
           // console.log(value);
           // console.log(curParentId);
           curDiv.css("z-index", value.zindex);
+          info_obj.z_index = value.zindex;
           curDiv.css("width", value.module_width + "px");
+          info_obj.width = value.module_width;
           // curDiv.css("height", value.module_height + "px");
           curDiv.css("left", value.module_x + "px");
+          info_obj.x = value.module_x;
           curDiv.css("top", value.module_y + "px");
+          info_obj.y = value.module_y;
           if (value.module_width < 785 && value.module_width >= 480) {
             curInfo[id].tableType = "middle";
           } else if (value.module_width < 480) {
             curInfo[id].tableType = "small";
           }
+
           eleWidthChange(curDiv);
         });
+        registEventForZIndexChange();
       }
     });
   });
 }
 
-
 $(function() {
   firstLoad();
   getTheModulePos();
-  
 });
 /* $("#hide-menu").mouseenter(function(){
   console.log("hover");
@@ -1667,6 +1574,3 @@ $(function() {
 .mouseleave(function(){
   $(this).css("width","0.1%");
 }) */
-
-
-

@@ -3,10 +3,9 @@
 body {
   height: 1000px;
 }
-#hide-menu{
-  width:0.1%;
-  height:60px;
-  background-color: #56a7a7;
+.no-data-info{
+  text-align: center;
+  color: #bcbcbc;
 }
 .faLock::before{
     display: inline-block;
