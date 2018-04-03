@@ -22,8 +22,8 @@ function InfoObject() {
     height: 400, //存放表格高度,默认为400,
     width: 800, //存放表格宽度,默认800
     z_index: 300, //存放z-index值,默认为300
-    is_seraching: 0,
-    search_result: {}
+    is_seraching: 0, //是否正在搜索
+    search_result: {} //存放搜索结果
   };
   return info;
 }
@@ -72,7 +72,7 @@ function adsorbent(ele) {
 }
 
 /*
-函数名:arrayDuplicateAndSort
+函数名:arrayDuplicateAndSort 数组去重和排序
 函数功能:为指定的数组排序后去重
 参数:需要排序去重的数组
 返回值:无
@@ -94,6 +94,12 @@ function arrayDuplicateAndSort(array) {
   }
 }
 
+/*
+函数名:arraySortByProperty 数组按指定属性排序
+函数功能:为指定的数组排序
+参数:需要排序的数组,和对象属性名
+返回值:无
+*/
 function arraySortByProperty(array, property) {
   function compare(property) {
     return function(a, b) {
@@ -476,20 +482,34 @@ function dragAble(ele) {
 返回值:无
 */
 function eleWidthChange(ele) {
+  //获取对象宽度
   var eleWidth = ele.width();
+  //获取对象id
   var ele_id = ele.attr("id");
+  //获取信息对象
   var infoObject = curInfo[ele_id];
+  //获取中等大小表格
   var middleTable = ele.find(".middle-table");
+  //当表格类型为big
   if (infoObject.tableType == "big") {
+    //当对象宽度小于785时
     if (eleWidth < 785) {
+      //将表格类型改变为middle
       infoObject.tableType = "middle";
+      //设置表格最小高度
       setMinHeight(ele);
+      //根据表格id选择写入页面函数
       chooseWriteIntoPage(ele_id);
     }
+    //当表格类型为middle
   } else if (infoObject.tableType == "middle") {
+    //当表格宽度小于且页面容量为10
     if (eleWidth < 760 && infoObject.pageCapacity == 10) {
+      //设置页面容量为8
       infoObject.pageCapacity = 8;
+      //适当缩小容器宽度
       middleTable.css("width", "96%");
+      //重写分页栏按钮
       setPagination(ele);
       chooseWriteIntoPage(ele_id);
     }
