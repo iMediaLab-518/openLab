@@ -1,6 +1,14 @@
+/*
+ * @Author: zzx & lh 
+ * @Date: 2018-04-03 21:36:53 
+ * @Last Modified by: zzx
+ * @Last Modified time: 2018-04-03 21:37:44
+ */
+
+
+
 /* 全局对象定义 */
 var curInfo = {}; //此页面的唯一全局变量
-
 /* 构造函数定义 */
 
 /*
@@ -53,9 +61,9 @@ function adsorbent(ele) {
     gapJudgeScopeRight = parentDivWidth - gapJudgeScope, //判定吸附的范围的最小值(适用于右吸附)
     gapJudgeScopeBottom = parentDivHeight - gapJudgeScope, //判定吸附的范围的最小值(适用于底部吸附)
     adsorbBottomPosition =
-      parentDivHeight - eleHeight - gapWidth - borderWidth * 2, //底部吸附位置
+    parentDivHeight - eleHeight - gapWidth - borderWidth * 2, //底部吸附位置
     adsorbRightPosition =
-      parentDivWidth - eleWidth - gapWidth - borderWidth * 2; //右吸附位置
+    parentDivWidth - eleWidth - gapWidth - borderWidth * 2; //右吸附位置
 
   if (leftPosition <= gapJudgeScope) {
     ele.css("left", gapWidth + "px");
@@ -97,12 +105,12 @@ function arrayDuplicateAndSort(array) {
 /*
 函数名:arraySortByProperty 数组按指定属性排序
 函数功能:为指定的数组排序
-参数:需要排序的数组,和对象属性名
+参数:需要排序的数组 array,和对象属性名property
 返回值:无
 */
 function arraySortByProperty(array, property) {
   function compare(property) {
-    return function(a, b) {
+    return function (a, b) {
       var value1 = a[property];
       var value2 = b[property];
       return value1 - value2;
@@ -163,7 +171,7 @@ function dragAble(ele) {
     var preTop = 0;
 
     ele.bind({
-      mousedown: function(e) {
+      mousedown: function (e) {
         var leftPos = ele.offset().left;
         var rightPos = leftPos + ele.width() + leftBorder + rightBorder;
         var topPos = ele.offset().top;
@@ -186,7 +194,7 @@ function dragAble(ele) {
     });
 
     $("body").bind({
-      mousemove: function(e) {
+      mousemove: function (e) {
         var leftPos = ele.offset().left;
         var rightPos = leftPos + ele.width() + leftBorder + rightBorder;
         var topPos = ele.offset().top;
@@ -452,7 +460,7 @@ function dragAble(ele) {
           }
         }
       },
-      mouseup: function(e) {
+      mouseup: function (e) {
         isMouseDown = false;
 
         leftJudge = false;
@@ -547,28 +555,28 @@ function eleWidthChange(ele) {
       } else {
         chooseWriteIntoPage(ele_id);
       }
+    } else {
+      if (eleWidth <= 430 && infoObject.pageCapacity == 10) {
+        middleTable.css("width", "90%");
+        infoObject.pageCapacity = 8;
+        setPagination(ele);
+        chooseWriteIntoPage(ele_id);
+      }
+      if (eleWidth > 435 && infoObject.pageCapacity == 8) {
+        middleTable.css("width", "100%");
+        infoObject.pageCapacity = 10;
+        setPagination(ele);
+        chooseWriteIntoPage(ele_id);
+      }
+      if (eleWidth > 480) {
+        infoObject.tableType = "middle";
+        infoObject.pageCapacity = 8;
+        setPagination(ele);
+        chooseWriteIntoPage(ele_id);
+      }
+      //为分页栏按钮注册事件
+      registEventForPagination(ele);
     }
-    registEventForPagination(ele);
-  } else {
-    if (eleWidth <= 430 && infoObject.pageCapacity == 10) {
-      middleTable.css("width", "90%");
-      infoObject.pageCapacity = 8;
-      setPagination(ele);
-      chooseWriteIntoPage(ele_id);
-    }
-    if (eleWidth > 435 && infoObject.pageCapacity == 8) {
-      middleTable.css("width", "100%");
-      infoObject.pageCapacity = 10;
-      setPagination(ele);
-      chooseWriteIntoPage(ele_id);
-    }
-    if (eleWidth > 480) {
-      infoObject.tableType = "middle";
-      infoObject.pageCapacity = 8;
-      setPagination(ele);
-      chooseWriteIntoPage(ele_id);
-    }
-    registEventForPagination(ele);
   }
 }
 
@@ -578,6 +586,7 @@ function eleWidthChange(ele) {
 参数:无
 返回值:无
 */
+
 function firstLoad() {
   //创建页面三个表格相关的信息对象
   curInfo["staff-info"] = new InfoObject();
@@ -590,7 +599,7 @@ function firstLoad() {
   //为三个表格的搜索功能注册事件
   searchInfoFromMiddleTable();
   //为页面的可拖动开关注册事件
-  $(".fa-thumb-tack").click(function() {
+  $(".fa-thumb-tack").click(function () {
     //获取所有可拖动Div
     var allDragableDiv = $(".myDiv");
     //获取点击的按钮
@@ -606,6 +615,7 @@ function firstLoad() {
     // console.log(curInfo["staff-info"].isLock);
     // console.log(curInfo["equipment-info"].isLock);
     // console.log(curInfo["warning-info"].isLock);
+    // 切换faLock类
     faLock.toggleClass("faLock");
     if (faLock.hasClass("faLock")) {
       curInfo[parentId].isLock = 0;
@@ -629,7 +639,7 @@ function firstLoad() {
         type: "post",
         cache: false,
         dataType: "json",
-        success: function(data) {
+        success: function (data) {
           if (data == "ok") {
             console.log("记录成功");
           } else {
@@ -638,7 +648,7 @@ function firstLoad() {
         }
       });
     }
-    $.each(allDragableDiv, function() {
+    $.each(allDragableDiv, function () {
       dragAble($(this));
     });
   });
@@ -652,8 +662,8 @@ function firstLoad() {
 */
 function getInformationArray(obj) {
   var info_obj = {};
-  $.each(obj, function(index, value) {
-    $.each(value, function(key, val) {
+  $.each(obj, function (index, value) {
+    $.each(value, function (key, val) {
       if (index == 0) {
         info_obj[key] = [val];
       } else {
@@ -690,7 +700,7 @@ function registEventForPagination(ele) {
   var ele_id = ele.attr("id");
   var pageCircles = ele.find(".pagination i");
   var infoObject = curInfo[ele_id];
-  pageCircles.click(function() {
+  pageCircles.click(function () {
     infoObject.curPage = $(this).attr("data-page");
     pageCircles.attr("class", "fa fa-circle-thin");
     $(this).attr("class", "fa fa-circle");
@@ -705,26 +715,36 @@ function registEventForPagination(ele) {
 返回值:无
 */
 function registEventForZIndexChange() {
+  //获取所有dragableDiv
   var dragable_divs = $(".myDiv");
-  $(".fa-arrow").click(function() {
+  //注册点击事件
+  $(".fa-arrow").click(function () {
+    //定义存放z-index信息的数组
     var z_index_array = [];
-    $.each(dragable_divs, function() {
+    //获取z-index信息并存入数组
+    $.each(dragable_divs, function () {
       var obj = {
         div_name: $(this).attr("id"),
         z_index: $(this).css("z-index")
       };
       z_index_array.push(obj);
     });
+    //按照z-index升序排序
     z_index_array = arraySortByProperty(z_index_array, "z_index");
+    //获取被点击按钮
     var arrow_icon = $(this);
+    //获取dragableDIvId
     var dragable_div_id = arrow_icon
-    .parent()
-    .parent()
-    .parent().attr("id");
+      .parent()
+      .parent()
+      .parent()
+      .attr("id");
     var info_obj = curInfo[dragable_div_id];
     var info = new Array();
-    $.each(z_index_array, function(index, value) {
+    $.each(z_index_array, function (index, value) {
+      //点击向下一层按钮
       if (arrow_icon.hasClass("fa-arrow-circle-down")) {
+        //不在最下面一层时,当前表格z-index减小100,在其下面一层的表格z-index增加100
         if (index != 0 && dragable_div_id == value.div_name) {
           curInfo[dragable_div_id].z_index = (
             parseInt(curInfo[dragable_div_id].z_index) - 100
@@ -733,18 +753,28 @@ function registEventForZIndexChange() {
             parseInt(curInfo[z_index_array[index - 1].div_name].z_index) + 100
           ).toString();
           info.push(dragable_div_id, curInfo[dragable_div_id].z_index);
-          info.push(z_index_array[index - 1].div_name, curInfo[z_index_array[index - 1].div_name].z_index);
+          info.push(
+            z_index_array[index - 1].div_name,
+            curInfo[z_index_array[index - 1].div_name].z_index
+          );
         }
-      } else if (index != 2 && dragable_div_id == value.div_name) {
-        curInfo[dragable_div_id].z_index = (
-          parseInt(curInfo[dragable_div_id].z_index) + 100
-        ).toString();
-        curInfo[z_index_array[index + 1].div_name].z_index = (
-          parseInt(curInfo[z_index_array[index + 1].div_name].z_index) - 100
-        ).toString();
-        info.push(dragable_div_id, curInfo[dragable_div_id].z_index);
-        info.push(z_index_array[index + 1].div_name, curInfo[z_index_array[index + 1].div_name].z_index);
-      }
+        //点击向上一层按钮
+      } else {
+        //不在最上面一层时,当前表格z-index增加100,在其上面一层的表格z-index减少100
+        if (index != 2 && dragable_div_id == value.div_name) {
+          curInfo[dragable_div_id].z_index = (
+            parseInt(curInfo[dragable_div_id].z_index) + 100
+          ).toString();
+          curInfo[z_index_array[index + 1].div_name].z_index = (
+            parseInt(curInfo[z_index_array[index + 1].div_name].z_index) - 100
+          ).toString();
+          info.push(dragable_div_id, curInfo[dragable_div_id].z_index);
+          info.push(
+            z_index_array[index + 1].div_name,
+            curInfo[z_index_array[index + 1].div_name].z_index
+          );
+        }
+      } 
     });
 
     $.ajax({
@@ -755,7 +785,7 @@ function registEventForZIndexChange() {
       type: "post",
       cache: false,
       dataType: "json",
-      success: function(data) {
+      success: function (data) {
         if (data == "ok") {
           console.log("记录成功");
         } else {
@@ -764,8 +794,7 @@ function registEventForZIndexChange() {
       }
     });
 
-
-    $.each(dragable_divs, function() {
+    $.each(dragable_divs, function () {
       var obj = curInfo[$(this).attr("id")];
       $(this).css("z-index", obj.z_index);
     });
@@ -899,18 +928,25 @@ function registEventForZIndexChange() {
 */
 
 function setMinHeight(ele) {
+  //获取表头高度
   var divHeaderHeight = ele.find(".div-header").height();
   var eleId = ele.attr("id");
+  //获取当前表格类型
   var maintainType = curInfo[eleId].tableType;
+  //获取大表格的高度
   var bigTableHeight = ele.find(".big-table-wrapper").height();
+  //获取中小表格的高度
   var middleTableHeight =
     ele.find(".middle-table").height() + ele.find(".pagination").height();
+  //获取当前主要内容的高度
   var maintainHeight =
     maintainType == "big" ? bigTableHeight : middleTableHeight;
+  //计算总高度并加上空白部分高度
   var totalHeight = divHeaderHeight + maintainHeight + 20;
   if (maintainType != "big") {
     totalHeight += 10;
   }
+  //设置高度和最小高度
   ele.css("height", totalHeight + "px");
   ele.css("min-height", totalHeight + "px");
 }
@@ -923,8 +959,10 @@ function setMinHeight(ele) {
 */
 
 function showDetails() {
-  $(".condensed-info i").hover(function(event) {
+  //在简略信息上悬停显示详细信息
+  $(".condensed-info i").hover(function (event) {
     var icon = $(this);
+    //获取dragabelDiv
     var dragale_parent_id = icon
       .parent()
       .parent()
@@ -932,7 +970,9 @@ function showDetails() {
       .attr("id");
     var container = icon.parent();
     var info_object = curInfo[dragale_parent_id];
+    //移除已存在的详细信息
     $(".hover-window").remove();
+    //写入相应html段落
     if (dragale_parent_id == "staff-info") {
       var staff_name = icon
         .next()
@@ -1000,13 +1040,17 @@ function showDetails() {
       container.css("height", "136px");
       $(".hover-window").css("bottom", "160px");
     }
+    //获取刚写入的html段落
     var hoverWindow = $(".hover-window");
     hoverWindow.show();
-    hoverWindow.mouseleave(function() {
+    //鼠标离开时移除详细信息
+    hoverWindow.mouseleave(function () {
       $(this).remove();
     });
-    $("body").bind("click", function() {
+    //点击页面其他地方移除详细信息
+    $("body").bind("click", function () {
       hoverWindow.remove();
+      //解除body绑定的click事件
       $("body").unbind("click");
     });
   });
@@ -1022,10 +1066,11 @@ function setPagination(ele) {
   var ele_id = ele.attr("id");
   var infoObject = curInfo[ele_id];
   infoObject.curPage = 1;
-  var l = infoObject.is_searching
-    ? infoObject.search_result.length
-    : infoObject.data.length;
+  var l = infoObject.is_searching ?
+    infoObject.search_result.length :
+    infoObject.data.length;
   var html = "";
+  //页数向上取整
   var pageNumber = Math.ceil(l / infoObject.pageCapacity);
   for (var i = 0; i < pageNumber; i++) {
     if (i == 0) {
@@ -1033,6 +1078,7 @@ function setPagination(ele) {
     } else {
       html += "<i data-page='" + (i + 1) + "' class='fa fa-circle-thin'></i>";
     }
+    //插入分页栏
     ele.find(".pagination").html(html);
   }
 }
@@ -1046,7 +1092,7 @@ function setPagination(ele) {
 function searchInfoFromMiddleTable() {
   var eval_str, info_object, parent_id, input_val;
   //为搜索框注册keydown事件
-  $(".search-input").on("keydown", function(event) {
+  $(".search-input").on("keydown", function (event) {
     //获取输入内容
     input_val = $(this).val();
     //获取当前搜索框所在的表格的id
@@ -1080,10 +1126,10 @@ function searchInfoFromMiddleTable() {
           "index == 'name' || index == 'position' || index == 'disease'";
       }
 
-      $.each(staff_info_obj, function(index, value) {
-        //只搜索这三项
+      $.each(staff_info_obj, function (index, value) {
+        //只搜索这几项
         if (eval(eval_str)) {
-          $.each(value, function(key, val) {
+          $.each(value, function (key, val) {
             if (val.indexOf(input_val) != -1) {
               result.push(key);
             }
@@ -1092,10 +1138,12 @@ function searchInfoFromMiddleTable() {
       });
       //对下标结果进行排序和去重
       arrayDuplicateAndSort(result);
+      //将结果存入信息对象的搜索结果属性中
       info_object.search_result = result;
       setPagination(ele);
       chooseWriteIntoPage(parent_id);
     }
+    //搜索内容为空时显示所有内容
     if (input_val == "" && event.keyCode == 13) {
       info_object.is_searching = 0;
       chooseWriteIntoPage(parent_id);
@@ -1109,40 +1157,61 @@ function searchInfoFromMiddleTable() {
 返回值:无
 */
 function writeIntoPageForStaffInfo() {
+  //获取员工信息对象表格
   var ele = $("#staff-info");
+  //获取员工信息对象
   var infoObject = curInfo["staff-info"];
+  //设置ajax为非异步
   $.ajaxSetup({
     async: false
   });
+  //只获取一次后台的全部员工信息
   if (!infoObject.isLoad) {
-    $.post("php/get_staff_management_info.php", function(json) {
+    $.post("php/get_staff_management_info.php", function (json) {
       infoObject.isLoad++;
       infoObject.data = JSON.parse(json).data;
     });
   }
+  //为大表格写入数据(使用datatable)
   if (infoObject.tableType == "big") {
     $("#staff-info-big-table").DataTable({
+      //获取数据
       data: infoObject.data,
-      columns: [
-        { data: "staff_serial_number" },
-        { data: "staff_name" },
-        { data: "staff_gender" },
-        { data: "staff_phone_num" },
-        { data: "staff_id_card_no" },
-        { data: "staff_role_name" },
-        { data: "staff_create_time" }
-      ],
-      columnDefs: [
+      //定义每列数据
+      columns: [{
+          data: "staff_serial_number"
+        },
         {
-          targets: 7,
-          render: function() {
-            return '<a href="#">Download</a>';
-          }
+          data: "staff_name"
+        },
+        {
+          data: "staff_gender"
+        },
+        {
+          data: "staff_phone_num"
+        },
+        {
+          data: "staff_id_card_no"
+        },
+        {
+          data: "staff_role_name"
+        },
+        {
+          data: "staff_create_time"
         }
       ],
+      //自定义第8列
+      columnDefs: [{
+        targets: 7,
+        render: function () {
+          return '<a href="#">Download</a>';
+        }
+      }],
+      //定义每页显示条数
       aLengthMenu: [5, 10, 15],
-      dom:
-        '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
+      //定义datatable部分的样式
+      dom: '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
+      //自定义提示文字
       language: {
         emptyTable: "表中没有可用数据",
         info: "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
@@ -1168,31 +1237,47 @@ function writeIntoPageForStaffInfo() {
         sortDescending: ": activate to sort column descending" //当一列被按照升序降序的时候添加到表头的ARIA标签，注意列头是这个字符串的前缀
       }
     });
+    //定义大表格的搜索框
     $("#staff-info-big-table_filter input")
       .attr("type", "text")
-      .addClass("remove-default-style")
+      .addClass("remove-default-style") //移除默认样式
       .addClass("search-input-for-big")
       .attr("placeholder", "  搜索姓名 性别等");
+    //为大表格添加上下边
     $("#staff-info-big-table").addClass("border-bottom-and-top");
-
-    $("select[name='staff-info-big-table_length']").change(function() {});
-    $("#staff-info-big-table_paginate").click(function() {});
+    //改变每页显示信息条数时修改最小高度
+    $("select[name='staff-info-big-table_length']").change(function () {
+      setMinHeight(ele);
+    });
+    //跳转页时改变最小高度
+    $("#staff-info-big-table_paginate").click(function () {
+      setMinHeight(ele);
+    });
     ele.find(".not-for-big-table").hide();
   }
+  //为中小表格写入数据
   if (infoObject.tableType == "middle" || infoObject.tableType == "small") {
+    //隐藏大表格
     $("#staff-info-big-table-wrapper").hide();
+    //显示不属于大表格的内容
     ele.find(".not-for-big-table").show();
+    //第一次加载时设置分页栏
     if (infoObject.isLoad == 1) {
       infoObject.isLoad++;
       setPagination(ele);
     }
+    //定义写入页面的html片段
     var html2 = "";
+    //页开始index
     var pageStart = (infoObject.curPage - 1) * infoObject.pageCapacity;
+    //页结束index
     var pageEnd = infoObject.curPage * infoObject.pageCapacity;
-    var loop_array = infoObject.is_searching
-      ? infoObject.search_result
-      : infoObject.data;
-    $.each(loop_array, function(index, value) {
+    //遍历数组
+    var loop_array = infoObject.is_searching ?
+      infoObject.search_result :
+      infoObject.data;
+    //遍历数组,将数据写入html片段后加载到页面
+    $.each(loop_array, function (index, value) {
       if (infoObject.is_searching) {
         value = infoObject.data[value];
       }
@@ -1235,18 +1320,25 @@ function writeIntoPageForStaffInfo() {
         }
       }
     });
+    //无数据时,提示没有数据
     if (!html2) {
       html2 += "<h4 class='no-data-info'>表中暂无数据</h4>";
       $("#staff-info-middle-table").css("width", "100%");
+      //隐藏分页栏
       ele.find(".pagination").hide();
     }
+    //写入html片段
     $("#staff-info-middle-table").html(html2);
+    //为分页栏注册事件
     registEventForPagination(ele);
+    //当时小表格时,注册showDetails函数
     if (infoObject.tableType == "small") {
       showDetails();
     }
   }
+  //设置最小高度
   setMinHeight(ele);
+  //设置ajax为异步
   $.ajaxSetup({
     async: true
   });
@@ -1265,7 +1357,7 @@ function writeIntoPageForEquipmentInfo() {
     async: false
   });
   if (!curInfo.isLoad) {
-    $.post("php/get_equipment_info.php", function(json) {
+    $.post("php/get_equipment_info.php", function (json) {
       curInfo.isLoad++;
       infoObject.data = JSON.parse(json).data;
     });
@@ -1273,23 +1365,27 @@ function writeIntoPageForEquipmentInfo() {
   if (infoObject.tableType == "big") {
     $("#equipment-info-big-table").DataTable({
       data: infoObject.data,
-      columns: [
-        { data: "building_no" },
-        { data: "room_no" },
-        { data: "bed_no" },
-        { data: "equipment_status" }
-      ],
-      columnDefs: [
+      columns: [{
+          data: "building_no"
+        },
         {
-          targets: 4,
-          render: function() {
-            return '<a href="#">Download</a>';
-          }
+          data: "room_no"
+        },
+        {
+          data: "bed_no"
+        },
+        {
+          data: "equipment_status"
         }
       ],
+      columnDefs: [{
+        targets: 4,
+        render: function () {
+          return '<a href="#">Download</a>';
+        }
+      }],
       aLengthMenu: [5, 10, 15],
-      dom:
-        '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
+      dom: '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
       language: {
         emptyTable: "表中没有可用数据",
         info: "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
@@ -1322,8 +1418,14 @@ function writeIntoPageForEquipmentInfo() {
       .attr("placeholder", "  搜索位置 设备号等");
     $("#equipment-info-big-table").addClass("border-bottom-and-top");
 
-    $("select[name='equipment-info-big-table_length']").change(function() {});
-    $("#equipment-info-big-table_paginate").click(function() {});
+    //改变每页显示信息条数时修改最小高度
+    $("select[name='staff-info-big-table_length']").change(function () {
+      setMinHeight(ele);
+    });
+    //跳转页时改变最小高度
+    $("#staff-info-big-table_paginate").click(function () {
+      setMinHeight(ele);
+    });
     ele.find(".not-for-big-table").hide();
   }
   if (infoObject.tableType == "middle" || infoObject.tableType == "small") {
@@ -1337,10 +1439,10 @@ function writeIntoPageForEquipmentInfo() {
     var html2 = "";
     var pageStart = (infoObject.curPage - 1) * infoObject.pageCapacity;
     var pageEnd = infoObject.curPage * infoObject.pageCapacity;
-    var loop_array = infoObject.is_searching
-      ? infoObject.search_result
-      : infoObject.data;
-    $.each(loop_array, function(index, value) {
+    var loop_array = infoObject.is_searching ?
+      infoObject.search_result :
+      infoObject.data;
+    $.each(loop_array, function (index, value) {
       if (infoObject.is_searching) {
         value = infoObject.data[value];
       }
@@ -1368,9 +1470,9 @@ function writeIntoPageForEquipmentInfo() {
           html2 += "<div class='condensed-info float-left'>";
           html2 +=
             "<i class='fa fa-hdd-o fa-4x " +
-            (value.equipment_status == "异常"
-              ? "leave-color"
-              : "female-color") +
+            (value.equipment_status == "异常" ?
+              "leave-color" :
+              "female-color") +
             "'";
           html2 += "data-install-date='" + value.equipment_install_date + "' ";
           html2 += "data-building-no='" + value.building_no + "' ";
@@ -1420,7 +1522,7 @@ function writeIntoPageForWarningInfo() {
     async: false
   });
   if (!curInfo.isLoad) {
-    $.post("php/get_bed_info.php", function(json) {
+    $.post("php/get_bed_info.php", function (json) {
       curInfo.isLoad++;
       infoObject.data = JSON.parse(json).data;
     });
@@ -1428,23 +1530,27 @@ function writeIntoPageForWarningInfo() {
   if (infoObject.tableType == "big") {
     $("#warning-info-big-table").DataTable({
       data: infoObject.data,
-      columns: [
-        { data: "name" },
-        { data: "position" },
-        { data: "disease" },
-        { data: "status" }
-      ],
-      columnDefs: [
+      columns: [{
+          data: "name"
+        },
         {
-          targets: 4,
-          render: function() {
-            return '<a href="#">Download</a>';
-          }
+          data: "position"
+        },
+        {
+          data: "disease"
+        },
+        {
+          data: "status"
         }
       ],
+      columnDefs: [{
+        targets: 4,
+        render: function () {
+          return '<a href="#">Download</a>';
+        }
+      }],
       aLengthMenu: [5, 10, 15],
-      dom:
-        '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
+      dom: '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
       language: {
         emptyTable: "表中没有可用数据",
         info: "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
@@ -1477,8 +1583,14 @@ function writeIntoPageForWarningInfo() {
       .attr("placeholder", "  搜索姓名 位置等");
     $("#warning-info-big-table").addClass("border-bottom-and-top");
 
-    $("select[name='warning-info-big-table_length']").change(function() {});
-    $("#warning-info-big-table_paginate").click(function() {});
+    //改变每页显示信息条数时修改最小高度
+    $("select[name='staff-info-big-table_length']").change(function () {
+      setMinHeight(ele);
+    });
+    //跳转页时改变最小高度
+    $("#staff-info-big-table_paginate").click(function () {
+      setMinHeight(ele);
+    });
     ele.find(".not-for-big-table").hide();
   }
   if (infoObject.tableType == "middle" || infoObject.tableType == "small") {
@@ -1492,10 +1604,10 @@ function writeIntoPageForWarningInfo() {
     var html2 = "";
     var pageStart = (infoObject.curPage - 1) * infoObject.pageCapacity;
     var pageEnd = infoObject.curPage * infoObject.pageCapacity;
-    var loop_array = infoObject.is_searching
-      ? infoObject.search_result
-      : infoObject.data;
-    $.each(loop_array, function(index, value) {
+    var loop_array = infoObject.is_searching ?
+      infoObject.search_result :
+      infoObject.data;
+    $.each(loop_array, function (index, value) {
       if (infoObject.is_searching) {
         value = infoObject.data[value];
       }
@@ -1545,15 +1657,15 @@ function writeIntoPageForWarningInfo() {
 
 //获取保存的坐标数据
 function getTheModulePos() {
-  $(function() {
+  $(function () {
     $.ajax({
       url: "php/get_the_module_pos.php",
       data: {},
       type: "get",
       cache: false,
       dataType: "json",
-      success: function(data) {
-        $.each(data, function(index, value) {
+      success: function (data) {
+        $.each(data, function (index, value) {
           var id = value.module_id;
           var curParentId = "#" + id;
           var curDiv = $(curParentId);
@@ -1583,7 +1695,7 @@ function getTheModulePos() {
   });
 }
 
-$(function() {
+$(function () {
   firstLoad();
   getTheModulePos();
 });

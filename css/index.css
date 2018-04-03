@@ -1,17 +1,155 @@
-/* index页面css */
+/*
+ * @Author: zzx &amp; lh 
+ * @Date: 2018-04-03 21:39:14 
+ * @Last Modified by: zzx
+ * @Last Modified time: 2018-04-03 22:05:17
+ */
 
-body {
-  height: 1000px;
+/*          非通用css          */
+
+/* staff-info */
+#staff-info {
+  position: absolute;
+  left: 0px;
+  top: 100px;
+  width: 790px;
+  min-width: 360px;
+  background-color: #f9f9f9;
+  border: 1px solid #f2f2f2;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px #bcbcbc;
+  z-index: 500;
 }
-.no-data-info{
+.staff-name {
+  font-size: 20px;
+}
+.join-time-title {
+  font-size: 13px;
+}
+.join-time {
+  font-size: 12px;
+  position: relative;
+  bottom: 4px;
+}
+.staff-status {
+  padding: 5px;
+  color: #fff;
+  position: relative;
+  bottom: 7px;
+}
+
+/* equipment-info */
+#equipment-info {
+  position: absolute;
+  left: 200px;
+  top: 100px;
+  width: 790px;
+  min-width: 360px;
+  background-color: #f9f9f9;
+  border: 1px solid #f2f2f2;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px #bcbcbc;
+  z-index: 300;
+}
+
+/* warning-info */
+#warning-info {
+  position: absolute;
+  left: 200px;
+  top: 200px;
+  width: 790px;
+  min-width: 360px;
+  background-color: #f9f9f9;
+  border: 1px solid #f2f2f2;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px #bcbcbc;
+  z-index: 400;
+}
+
+/* 信息卡片css */
+.info-card {
+  float: left;
+  background-color: #fff;
+  width: 130px;
+  height: 160px;
   text-align: center;
-  color: #bcbcbc;
+  padding-top: 18px;
+  margin: 20px 0 0px 20px;
+  box-shadow: 0 1px 3px #bcbcbc;
 }
+.equipment-info-card {
+  float: left;
+  background-color: #fff;
+  width: 130px;
+  height: 150px;
+  text-align: center;
+  padding-top: 10px;
+  margin: 20px 0 0px 20px;
+  box-shadow: 0 1px 3px #bcbcbc;
+}
+.equipment-bind-icon{
+  position: relative;
+  left:50px;
+  top:-5px;
+}
+/* 详细信息css */
+.hover-window {
+  position: relative;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 1);
+  left:-50px;
+  display: none;
+}
+
+/* 简略信息css */
+.condensed-info {
+  text-align: center;
+  margin: 20px 0 0 20px;
+  width: 60px;
+}
+/* 固定图标css */
 .faLock::before{
-    display: inline-block;
-    transform: rotate(45deg);
+  display: inline-block;
+  transform: rotate(45deg);
 }
-.z-index-div-wrapper{
+
+/* 输入框css */
+.search-input {
+  position: relative;
+  bottom: 7px;
+  left: 25px;
+  width: 40%;
+  height: 26px;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0px 1px 2px #868686;
+  background: rgba(255, 255, 255, 0);
+}
+.search-input-for-big {
+  width: 50%;
+  min-width: 276px;
+  height: 26px;
+  outline: none;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0px 1px 2px #868686;
+}
+
+/* 分页栏css */
+.pagination {
+  width: 100%;
+  text-align: center;
+  position: relative;
+}
+.pagination i {
+  font-size: 2px;
+  color: #ccc;
+  margin-right: 10px;
+}
+
+/* z-inde相关css */
+/* .z-index-div-wrapper{
   position: relative;
   width:140px;
   border-top:1px solid #f2f2f2;
@@ -38,103 +176,26 @@ body {
 }
 .cur-z-index-div{
   background-color: #ccc;
-}
-#staff-info {
-  position: absolute;
-  left: 0px;
-  top: 100px;
-  width: 790px;
-  min-width: 360px;
-  background-color: #f9f9f9;
-  border: 1px solid #f2f2f2;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px #bcbcbc;
-  z-index: 500;
-}
-#equipment-info {
-  position: absolute;
-  left: 200px;
-  top: 100px;
-  width: 790px;
-  min-width: 360px;
-  background-color: #f9f9f9;
-  border: 1px solid #f2f2f2;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px #bcbcbc;
-  z-index: 300;
-}
-#warning-info {
-  position: absolute;
-  left: 200px;
-  top: 200px;
-  width: 790px;
-  min-width: 360px;
-  background-color: #f9f9f9;
-  border: 1px solid #f2f2f2;
-  border-radius: 5px;
-  box-shadow: 0 1px 3px #bcbcbc;
-  z-index: 400;
+} */
+/*        非通用css结束       */
+
+/*        通用css       */
+
+/* 全局css */
+body {
+  height: 1000px;
 }
 
-.search-input {
-  position: relative;
-  bottom: 7px;
-  left: 25px;
-  width: 40%;
-  height: 26px;
-  outline: none;
-  border: none;
-  border-radius: 5px;
-  box-shadow: 0px 1px 2px #868686;
-  background: rgba(255, 255, 255, 0);
+/* 提示信息css */
+.no-data-info{
+  text-align: center;
+  color: #bcbcbc;
 }
-.search-input-for-big {
-  width: 50%;
-  min-width: 276px;
-  height: 26px;
-  outline: none;
-  border: none;
-  border-radius: 5px;
-  box-shadow: 0px 1px 2px #868686;
+i.fa:hover {
+  cursor: pointer;
 }
 
-.info-card {
-  float: left;
-  background-color: #fff;
-  width: 130px;
-  height: 160px;
-  text-align: center;
-  padding-top: 18px;
-  margin: 20px 0 0px 20px;
-  box-shadow: 0 1px 3px #bcbcbc;
-}
-.equipment-info-card {
-  float: left;
-  background-color: #fff;
-  width: 130px;
-  height: 150px;
-  text-align: center;
-  padding-top: 10px;
-  margin: 20px 0 0px 20px;
-  box-shadow: 0 1px 3px #bcbcbc;
-}
-.staff-name {
-  font-size: 20px;
-}
-.join-time-title {
-  font-size: 13px;
-}
-.join-time {
-  font-size: 12px;
-  position: relative;
-  bottom: 4px;
-}
-.staff-status {
-  padding: 5px;
-  color: #fff;
-  position: relative;
-  bottom: 7px;
-}
+/* 颜色css */
 .leave-color {
   background-color: #da4548;
 }
@@ -144,35 +205,6 @@ body {
 .vocation-color {
   background-color: #ccc;
 }
-.pagination {
-  width: 100%;
-  text-align: center;
-  position: relative;
-}
-.pagination i {
-  font-size: 2px;
-  color: #ccc;
-  margin-right: 10px;
-}
-i.fa:hover {
-  cursor: pointer;
-}
-.condensed-info {
-  text-align: center;
-  margin: 20px 0 0 20px;
-  width: 60px;
-}
-.equipment-bind-icon{
-  position: relative;
-  left:50px;
-  top:-5px;
-}
-
-/* index页面css END */
-
-/* 通用css */
-
-/* 颜色css */
 .common-color {
   color: #56a7a7;
 }
@@ -214,10 +246,17 @@ i.fa:hover {
 .margin-bottom-20px{
   margin-bottom: 20px;
 }
-
-.z-index-20 {
-  z-index: 20;
+.padding-left-10px {
+  padding-left: 10px;
 }
+.padding-right-10px {
+  padding-right: 10px;
+}
+.padding-right-20px {
+  padding-right: 20px;
+}
+
+
 
 /* 字体css */
 .font-size-20px {
@@ -246,15 +285,11 @@ i.fa:hover {
 .float-right {
   float: right;
 }
-.padding-left-10px {
-  padding-left: 10px;
+.z-index-20 {
+  z-index: 20;
 }
-.padding-right-10px {
-  padding-right: 10px;
-}
-.padding-right-20px {
-  padding-right: 20px;
-}
+
+/* 相对移动css */
 .top-move-3px {
   position: relative;
   top: -3px;
@@ -263,10 +298,5 @@ i.fa:hover {
   position: relative;
   top: -20px;
 }
-.hover-window {
-  position: relative;
-  z-index: 1000;
-  background-color: rgba(255, 255, 255, 1);
-  left:-50px;
-  display: none;
-}
+
+/*        通用css结束       */
