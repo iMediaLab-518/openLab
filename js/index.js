@@ -2,7 +2,7 @@
  * @Author: zzx & lh 
  * @Date: 2018-04-03 21:36:53 
  * @Last Modified by: zzx
- * @Last Modified time: 2018-04-03 21:37:44
+ * @Last Modified time: 2018-04-04 15:06:02
  */
 
 
@@ -555,6 +555,7 @@ function eleWidthChange(ele) {
       } else {
         chooseWriteIntoPage(ele_id);
       }
+    }
     } else {
       if (eleWidth <= 430 && infoObject.pageCapacity == 10) {
         middleTable.css("width", "90%");
@@ -578,7 +579,7 @@ function eleWidthChange(ele) {
       registEventForPagination(ele);
     }
   }
-}
+
 
 /*
 函数名:firstLoad 初次载入
