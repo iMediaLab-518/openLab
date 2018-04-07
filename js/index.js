@@ -2,7 +2,7 @@
  * @Author: zzx & lh 
  * @Date: 2018-04-03 21:36:53 
  * @Last Modified by: zzx
- * @Last Modified time: 2018-04-04 15:06:02
+ * @Last Modified time: 2018-04-07 21:50:47
  */
 
 
@@ -605,6 +605,14 @@ function firstLoad() {
     var allDragableDiv = $(".myDiv");
     //获取点击的按钮
     var faLock = $(this);
+    //获取上一级
+    var parent = faLock.parent();
+    //修改title
+    if (parent.attr("title") == "固定") {
+      parent.attr("title","解除固定");
+    } else {
+      parent.attr("title","固定");
+    }
     //获取被点击按钮的可拖动的祖先Div
     var dragableParentDiv = faLock
       .parent()
@@ -1357,9 +1365,9 @@ function writeIntoPageForEquipmentInfo() {
   $.ajaxSetup({
     async: false
   });
-  if (!curInfo.isLoad) {
+  if (!infoObject.isLoad) {
     $.post("php/get_equipment_info.php", function (json) {
-      curInfo.isLoad++;
+      infoObject.isLoad++;
       infoObject.data = JSON.parse(json).data;
     });
   }
