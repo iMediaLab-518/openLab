@@ -30,7 +30,7 @@
 			$row['staff_gender']="男";
 		}
 		//汇总输出
-		$staff_infomation[] = array('staff_serial_number' => $row['staff_serial_number'], 'staff_name' => $row['staff_name'], 'staff_gender' => $row['staff_gender'], 'staff_phone_num' => $row['staff_phone_num'], 'staff_id_card_no' => $row['staff_id_card_no'], 'staff_role_name' => $row_role['role_name'], 'staff_create_time' => $row['staff_create_time'], 'staff_id' => $row['staff_id']);
+		$staff_infomation[] = array('staff_serial_number' => $row['staff_serial_number'], 'staff_name' => $row['staff_name'], 'staff_gender' => $row['staff_gender'], 'staff_phone_num' => $row['staff_phone_num'], 'staff_id_card_no' => $row['staff_id_card_no'], 'staff_role_name' => $row_role['role_name'], 'staff_create_time' => $row['staff_create_time'], 'staff_id' => $row['staff_id'],'staff_is_in_service' => $row['staff_is_in_service']);
 
 	}
 		//获取数据库staff_info表总记录条数
