@@ -2,10 +2,8 @@
  * @Author: zzx & lh 
  * @Date: 2018-04-03 21:36:53 
  * @Last Modified by: zzx
- * @Last Modified time: 2018-04-07 21:50:47
+ * @Last Modified time: 2018-04-08 20:43:13
  */
-
-
 
 /* 全局对象定义 */
 var curInfo = {}; //此页面的唯一全局变量
@@ -61,9 +59,9 @@ function adsorbent(ele) {
     gapJudgeScopeRight = parentDivWidth - gapJudgeScope, //判定吸附的范围的最小值(适用于右吸附)
     gapJudgeScopeBottom = parentDivHeight - gapJudgeScope, //判定吸附的范围的最小值(适用于底部吸附)
     adsorbBottomPosition =
-    parentDivHeight - eleHeight - gapWidth - borderWidth * 2, //底部吸附位置
+      parentDivHeight - eleHeight - gapWidth - borderWidth * 2, //底部吸附位置
     adsorbRightPosition =
-    parentDivWidth - eleWidth - gapWidth - borderWidth * 2; //右吸附位置
+      parentDivWidth - eleWidth - gapWidth - borderWidth * 2; //右吸附位置
 
   if (leftPosition <= gapJudgeScope) {
     ele.css("left", gapWidth + "px");
@@ -110,7 +108,7 @@ function arrayDuplicateAndSort(array) {
 */
 function arraySortByProperty(array, property) {
   function compare(property) {
-    return function (a, b) {
+    return function(a, b) {
       var value1 = a[property];
       var value2 = b[property];
       return value1 - value2;
@@ -171,7 +169,7 @@ function dragAble(ele) {
     var preTop = 0;
 
     ele.bind({
-      mousedown: function (e) {
+      mousedown: function(e) {
         var leftPos = ele.offset().left;
         var rightPos = leftPos + ele.width() + leftBorder + rightBorder;
         var topPos = ele.offset().top;
@@ -194,7 +192,7 @@ function dragAble(ele) {
     });
 
     $("body").bind({
-      mousemove: function (e) {
+      mousemove: function(e) {
         var leftPos = ele.offset().left;
         var rightPos = leftPos + ele.width() + leftBorder + rightBorder;
         var topPos = ele.offset().top;
@@ -460,7 +458,7 @@ function dragAble(ele) {
           }
         }
       },
-      mouseup: function (e) {
+      mouseup: function(e) {
         isMouseDown = false;
 
         leftJudge = false;
@@ -556,30 +554,29 @@ function eleWidthChange(ele) {
         chooseWriteIntoPage(ele_id);
       }
     }
-    } else {
-      if (eleWidth <= 430 && infoObject.pageCapacity == 10) {
-        middleTable.css("width", "90%");
-        infoObject.pageCapacity = 8;
-        setPagination(ele);
-        chooseWriteIntoPage(ele_id);
-      }
-      if (eleWidth > 435 && infoObject.pageCapacity == 8) {
-        middleTable.css("width", "100%");
-        infoObject.pageCapacity = 10;
-        setPagination(ele);
-        chooseWriteIntoPage(ele_id);
-      }
-      if (eleWidth > 480) {
-        infoObject.tableType = "middle";
-        infoObject.pageCapacity = 8;
-        setPagination(ele);
-        chooseWriteIntoPage(ele_id);
-      }
-      //为分页栏按钮注册事件
-      registEventForPagination(ele);
+  } else {
+    if (eleWidth <= 430 && infoObject.pageCapacity == 10) {
+      middleTable.css("width", "90%");
+      infoObject.pageCapacity = 8;
+      setPagination(ele);
+      chooseWriteIntoPage(ele_id);
     }
+    if (eleWidth > 435 && infoObject.pageCapacity == 8) {
+      middleTable.css("width", "100%");
+      infoObject.pageCapacity = 10;
+      setPagination(ele);
+      chooseWriteIntoPage(ele_id);
+    }
+    if (eleWidth > 480) {
+      infoObject.tableType = "middle";
+      infoObject.pageCapacity = 8;
+      setPagination(ele);
+      chooseWriteIntoPage(ele_id);
+    }
+    //为分页栏按钮注册事件
+    registEventForPagination(ele);
   }
-
+}
 
 /*
 函数名:firstLoad 初次载入
@@ -600,7 +597,7 @@ function firstLoad() {
   //为三个表格的搜索功能注册事件
   searchInfoFromMiddleTable();
   //为页面的可拖动开关注册事件
-  $(".fa-thumb-tack").click(function () {
+  $(".fa-thumb-tack").click(function() {
     //获取所有可拖动Div
     var allDragableDiv = $(".myDiv");
     //获取点击的按钮
@@ -609,9 +606,9 @@ function firstLoad() {
     var parent = faLock.parent();
     //修改title
     if (parent.attr("title") == "固定") {
-      parent.attr("title","解除固定");
+      parent.attr("title", "解除固定");
     } else {
-      parent.attr("title","固定");
+      parent.attr("title", "固定");
     }
     //获取被点击按钮的可拖动的祖先Div
     var dragableParentDiv = faLock
@@ -648,7 +645,7 @@ function firstLoad() {
         type: "post",
         cache: false,
         dataType: "json",
-        success: function (data) {
+        success: function(data) {
           if (data == "ok") {
             console.log("记录成功");
           } else {
@@ -657,7 +654,7 @@ function firstLoad() {
         }
       });
     }
-    $.each(allDragableDiv, function () {
+    $.each(allDragableDiv, function() {
       dragAble($(this));
     });
   });
@@ -671,8 +668,8 @@ function firstLoad() {
 */
 function getInformationArray(obj) {
   var info_obj = {};
-  $.each(obj, function (index, value) {
-    $.each(value, function (key, val) {
+  $.each(obj, function(index, value) {
+    $.each(value, function(key, val) {
       if (index == 0) {
         info_obj[key] = [val];
       } else {
@@ -709,7 +706,7 @@ function registEventForPagination(ele) {
   var ele_id = ele.attr("id");
   var pageCircles = ele.find(".pagination i");
   var infoObject = curInfo[ele_id];
-  pageCircles.click(function () {
+  pageCircles.click(function() {
     infoObject.curPage = $(this).attr("data-page");
     pageCircles.attr("class", "fa fa-circle-thin");
     $(this).attr("class", "fa fa-circle");
@@ -727,11 +724,11 @@ function registEventForZIndexChange() {
   //获取所有dragableDiv
   var dragable_divs = $(".myDiv");
   //注册点击事件
-  $(".fa-arrow").click(function () {
+  $(".fa-arrow").click(function() {
     //定义存放z-index信息的数组
     var z_index_array = [];
     //获取z-index信息并存入数组
-    $.each(dragable_divs, function () {
+    $.each(dragable_divs, function() {
       var obj = {
         div_name: $(this).attr("id"),
         z_index: $(this).css("z-index")
@@ -750,7 +747,7 @@ function registEventForZIndexChange() {
       .attr("id");
     var info_obj = curInfo[dragable_div_id];
     var info = new Array();
-    $.each(z_index_array, function (index, value) {
+    $.each(z_index_array, function(index, value) {
       //点击向下一层按钮
       if (arrow_icon.hasClass("fa-arrow-circle-down")) {
         //不在最下面一层时,当前表格z-index减小100,在其下面一层的表格z-index增加100
@@ -783,7 +780,7 @@ function registEventForZIndexChange() {
             curInfo[z_index_array[index + 1].div_name].z_index
           );
         }
-      } 
+      }
     });
 
     $.ajax({
@@ -794,7 +791,7 @@ function registEventForZIndexChange() {
       type: "post",
       cache: false,
       dataType: "json",
-      success: function (data) {
+      success: function(data) {
         if (data == "ok") {
           console.log("记录成功");
         } else {
@@ -803,7 +800,7 @@ function registEventForZIndexChange() {
       }
     });
 
-    $.each(dragable_divs, function () {
+    $.each(dragable_divs, function() {
       var obj = curInfo[$(this).attr("id")];
       $(this).css("z-index", obj.z_index);
     });
@@ -969,7 +966,7 @@ function setMinHeight(ele) {
 
 function showDetails() {
   //在简略信息上悬停显示详细信息
-  $(".condensed-info i").hover(function (event) {
+  $(".condensed-info i").hover(function(event) {
     var icon = $(this);
     //获取dragabelDiv
     var dragale_parent_id = icon
@@ -990,6 +987,7 @@ function showDetails() {
       var staff_role_name = icon.attr("data-role-name");
       var staff_create_time = icon.attr("data-create-time");
       var staff_gender = icon.attr("data-gender");
+      var staff_status = icon.attr("data-staff-status");
       var html2 = "";
       html2 += "<div class='info-card hover-window'>";
       html2 +=
@@ -1003,7 +1001,11 @@ function showDetails() {
         (staff_gender == "男" ? "male-color" : "female-color") +
         "'></i>";
       html2 += "<span class='staff-type'> " + staff_role_name + "</span> </p>";
-      html2 += "<div class='staff-status leave-color'>离职";
+      html2 +=
+        "<div class='staff-status " +
+        (staff_status ? "working-color" : "leave-color") +
+        "'>" +
+        (staff_status ? "在职" : "离职");
       html2 += "</div></div>";
       container.append(html2);
       container.css("height", "84px");
@@ -1012,6 +1014,7 @@ function showDetails() {
       var position = icon.attr("data-position");
       var name = icon.attr("data-name");
       var disease = icon.attr("data-disease");
+      var status = icon.attr("data-status");
       var html2 = "";
       html2 += "<div class='equipment-info-card hover-window'>";
       html2 += "<i class='fa fa-tag equipment-bind-icon common-color'></i><p>";
@@ -1021,7 +1024,12 @@ function showDetails() {
       html2 += "<span class='font-size-20px'><b>" + name + "</b></span><br>";
       html2 += "<span class='join-time'>";
       html2 += "<b>" + disease + "</b></span></p>";
-      html2 += "<div class='staff-status leave-color'>异常</div></div>";
+      html2 +=
+        "<div class='staff-status " +
+        (status == "异常" ? "leave-color" : "working-color") +
+        "'>" +
+        status +
+        "</div></div>";
       container.append(html2);
       container.css("height", "96px");
       $(".hover-window").css("bottom", "120px");
@@ -1042,7 +1050,9 @@ function showDetails() {
       html2 += "<span class='join-time'>";
       html2 += "<b>" + equipment_install_date + "</b></span></p>";
       html2 +=
-        "<div class='staff-status leave-color'>" +
+        "<div class='staff-status " +
+        (equipment_status == "未绑定" ? "leave-color" : "working-color") +
+        "'>" +
         equipment_status +
         "</div></div>";
       container.append(html2);
@@ -1053,11 +1063,11 @@ function showDetails() {
     var hoverWindow = $(".hover-window");
     hoverWindow.show();
     //鼠标离开时移除详细信息
-    hoverWindow.mouseleave(function () {
+    hoverWindow.mouseleave(function() {
       $(this).remove();
     });
     //点击页面其他地方移除详细信息
-    $("body").bind("click", function () {
+    $("body").bind("click", function() {
       hoverWindow.remove();
       //解除body绑定的click事件
       $("body").unbind("click");
@@ -1075,9 +1085,9 @@ function setPagination(ele) {
   var ele_id = ele.attr("id");
   var infoObject = curInfo[ele_id];
   infoObject.curPage = 1;
-  var l = infoObject.is_searching ?
-    infoObject.search_result.length :
-    infoObject.data.length;
+  var l = infoObject.is_searching
+    ? infoObject.search_result.length
+    : infoObject.data.length;
   var html = "";
   //页数向上取整
   var pageNumber = Math.ceil(l / infoObject.pageCapacity);
@@ -1101,7 +1111,7 @@ function setPagination(ele) {
 function searchInfoFromMiddleTable() {
   var eval_str, info_object, parent_id, input_val;
   //为搜索框注册keydown事件
-  $(".search-input").on("keydown", function (event) {
+  $(".search-input").on("keydown", function(event) {
     //获取输入内容
     input_val = $(this).val();
     //获取当前搜索框所在的表格的id
@@ -1135,10 +1145,10 @@ function searchInfoFromMiddleTable() {
           "index == 'name' || index == 'position' || index == 'disease'";
       }
 
-      $.each(staff_info_obj, function (index, value) {
+      $.each(staff_info_obj, function(index, value) {
         //只搜索这几项
         if (eval(eval_str)) {
-          $.each(value, function (key, val) {
+          $.each(value, function(key, val) {
             if (val.indexOf(input_val) != -1) {
               result.push(key);
             }
@@ -1176,7 +1186,7 @@ function writeIntoPageForStaffInfo() {
   });
   //只获取一次后台的全部员工信息
   if (!infoObject.isLoad) {
-    $.post("php/get_staff_management_info.php", function (json) {
+    $.post("php/get_staff_management_info.php", function(json) {
       infoObject.isLoad++;
       infoObject.data = JSON.parse(json).data;
     });
@@ -1187,7 +1197,8 @@ function writeIntoPageForStaffInfo() {
       //获取数据
       data: infoObject.data,
       //定义每列数据
-      columns: [{
+      columns: [
+        {
           data: "staff_serial_number"
         },
         {
@@ -1210,16 +1221,19 @@ function writeIntoPageForStaffInfo() {
         }
       ],
       //自定义第8列
-      columnDefs: [{
-        targets: 7,
-        render: function () {
-          return '<a href="#">Download</a>';
+      columnDefs: [
+        {
+          targets: 7,
+          render: function() {
+            return '<a href="#">Download</a>';
+          }
         }
-      }],
+      ],
       //定义每页显示条数
       aLengthMenu: [5, 10, 15],
       //定义datatable部分的样式
-      dom: '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
+      dom:
+        '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
       //自定义提示文字
       language: {
         emptyTable: "表中没有可用数据",
@@ -1255,11 +1269,11 @@ function writeIntoPageForStaffInfo() {
     //为大表格添加上下边
     $("#staff-info-big-table").addClass("border-bottom-and-top");
     //改变每页显示信息条数时修改最小高度
-    $("select[name='staff-info-big-table_length']").change(function () {
+    $("select[name='staff-info-big-table_length']").change(function() {
       setMinHeight(ele);
     });
     //跳转页时改变最小高度
-    $("#staff-info-big-table_paginate").click(function () {
+    $("#staff-info-big-table_paginate").click(function() {
       setMinHeight(ele);
     });
     ele.find(".not-for-big-table").hide();
@@ -1282,11 +1296,11 @@ function writeIntoPageForStaffInfo() {
     //页结束index
     var pageEnd = infoObject.curPage * infoObject.pageCapacity;
     //遍历数组
-    var loop_array = infoObject.is_searching ?
-      infoObject.search_result :
-      infoObject.data;
+    var loop_array = infoObject.is_searching
+      ? infoObject.search_result
+      : infoObject.data;
     //遍历数组,将数据写入html片段后加载到页面
-    $.each(loop_array, function (index, value) {
+    $.each(loop_array, function(index, value) {
       if (infoObject.is_searching) {
         value = infoObject.data[value];
       }
@@ -1311,7 +1325,11 @@ function writeIntoPageForStaffInfo() {
             "<span class='staff-type'> " +
             value.staff_role_name +
             "</span> </p>";
-          html2 += "<div class='staff-status leave-color'>离职";
+          html2 +=
+            "<div class='staff-status " +
+            (value.staff_is_in_service ? "working-color" : "leave-color") +
+            "'>" +
+            (value.staff_is_in_service ? "在职" : "离职");
           html2 += "</div></div>";
         } else {
           html2 += "<div class='condensed-info float-left'>";
@@ -1322,6 +1340,7 @@ function writeIntoPageForStaffInfo() {
           html2 += "data-create-time='" + value.staff_create_time + "' ";
           html2 += "data-gender='" + value.staff_gender + "' ";
           html2 += "data-role-name='" + value.staff_role_name + "'";
+          html2 += "data-staff-status='" + value.staff_is_in_service + "'";
           html2 += "data-position-number='" + (index - pageStart) + "'";
           html2 += "></i><br>";
           html2 +=
@@ -1366,7 +1385,7 @@ function writeIntoPageForEquipmentInfo() {
     async: false
   });
   if (!infoObject.isLoad) {
-    $.post("php/get_equipment_info.php", function (json) {
+    $.post("php/get_equipment_info.php", function(json) {
       infoObject.isLoad++;
       infoObject.data = JSON.parse(json).data;
     });
@@ -1374,7 +1393,8 @@ function writeIntoPageForEquipmentInfo() {
   if (infoObject.tableType == "big") {
     $("#equipment-info-big-table").DataTable({
       data: infoObject.data,
-      columns: [{
+      columns: [
+        {
           data: "building_no"
         },
         {
@@ -1387,14 +1407,17 @@ function writeIntoPageForEquipmentInfo() {
           data: "equipment_status"
         }
       ],
-      columnDefs: [{
-        targets: 4,
-        render: function () {
-          return '<a href="#">Download</a>';
+      columnDefs: [
+        {
+          targets: 4,
+          render: function() {
+            return '<a href="#">Download</a>';
+          }
         }
-      }],
+      ],
       aLengthMenu: [5, 10, 15],
-      dom: '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
+      dom:
+        '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
       language: {
         emptyTable: "表中没有可用数据",
         info: "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
@@ -1428,11 +1451,11 @@ function writeIntoPageForEquipmentInfo() {
     $("#equipment-info-big-table").addClass("border-bottom-and-top");
 
     //改变每页显示信息条数时修改最小高度
-    $("select[name='staff-info-big-table_length']").change(function () {
+    $("select[name='staff-info-big-table_length']").change(function() {
       setMinHeight(ele);
     });
     //跳转页时改变最小高度
-    $("#staff-info-big-table_paginate").click(function () {
+    $("#staff-info-big-table_paginate").click(function() {
       setMinHeight(ele);
     });
     ele.find(".not-for-big-table").hide();
@@ -1448,10 +1471,10 @@ function writeIntoPageForEquipmentInfo() {
     var html2 = "";
     var pageStart = (infoObject.curPage - 1) * infoObject.pageCapacity;
     var pageEnd = infoObject.curPage * infoObject.pageCapacity;
-    var loop_array = infoObject.is_searching ?
-      infoObject.search_result :
-      infoObject.data;
-    $.each(loop_array, function (index, value) {
+    var loop_array = infoObject.is_searching
+      ? infoObject.search_result
+      : infoObject.data;
+    $.each(loop_array, function(index, value) {
       if (infoObject.is_searching) {
         value = infoObject.data[value];
       }
@@ -1472,16 +1495,20 @@ function writeIntoPageForEquipmentInfo() {
           html2 += "<span class='join-time'>";
           html2 += "<b>" + value.equipment_install_date + "</b></span></p>";
           html2 +=
-            "<div class='staff-status leave-color'>" +
+            "<div class='staff-status " +
+            (value.equipment_status == "未绑定"
+              ? "leave-color"
+              : "working-color") +
+            "'>" +
             value.equipment_status +
             "</div></div>";
         } else {
           html2 += "<div class='condensed-info float-left'>";
           html2 +=
             "<i class='fa fa-hdd-o fa-4x " +
-            (value.equipment_status == "异常" ?
-              "leave-color" :
-              "female-color") +
+            (value.equipment_status == "异常"
+              ? "leave-color"
+              : "female-color") +
             "'";
           html2 += "data-install-date='" + value.equipment_install_date + "' ";
           html2 += "data-building-no='" + value.building_no + "' ";
@@ -1531,7 +1558,7 @@ function writeIntoPageForWarningInfo() {
     async: false
   });
   if (!curInfo.isLoad) {
-    $.post("php/get_bed_info.php", function (json) {
+    $.post("php/get_bed_info.php", function(json) {
       curInfo.isLoad++;
       infoObject.data = JSON.parse(json).data;
     });
@@ -1539,7 +1566,8 @@ function writeIntoPageForWarningInfo() {
   if (infoObject.tableType == "big") {
     $("#warning-info-big-table").DataTable({
       data: infoObject.data,
-      columns: [{
+      columns: [
+        {
           data: "name"
         },
         {
@@ -1552,14 +1580,17 @@ function writeIntoPageForWarningInfo() {
           data: "status"
         }
       ],
-      columnDefs: [{
-        targets: 4,
-        render: function () {
-          return '<a href="#">Download</a>';
+      columnDefs: [
+        {
+          targets: 4,
+          render: function() {
+            return '<a href="#">Download</a>';
+          }
         }
-      }],
+      ],
       aLengthMenu: [5, 10, 15],
-      dom: '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
+      dom:
+        '<".float-left padding-10px"f>rt<"bottom .padding-10px"li><"bottom .padding-10px top-move-20px"p><"clear">',
       language: {
         emptyTable: "表中没有可用数据",
         info: "当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",
@@ -1593,11 +1624,11 @@ function writeIntoPageForWarningInfo() {
     $("#warning-info-big-table").addClass("border-bottom-and-top");
 
     //改变每页显示信息条数时修改最小高度
-    $("select[name='staff-info-big-table_length']").change(function () {
+    $("select[name='staff-info-big-table_length']").change(function() {
       setMinHeight(ele);
     });
     //跳转页时改变最小高度
-    $("#staff-info-big-table_paginate").click(function () {
+    $("#staff-info-big-table_paginate").click(function() {
       setMinHeight(ele);
     });
     ele.find(".not-for-big-table").hide();
@@ -1613,10 +1644,10 @@ function writeIntoPageForWarningInfo() {
     var html2 = "";
     var pageStart = (infoObject.curPage - 1) * infoObject.pageCapacity;
     var pageEnd = infoObject.curPage * infoObject.pageCapacity;
-    var loop_array = infoObject.is_searching ?
-      infoObject.search_result :
-      infoObject.data;
-    $.each(loop_array, function (index, value) {
+    var loop_array = infoObject.is_searching
+      ? infoObject.search_result
+      : infoObject.data;
+    $.each(loop_array, function(index, value) {
       if (infoObject.is_searching) {
         value = infoObject.data[value];
       }
@@ -1632,12 +1663,18 @@ function writeIntoPageForWarningInfo() {
             "<span class='font-size-20px'><b>" + value.name + "</b></span><br>";
           html2 += "<span class='join-time'>";
           html2 += "<b>" + value.disease + "</b></span></p>";
-          html2 += "<div class='staff-status leave-color'>异常</div></div>";
+          html2 +=
+            "<div class='staff-status " +
+            (value.status == "异常" ? "leave-color" : "working-color") +
+            "'>" +
+            value.status +
+            "</div></div>";
         } else {
           html2 += "<div class='condensed-info float-left'>";
           html2 += "<i class='fa fa-line-chart fa-4x female-color' ";
           html2 += "data-position='" + value.position + "' ";
           html2 += "data-disease='" + value.disease + "' ";
+          html2 += "data-status='" + value.status + "' ";
           html2 += "data-name='" + value.name + "'";
           html2 += "></i><br>";
           html2 +=
@@ -1666,15 +1703,15 @@ function writeIntoPageForWarningInfo() {
 
 //获取保存的坐标数据
 function getTheModulePos() {
-  $(function () {
+  $(function() {
     $.ajax({
       url: "php/get_the_module_pos.php",
       data: {},
       type: "get",
       cache: false,
       dataType: "json",
-      success: function (data) {
-        $.each(data, function (index, value) {
+      success: function(data) {
+        $.each(data, function(index, value) {
           var id = value.module_id;
           var curParentId = "#" + id;
           var curDiv = $(curParentId);
@@ -1704,7 +1741,7 @@ function getTheModulePos() {
   });
 }
 
-$(function () {
+$(function() {
   firstLoad();
   getTheModulePos();
 });
