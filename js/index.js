@@ -1506,9 +1506,9 @@ function writeIntoPageForEquipmentInfo() {
           html2 += "<div class='condensed-info float-left'>";
           html2 +=
             "<i class='fa fa-hdd-o fa-4x " +
-            (value.equipment_status == "异常"
-              ? "leave-color"
-              : "female-color") +
+            (value.equipment_status == "未绑定"
+              ? "female-color"
+              : "common-color") +
             "'";
           html2 += "data-install-date='" + value.equipment_install_date + "' ";
           html2 += "data-building-no='" + value.building_no + "' ";
