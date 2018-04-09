@@ -1671,7 +1671,13 @@ function writeIntoPageForWarningInfo() {
             "</div></div>";
         } else {
           html2 += "<div class='condensed-info float-left'>";
-          html2 += "<i class='fa fa-line-chart fa-4x female-color' ";
+          // html2 += "<i class='fa fa-line-chart fa-4x female-color' ";
+          html2 +=
+            "<i class='fa fa-line-chart fa-4x " +
+            (value.status == "异常"
+              ? "female-color"
+              : "common-color") +
+            "'";
           html2 += "data-position='" + value.position + "' ";
           html2 += "data-disease='" + value.disease + "' ";
           html2 += "data-status='" + value.status + "' ";
