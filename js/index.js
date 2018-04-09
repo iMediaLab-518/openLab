@@ -1327,9 +1327,9 @@ function writeIntoPageForStaffInfo() {
             "</span> </p>";
           html2 +=
             "<div class='staff-status " +
-            (value.staff_is_in_service ? "working-color" : "leave-color") +
+            (value.staff_is_in_service==1 ? "working-color" : "leave-color") +
             "'>" +
-            (value.staff_is_in_service ? "在职" : "离职");
+            (value.staff_is_in_service==1 ? "在职" : "离职");
           html2 += "</div></div>";
         } else {
           html2 += "<div class='condensed-info float-left'>";
